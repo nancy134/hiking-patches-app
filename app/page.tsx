@@ -11,21 +11,21 @@ const mockPatches = [
     name: 'White Mountains 4000 Footers',
     region: 'NH',
     description: '48 peaks over 4000 feet.',
-    imageUrl: '/patches/4000-footers.jpg',
+    imageUrl: '/patches/48-4k.jpeg',
   },
   {
     id: '2',
     name: 'NH 52 With a View',
     region: 'NH',
     description: 'Scenic hikes in NH under 4000 feet.',
-    imageUrl: '/patches/52wav.jpg',
+    imageUrl: '/patches/52-wav.jpeg',
   },
   {
     id: '3',
     name: 'New England Hundred Highest',
     region: 'NE',
     description: 'The top 100 peaks in NE.',
-    imageUrl: '/patches/ne-hundred.jpg',
+    imageUrl: '/patches/patch-ne-100.jpeg',
   },
 ];
 
