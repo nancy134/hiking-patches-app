@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import { list, getUrl } from 'aws-amplify/storage';
 
-export default function UploadedFilesList() {
+interface UploadedFilesListProps {
+  refreshTrigger: number;
+}
+
+export default function UploadedFilesList({ refreshTrigger }: UploadedFilesListProps) {
   const [fileUrls, setFileUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +36,7 @@ export default function UploadedFilesList() {
     };
 
     fetchFiles();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="mt-6">
