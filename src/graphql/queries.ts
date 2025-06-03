@@ -8,27 +8,29 @@ type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryOutput: OutputType;
 };
 
-export const getTodo = /* GraphQL */ `query GetTodo($id: ID!) {
-  getTodo(id: $id) {
+export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
+  getPatch(id: $id) {
     id
     name
     description
+    imageUrl
     createdAt
     updatedAt
     __typename
   }
 }
-` as GeneratedQuery<APITypes.GetTodoQueryVariables, APITypes.GetTodoQuery>;
-export const listTodos = /* GraphQL */ `query ListTodos(
-  $filter: ModelTodoFilterInput
+` as GeneratedQuery<APITypes.GetPatchQueryVariables, APITypes.GetPatchQuery>;
+export const listPatches = /* GraphQL */ `query ListPatches(
+  $filter: ModelPatchFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  listPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       name
       description
+      imageUrl
       createdAt
       updatedAt
       __typename
@@ -37,4 +39,7 @@ export const listTodos = /* GraphQL */ `query ListTodos(
     __typename
   }
 }
-` as GeneratedQuery<APITypes.ListTodosQueryVariables, APITypes.ListTodosQuery>;
+` as GeneratedQuery<
+  APITypes.ListPatchesQueryVariables,
+  APITypes.ListPatchesQuery
+>;

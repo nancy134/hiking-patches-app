@@ -8,54 +8,57 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
-export const createTodo = /* GraphQL */ `mutation CreateTodo(
-  $input: CreateTodoInput!
-  $condition: ModelTodoConditionInput
+export const createPatch = /* GraphQL */ `mutation CreatePatch(
+  $input: CreatePatchInput!
+  $condition: ModelPatchConditionInput
 ) {
-  createTodo(input: $input, condition: $condition) {
+  createPatch(input: $input, condition: $condition) {
     id
     name
     description
+    imageUrl
     createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateTodoMutationVariables,
-  APITypes.CreateTodoMutation
+  APITypes.CreatePatchMutationVariables,
+  APITypes.CreatePatchMutation
 >;
-export const updateTodo = /* GraphQL */ `mutation UpdateTodo(
-  $input: UpdateTodoInput!
-  $condition: ModelTodoConditionInput
+export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
+  $input: UpdatePatchInput!
+  $condition: ModelPatchConditionInput
 ) {
-  updateTodo(input: $input, condition: $condition) {
+  updatePatch(input: $input, condition: $condition) {
     id
     name
     description
+    imageUrl
     createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateTodoMutationVariables,
-  APITypes.UpdateTodoMutation
+  APITypes.UpdatePatchMutationVariables,
+  APITypes.UpdatePatchMutation
 >;
-export const deleteTodo = /* GraphQL */ `mutation DeleteTodo(
-  $input: DeleteTodoInput!
-  $condition: ModelTodoConditionInput
+export const deletePatch = /* GraphQL */ `mutation DeletePatch(
+  $input: DeletePatchInput!
+  $condition: ModelPatchConditionInput
 ) {
-  deleteTodo(input: $input, condition: $condition) {
+  deletePatch(input: $input, condition: $condition) {
     id
     name
     description
+    imageUrl
     createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteTodoMutationVariables,
-  APITypes.DeleteTodoMutation
+  APITypes.DeletePatchMutationVariables,
+  APITypes.DeletePatchMutation
 >;

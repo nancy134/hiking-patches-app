@@ -2,18 +2,20 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateTodoInput = {
+export type CreatePatchInput = {
   id?: string | null,
   name: string,
   description?: string | null,
+  imageUrl?: string | null,
 };
 
-export type ModelTodoConditionInput = {
+export type ModelPatchConditionInput = {
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
-  and?: Array< ModelTodoConditionInput | null > | null,
-  or?: Array< ModelTodoConditionInput | null > | null,
-  not?: ModelTodoConditionInput | null,
+  imageUrl?: ModelStringInput | null,
+  and?: Array< ModelPatchConditionInput | null > | null,
+  or?: Array< ModelPatchConditionInput | null > | null,
+  not?: ModelPatchConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
 };
@@ -58,34 +60,37 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type Todo = {
-  __typename: "Todo",
+export type Patch = {
+  __typename: "Patch",
   id: string,
   name: string,
   description?: string | null,
+  imageUrl?: string | null,
   createdAt: string,
   updatedAt: string,
 };
 
-export type UpdateTodoInput = {
+export type UpdatePatchInput = {
   id: string,
   name?: string | null,
   description?: string | null,
+  imageUrl?: string | null,
 };
 
-export type DeleteTodoInput = {
+export type DeletePatchInput = {
   id: string,
 };
 
-export type ModelTodoFilterInput = {
+export type ModelPatchFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
+  imageUrl?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelTodoFilterInput | null > | null,
-  or?: Array< ModelTodoFilterInput | null > | null,
-  not?: ModelTodoFilterInput | null,
+  and?: Array< ModelPatchFilterInput | null > | null,
+  or?: Array< ModelPatchFilterInput | null > | null,
+  not?: ModelPatchFilterInput | null,
 };
 
 export type ModelIDInput = {
@@ -104,20 +109,21 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type ModelTodoConnection = {
-  __typename: "ModelTodoConnection",
-  items:  Array<Todo | null >,
+export type ModelPatchConnection = {
+  __typename: "ModelPatchConnection",
+  items:  Array<Patch | null >,
   nextToken?: string | null,
 };
 
-export type ModelSubscriptionTodoFilterInput = {
+export type ModelSubscriptionPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   name?: ModelSubscriptionStringInput | null,
   description?: ModelSubscriptionStringInput | null,
+  imageUrl?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionTodoFilterInput | null > | null,
-  or?: Array< ModelSubscriptionTodoFilterInput | null > | null,
+  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -150,83 +156,88 @@ export type ModelSubscriptionStringInput = {
   notIn?: Array< string | null > | null,
 };
 
-export type CreateTodoMutationVariables = {
-  input: CreateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type CreatePatchMutationVariables = {
+  input: CreatePatchInput,
+  condition?: ModelPatchConditionInput | null,
 };
 
-export type CreateTodoMutation = {
-  createTodo?:  {
-    __typename: "Todo",
+export type CreatePatchMutation = {
+  createPatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type UpdateTodoMutationVariables = {
-  input: UpdateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type UpdatePatchMutationVariables = {
+  input: UpdatePatchInput,
+  condition?: ModelPatchConditionInput | null,
 };
 
-export type UpdateTodoMutation = {
-  updateTodo?:  {
-    __typename: "Todo",
+export type UpdatePatchMutation = {
+  updatePatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type DeleteTodoMutationVariables = {
-  input: DeleteTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type DeletePatchMutationVariables = {
+  input: DeletePatchInput,
+  condition?: ModelPatchConditionInput | null,
 };
 
-export type DeleteTodoMutation = {
-  deleteTodo?:  {
-    __typename: "Todo",
+export type DeletePatchMutation = {
+  deletePatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type GetTodoQueryVariables = {
+export type GetPatchQueryVariables = {
   id: string,
 };
 
-export type GetTodoQuery = {
-  getTodo?:  {
-    __typename: "Todo",
+export type GetPatchQuery = {
+  getPatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type ListTodosQueryVariables = {
-  filter?: ModelTodoFilterInput | null,
+export type ListPatchesQueryVariables = {
+  filter?: ModelPatchFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListTodosQuery = {
-  listTodos?:  {
-    __typename: "ModelTodoConnection",
+export type ListPatchesQuery = {
+  listPatches?:  {
+    __typename: "ModelPatchConnection",
     items:  Array< {
-      __typename: "Todo",
+      __typename: "Patch",
       id: string,
       name: string,
       description?: string | null,
+      imageUrl?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -234,46 +245,49 @@ export type ListTodosQuery = {
   } | null,
 };
 
-export type OnCreateTodoSubscriptionVariables = {
-  filter?: ModelSubscriptionTodoFilterInput | null,
+export type OnCreatePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
 };
 
-export type OnCreateTodoSubscription = {
-  onCreateTodo?:  {
-    __typename: "Todo",
+export type OnCreatePatchSubscription = {
+  onCreatePatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnUpdateTodoSubscriptionVariables = {
-  filter?: ModelSubscriptionTodoFilterInput | null,
+export type OnUpdatePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
 };
 
-export type OnUpdateTodoSubscription = {
-  onUpdateTodo?:  {
-    __typename: "Todo",
+export type OnUpdatePatchSubscription = {
+  onUpdatePatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnDeleteTodoSubscriptionVariables = {
-  filter?: ModelSubscriptionTodoFilterInput | null,
+export type OnDeletePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
 };
 
-export type OnDeleteTodoSubscription = {
-  onDeleteTodo?:  {
-    __typename: "Todo",
+export type OnDeletePatchSubscription = {
+  onDeletePatch?:  {
+    __typename: "Patch",
     id: string,
     name: string,
     description?: string | null,
+    imageUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,

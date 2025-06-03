@@ -1,17 +1,17 @@
-import React from 'react';
-
-type Props = {
-  query: string;
-  setQuery: (q: string) => void;
+type SearchBarProps = {
+  value: string;
+  onChange: (value: string) => void;
 };
 
-export const SearchBar: React.FC<Props> = ({ query, setQuery }) => (
-  <input
-    type="text"
-    placeholder="Search patches..."
-    className="w-full p-2 border rounded mb-4"
-    value={query}
-    onChange={(e) => setQuery(e.target.value)}
-  />
-);
+export default function SearchBar({ value, onChange }: SearchBarProps) {
+  return (
+    <input
+      type="text"
+      className="w-full p-2 border rounded mb-4"
+      placeholder="Search hiking patches..."
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
+}
 
