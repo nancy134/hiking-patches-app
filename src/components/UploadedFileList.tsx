@@ -10,10 +10,16 @@ export default function UploadedFilesList() {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const { items } = await list({ prefix: '' }); // List all files
+        const { items } = await list({ 
+            prefix: '',
+            options: {
+                accessLevel: 'private'
+            }
+        });
+        console.log("S3 items: ", items);
         const urls = await Promise.all(
           items.map(async (item) => {
-            const { url } = await getUrl({ key: item.key });
+            const { url } = await getUrl({ key: item.key, options: {accessLevel: 'private' }});
             return url;
           })
         );

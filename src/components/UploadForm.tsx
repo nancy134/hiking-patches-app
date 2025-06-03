@@ -27,6 +27,7 @@ export default function UploadForm() {
         key: file.name,
         data: file,
         options: {
+          accessLevel: 'private',
           contentType: file.type,
         },
       }).result;
