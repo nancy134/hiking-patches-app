@@ -6,6 +6,10 @@ import { uploadData, getUrl } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch } from '@/graphql/mutations';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import awsExports from '@/aws-exports';
+
+const bucket = awsExports.aws_user_files_s3_bucket;
+const region = awsExports.aws_user_files_s3_bucket_region;
 
 const client = generateClient();
 
@@ -17,35 +21,35 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-
-  const checkUserGroup = async () => {
-    try {
-      const session = await fetchAuthSession();
-      const idToken = session.tokens?.idToken?.toString();
-
-      if (!idToken) {
-        console.warn('No ID token found');
-        return false;
-      }
-
-      const payload = JSON.parse(atob(idToken.split('.')[1]));
-      const groups = payload['cognito:groups'] || [];
-      console.log('User groups:', groups);
-
-      return groups.includes('Admin');
-    } catch (error) {
-      console.error('Error fetching user session:', error);
-      return false;
-    }
-  };
-
-
   useEffect(() => {
-    const load = async () => {
-      const isUserAdmin = await checkUserGroup();
-      setIsAdmin(isUserAdmin);
+    const checkAccess = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (!user) {
+          setIsAdmin(false);
+          return;
+        }
+
+        const session = await fetchAuthSession();
+        const idToken = session.tokens?.idToken?.toString();
+
+        if (!idToken) {
+          setIsAdmin(false);
+          return;
+        }
+
+        const payload = JSON.parse(atob(idToken.split('.')[1]));
+        const groups = payload['cognito:groups'] || [];
+        console.log('User groups:', groups);
+
+        setIsAdmin(groups.includes('Admin'));
+      } catch (err) {
+        console.warn('Not logged in or error fetching session:', err);
+        setIsAdmin(false);
+      }
     };
-    load();
+
+    checkAccess();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,15 +67,20 @@ export default function AdminPage() {
         options: { accessLevel: 'public', contentType: imageFile.type }
       }).result;
 
-      const { url } = await getUrl({ key: filename, options: { accessLevel: 'public' } });
+      if (!bucket || !region) {
+        throw new Error('Missing S3 bucket or region in Amplify config');
+      }
 
+      // Construct public URL
+      const url = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
+      console.log("url: "+url);
       await client.graphql({
         query: createPatch,
         variables: {
           input: {
             name,
             description,
-            imageUrl: url.toString(),
+            imageUrl: url,
           },
         },
         authMode: "userPool"
