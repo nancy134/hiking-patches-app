@@ -10,6 +10,11 @@
       "keyDescription": ""
     },
     "conflictResolution": {},
-    "additionalAuthTypes": []
+    "additionalAuthTypes": [
+      {
+        "mode": "AMAZON_COGNITO_USER_POOLS",
+        "cognitoUserPoolId": "authhikingpatchesapp368a1661"
+      }
+    ]
   }
 }

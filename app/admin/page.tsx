@@ -74,6 +74,7 @@ export default function AdminPage() {
             imageUrl: url.toString(),
           },
         },
+        authMode: "userPool"
       });
 
       setName('');

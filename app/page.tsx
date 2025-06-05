@@ -18,8 +18,10 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPatches = async () => {
       try {
-        const response = await client.graphql({ query: listPatches });
-        const patches = response.data.listPatches.items;
+        const response = await client.graphql({ 
+          query: listPatches
+        });
+        const patches = response?.data?.listPatches?.items || [];
         setAllPatches(patches);
         setFilteredPatches(patches);
       } catch (error) {
