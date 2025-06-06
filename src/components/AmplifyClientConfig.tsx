@@ -6,7 +6,6 @@ import awsconfig from '../aws-exports';
 
 export default function AmplifyClientConfig() {
   useEffect(() => {
-    console.log('[Amplify Init] Configuring in browser with:', awsconfig);
     Amplify.configure(awsconfig);
   }, []);
 

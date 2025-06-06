@@ -20,7 +20,6 @@ export default function UploadedFilesList({ refreshTrigger }: UploadedFilesListP
                 accessLevel: 'private'
             }
         });
-        console.log("S3 items: ", items);
         const urls = await Promise.all(
           items.map(async (item) => {
             const { url } = await getUrl({ key: item.key, options: {accessLevel: 'private' }});
