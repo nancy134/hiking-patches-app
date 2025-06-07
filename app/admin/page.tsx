@@ -81,7 +81,8 @@ export default function AdminPage() {
         await uploadData({
           key: filename,
           data: imageFile,
-          options: { accessLevel: 'public', contentType: imageFile.type }
+          contentType: imageFile.type,
+          accessLevel: 'public'
         }).result;
 
         if (!bucket || !region) throw new Error('Missing S3 bucket or region');
