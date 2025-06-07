@@ -1,15 +1,20 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
-import { createPatch, updatePatch, deletePatch } from '@/graphql/mutations';
+import {
+  createPatch,
+  updatePatch,
+  deletePatch
+} from '@/graphql/mutations';
 import { listPatches } from '@/graphql/queries';
-import awsExports from '@/aws-exports';
 
+import awsExports from '@/aws-exports';
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
+
 const client = generateClient();
 
 export default function AdminPage() {
@@ -18,44 +23,41 @@ export default function AdminPage() {
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [patches, setPatches] = useState<Patch[]>([]);
   const [editingPatch, setEditingPatch] = useState<Partial<Patch> | null>(null);
 
-  const fetchPatches = useCallback(async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const patchesPerPage = 25;
+
+  const fetchPatches = async () => {
     const response = await client.graphql({ query: listPatches });
     setPatches(response.data.listPatches.items);
-  }, []);
+  };
 
   useEffect(() => {
     const checkAccess = async () => {
       try {
         const user = await getCurrentUser();
         if (!user) return setIsAdmin(false);
-
         const session = await fetchAuthSession();
         const idToken = session.tokens?.idToken?.toString();
         if (!idToken) return setIsAdmin(false);
-
         const payload = JSON.parse(atob(idToken.split('.')[1]));
         const groups = payload['cognito:groups'] || [];
         setIsAdmin(groups.includes('Admin'));
       } catch (err) {
-        console.warn('Not logged in or error fetching session:', err);
+        console.warn('Access check failed:', err);
         setIsAdmin(false);
       }
     };
+
     checkAccess();
   }, []);
 
   useEffect(() => {
     fetchPatches();
-  }, [fetchPatches]);
-
-  const handleEdit = (patch: Patch) => {
-    setEditingPatch(patch);
-    setName(patch.name);
-    setDescription(patch.description);
-  };
+  }, []);
 
   const cancelEdit = () => {
     setEditingPatch(null);
@@ -64,21 +66,11 @@ export default function AdminPage() {
     setImageFile(null);
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this patch?");
-    if (!confirmDelete) return;
-    await client.graphql({
-      query: deletePatch,
-      variables: { input: { id } },
-      authMode: 'userPool',
-    });
-    fetchPatches();
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !description || (editingPatch === null && !imageFile)) return;
+    if (!name || !description || (!editingPatch && !imageFile)) return;
     setLoading(true);
+    setSuccess(false);
     try {
       let imageUrl = editingPatch?.imageUrl ?? '';
       if (imageFile) {
@@ -89,44 +81,81 @@ export default function AdminPage() {
           options: { accessLevel: 'public', contentType: imageFile.type }
         }).result;
 
-        if (!bucket || !region) throw new Error('Missing S3 bucket or region in Amplify config');
+        if (!bucket || !region) throw new Error('Missing S3 bucket or region');
         imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
       }
 
-      const patchInput = { name, description, imageUrl };
       if (editingPatch) {
         await client.graphql({
           query: updatePatch,
-          variables: { input: { ...patchInput, id: editingPatch.id } },
+          variables: {
+            input: {
+              id: editingPatch.id,
+              name,
+              description,
+              imageUrl
+            },
+          },
           authMode: 'userPool',
         });
       } else {
         await client.graphql({
           query: createPatch,
-          variables: { input: patchInput },
+          variables: {
+            input: { name, description, imageUrl },
+          },
           authMode: 'userPool',
         });
       }
 
       cancelEdit();
+      setSuccess(true);
       fetchPatches();
     } catch (err) {
-      console.error('Error saving patch:', err);
+      console.error('Error submitting patch:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEdit = (patch: Patch) => {
+    setEditingPatch(patch);
+    setName(patch.name);
+    setDescription(patch.description);
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this patch?');
+    if (!confirmDelete) return;
+
+    await client.graphql({
+      query: deletePatch,
+      variables: { input: { id } },
+      authMode: 'userPool',
+    });
+    fetchPatches();
+  };
+
+  // Pagination logic
+  const indexOfLastPatch = currentPage * patchesPerPage;
+  const indexOfFirstPatch = indexOfLastPatch - patchesPerPage;
+  const currentPatches = patches.slice(indexOfFirstPatch, indexOfLastPatch);
+  const totalPages = Math.ceil(patches.length / patchesPerPage);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   if (isAdmin === null) return <p className="p-6">Checking permissions...</p>;
   if (!isAdmin) return <p className="p-6 text-red-600 font-semibold">⛔ Access denied. Admins only.</p>;
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">🛠️ Admin: Manage Hiking Patches</h1>
 
+      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mb-8 bg-gray-50 p-4 rounded shadow">
         <h2 className="text-lg font-semibold">{editingPatch ? 'Edit Patch' : 'Add New Patch'}</h2>
-
         <input
           type="text"
           placeholder="Patch name"
@@ -148,28 +177,25 @@ export default function AdminPage() {
           onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
           className="w-full"
         />
-        {imageFile && (
-          <img
-            src={URL.createObjectURL(imageFile)}
-            alt="Preview"
-            className="h-24 object-contain"
-          />
-        )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          {loading ? 'Saving...' : editingPatch ? 'Update Patch' : 'Add Patch'}
-        </button>
-        {editingPatch && (
-          <button type="button" onClick={cancelEdit} className="text-gray-600 underline">
-            Cancel
+        <div className="flex items-center gap-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            {loading ? 'Saving...' : editingPatch ? 'Update Patch' : 'Add Patch'}
           </button>
-        )}
+          {editingPatch && (
+            <button type="button" onClick={cancelEdit} className="text-gray-600 underline">
+              Cancel
+            </button>
+          )}
+        </div>
+        {success && <p className="text-green-600 mt-2">✅ Patch saved successfully!</p>}
       </form>
 
-      <table className="w-full table-auto border border-collapse">
+      {/* Patch Table */}
+      <table className="w-full table-auto border border-collapse mb-4">
         <thead>
           <tr className="bg-gray-200">
             <th className="border px-4 py-2">Name</th>
@@ -179,7 +205,7 @@ export default function AdminPage() {
           </tr>
         </thead>
         <tbody>
-          {patches.map((patch) => (
+          {currentPatches.map((patch) => (
             <tr key={patch.id}>
               <td className="border px-4 py-2">{patch.name}</td>
               <td className="border px-4 py-2">{patch.description}</td>
@@ -198,14 +224,28 @@ export default function AdminPage() {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+        >
+          ⬅ Previous
+        </button>
+        <span className="text-sm text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Next ➡
+        </button>
+      </div>
     </div>
   );
 }
-
-type Patch = {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-};
 
