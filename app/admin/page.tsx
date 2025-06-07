@@ -81,7 +81,6 @@ export default function AdminPage() {
         await uploadData({
           key: filename,
           data: imageFile,
-          contentType: imageFile.type,
           accessLevel: 'public'
         }).result;
 
