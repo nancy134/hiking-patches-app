@@ -1,23 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getCurrentUser } from 'aws-amplify/auth';
-import { uploadData, getUrl } from 'aws-amplify/storage';
+import { useEffect, useState, useCallback } from 'react';
+import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
-import { 
-  createPatch,
-  updatePatch,
-  deletePatch
-} from '@/graphql/mutations';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import {
-  listPatches,
-} from '@/graphql/queries';
-
+import { createPatch, updatePatch, deletePatch } from '@/graphql/mutations';
+import { listPatches } from '@/graphql/queries';
 import awsExports from '@/aws-exports';
+
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
-
 const client = generateClient();
 
 export default function AdminPage() {
@@ -26,78 +18,43 @@ export default function AdminPage() {
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [patches, setPatches] = useState<Patch[]>([]);
-  const [newPatch, setNewPatch] = useState({ name: '', description: '', imageUrl: '' });
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [editingPatch, setEditingPatch] = useState<Partial<Patch> | null>(null);
 
-  const fetchPatches = async () => {
+  const fetchPatches = useCallback(async () => {
     const response = await client.graphql({ query: listPatches });
     setPatches(response.data.listPatches.items);
-  };
+  }, []);
 
   useEffect(() => {
     const checkAccess = async () => {
       try {
         const user = await getCurrentUser();
-        if (!user) {
-          setIsAdmin(false);
-          return;
-        }
+        if (!user) return setIsAdmin(false);
 
         const session = await fetchAuthSession();
         const idToken = session.tokens?.idToken?.toString();
-
-        if (!idToken) {
-          setIsAdmin(false);
-          return;
-        }
+        if (!idToken) return setIsAdmin(false);
 
         const payload = JSON.parse(atob(idToken.split('.')[1]));
         const groups = payload['cognito:groups'] || [];
-
         setIsAdmin(groups.includes('Admin'));
       } catch (err) {
         console.warn('Not logged in or error fetching session:', err);
         setIsAdmin(false);
       }
     };
-
     checkAccess();
   }, []);
 
   useEffect(() => {
     fetchPatches();
-  }, []);
-
-  const handleAdd = async () => {
-    if (!newPatch.name) return;
-    await client.graphql({
-      query: createPatch,
-      variables: {
-        input: { ...newPatch }
-      },
-      authMode: 'userPool',
-    });
-    setNewPatch({ name: '', description: '', imageUrl: '' });
-    await fetchPatches();
-  };
+  }, [fetchPatches]);
 
   const handleEdit = (patch: Patch) => {
     setEditingPatch(patch);
     setName(patch.name);
     setDescription(patch.description);
-    //setImageUrl(patch.imageUrl);
-  };
-
-  const handleDelete = async (id: string) => {
-    await client.graphql({
-      query: deletePatch,
-      variables: { input: { id } },
-      authMode: 'userPool',
-    });
-    fetchPatches();
   };
 
   const cancelEdit = () => {
@@ -107,14 +64,14 @@ export default function AdminPage() {
     setImageFile(null);
   };
 
-  const handleUpdate = async () => {
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this patch?");
+    if (!confirmDelete) return;
     await client.graphql({
-      query: updatePatch,
-      variables: { input: editingPatch },
+      query: deletePatch,
+      variables: { input: { id } },
       authMode: 'userPool',
     });
-    setEditingId(null);
-    setEditingPatch({});
     fetchPatches();
   };
 
@@ -122,10 +79,9 @@ export default function AdminPage() {
     e.preventDefault();
     if (!name || !description || (editingPatch === null && !imageFile)) return;
     setLoading(true);
-    setSuccess(false);
     try {
       let imageUrl = editingPatch?.imageUrl ?? '';
-      if (imageFile){
+      if (imageFile) {
         const filename = `${Date.now()}-${imageFile.name}`;
         await uploadData({
           key: filename,
@@ -133,60 +89,41 @@ export default function AdminPage() {
           options: { accessLevel: 'public', contentType: imageFile.type }
         }).result;
 
-        if (!bucket || !region) {
-          throw new Error('Missing S3 bucket or region in Amplify config');
-        }
-
-        // Construct public URL
-        const url = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
-        imageUrl = url;
+        if (!bucket || !region) throw new Error('Missing S3 bucket or region in Amplify config');
+        imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
       }
-      if (editingPatch){
+
+      const patchInput = { name, description, imageUrl };
+      if (editingPatch) {
         await client.graphql({
           query: updatePatch,
-          variables: {
-            input: {
-              id: editingPatch.id,
-              name,
-              description,
-              imageUrl
-            },
-          },
-          authMode: "userPool"
+          variables: { input: { ...patchInput, id: editingPatch.id } },
+          authMode: 'userPool',
         });
       } else {
         await client.graphql({
           query: createPatch,
-          variables: {
-            input: { name, description, imageUrl },
-          },
+          variables: { input: patchInput },
           authMode: 'userPool',
         });
       }
-      setName('');
-      setDescription('');
-      setImageFile(null);
-      setSuccess(true);
-      setEditingPatch(null);
-      await fetchPatches();
+
+      cancelEdit();
+      fetchPatches();
     } catch (err) {
-      console.error('Error creating patch:', err);
+      console.error('Error saving patch:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (isAdmin === null) {
-    return <p className="p-6">Checking permissions...</p>;
-  }
-
-  if (!isAdmin) {
-    return <p className="p-6 text-red-600 font-semibold">⛔ Access denied. Admins only.</p>;
-  }
+  if (isAdmin === null) return <p className="p-6">Checking permissions...</p>;
+  if (!isAdmin) return <p className="p-6 text-red-600 font-semibold">⛔ Access denied. Admins only.</p>;
 
   return (
     <div className="p-6 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">🛠️ Admin: Manage Hiking Patches</h1>
+
       <form onSubmit={handleSubmit} className="space-y-4 mb-8 bg-gray-50 p-4 rounded shadow">
         <h2 className="text-lg font-semibold">{editingPatch ? 'Edit Patch' : 'Add New Patch'}</h2>
 
@@ -211,6 +148,13 @@ export default function AdminPage() {
           onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
           className="w-full"
         />
+        {imageFile && (
+          <img
+            src={URL.createObjectURL(imageFile)}
+            alt="Preview"
+            className="h-24 object-contain"
+          />
+        )}
         <button
           type="submit"
           disabled={loading}
@@ -224,9 +168,7 @@ export default function AdminPage() {
           </button>
         )}
       </form>
-      {success && <p className="text-green-600 mt-4">✅ Patch added successfully!</p>}
 
-      {/* Patch List */}
       <table className="w-full table-auto border border-collapse">
         <thead>
           <tr className="bg-gray-200">
@@ -256,8 +198,14 @@ export default function AdminPage() {
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }
+
+type Patch = {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+};
 
