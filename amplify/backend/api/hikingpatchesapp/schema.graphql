@@ -11,4 +11,5 @@ type Patch @model
   name: String!
   description: String
   imageUrl: String
+  regions: [String]  
 }

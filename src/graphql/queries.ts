@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/hikingpatchesapp/src/API";
+import * as APITypes from "../../app/admin/src/API";
 type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
   __generatedQueryOutput: OutputType;
@@ -14,6 +14,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
@@ -31,6 +32,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       name
       description
       imageUrl
+      regions
       createdAt
       updatedAt
       __typename

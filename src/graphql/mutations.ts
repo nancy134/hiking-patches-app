@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/hikingpatchesapp/src/API";
+import * as APITypes from "../../app/admin/src/API";
 type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationInput: InputType;
   __generatedMutationOutput: OutputType;
@@ -17,6 +17,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
@@ -35,6 +36,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
@@ -53,6 +55,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename

@@ -26,8 +26,8 @@ export default function AdminPage() {
   const [success, setSuccess] = useState(false);
   const [patches, setPatches] = useState<Patch[]>([]);
   const [editingPatch, setEditingPatch] = useState<Partial<Patch> | null>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
+  const [regions, setRegions] = useState<string[]>([]);
   const patchesPerPage = 25;
 
   const fetchPatches = async () => {
@@ -64,6 +64,7 @@ export default function AdminPage() {
     setName('');
     setDescription('');
     setImageFile(null);
+    setRegions([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,7 +85,10 @@ export default function AdminPage() {
         if (!bucket || !region) throw new Error('Missing S3 bucket or region');
         imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
       }
-
+      console.log("regions:");
+      console.log(regions);
+      console.log("editingPatch:");
+      console.log(editingPatch);
       if (editingPatch) {
         await client.graphql({
           query: updatePatch,
@@ -93,7 +97,8 @@ export default function AdminPage() {
               id: editingPatch.id,
               name,
               description,
-              imageUrl
+              imageUrl,
+              regions
             },
           },
           authMode: 'userPool',
@@ -102,7 +107,7 @@ export default function AdminPage() {
         await client.graphql({
           query: createPatch,
           variables: {
-            input: { name, description, imageUrl },
+            input: { name, description, imageUrl, regions },
           },
           authMode: 'userPool',
         });
@@ -122,6 +127,7 @@ export default function AdminPage() {
     setEditingPatch(patch);
     setName(patch.name);
     setDescription(patch.description);
+    setRegions(patch.regions ?? []);
   };
 
   const handleDelete = async (id: string) => {
@@ -171,6 +177,33 @@ export default function AdminPage() {
           className="w-full p-2 border rounded"
           required
         />
+        <select
+          multiple
+          value={regions}
+          onChange={(e) =>
+            setRegions(Array.from(e.target.selectedOptions, (opt) => opt.value))
+          }
+          className="w-full p-2 border rounded"
+        >
+          {[
+          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
+          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
+          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
+          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
+          'West Virginia', 'Wisconsin', 'Wyoming',
+          'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
+          'Newfoundland and Labrador', 'Nova Scotia', 'Ontario',
+          'Prince Edward Island', 'Quebec', 'Saskatchewan'
+          ].map((region) => (
+        <option key={region} value={region}>{region}</option>
+      ))}
+      </select>
+
         <input
           type="file"
           accept="image/*"
@@ -201,6 +234,7 @@ export default function AdminPage() {
             <th className="border px-4 py-2">Name</th>
             <th className="border px-4 py-2">Description</th>
             <th className="border px-4 py-2">Image</th>
+            <th className="border px-4 py-2">Regions</th>
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -212,6 +246,7 @@ export default function AdminPage() {
               <td className="border px-4 py-2">
                 <img src={patch.imageUrl} alt={patch.name} className="h-16" />
               </td>
+              <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
               <td className="border px-4 py-2 space-x-2">
                 <button onClick={() => handleEdit(patch)} className="text-blue-600 underline">
                   Edit

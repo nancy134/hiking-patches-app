@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/hikingpatchesapp/src/API";
+import * as APITypes from "../../app/admin/src/API";
 type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionInput: InputType;
   __generatedSubscriptionOutput: OutputType;
@@ -14,6 +14,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
@@ -29,6 +30,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
@@ -44,6 +46,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     name
     description
     imageUrl
+    regions
     createdAt
     updatedAt
     __typename
