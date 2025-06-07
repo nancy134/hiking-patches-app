@@ -12,6 +12,8 @@ import {
 import { listPatches } from '@/graphql/queries';
 
 import awsExports from '@/aws-exports';
+import { Patch } from '@/models';
+
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
 
