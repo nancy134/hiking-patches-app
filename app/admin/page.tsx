@@ -12,7 +12,7 @@ import {
 import { listPatches } from '@/graphql/queries';
 
 import awsExports from '@/aws-exports';
-import { Patch } from '@/models';
+import { Patch } from '@/API';
 
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
@@ -79,9 +79,8 @@ export default function AdminPage() {
       if (imageFile) {
         const filename = `${Date.now()}-${imageFile.name}`;
         await uploadData({
-          key: filename,
-          data: imageFile,
-          accessLevel: 'public'
+          path: filename,
+          data: imageFile
         }).result;
 
         if (!bucket || !region) throw new Error('Missing S3 bucket or region');
@@ -91,7 +90,7 @@ export default function AdminPage() {
       console.log(regions);
       console.log("editingPatch:");
       console.log(editingPatch);
-      if (editingPatch) {
+      if (editingPatch?.id) {
         await client.graphql({
           query: updatePatch,
           variables: {
@@ -127,9 +126,9 @@ export default function AdminPage() {
 
   const handleEdit = (patch: Patch) => {
     setEditingPatch(patch);
-    setName(patch.name);
-    setDescription(patch.description);
-    setRegions(patch.regions ?? []);
+    setName(patch.name ?? '');
+    setDescription(patch.description ?? '');
+    setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
   };
 
   const handleDelete = async (id: string) => {
@@ -246,7 +245,7 @@ export default function AdminPage() {
               <td className="border px-4 py-2">{patch.name}</td>
               <td className="border px-4 py-2">{patch.description}</td>
               <td className="border px-4 py-2">
-                <img src={patch.imageUrl} alt={patch.name} className="h-16" />
+                <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
               </td>
               <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
               <td className="border px-4 py-2 space-x-2">

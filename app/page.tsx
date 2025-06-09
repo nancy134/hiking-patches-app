@@ -6,7 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import PatchGrid from '@/components/PatchGrid';
 import { generateClient } from 'aws-amplify/api';
 import { listPatches } from '@/graphql/queries';
-import { Patch } from '@/models';
+import { Patch } from '@/API';
 import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
 
 const client = generateClient();

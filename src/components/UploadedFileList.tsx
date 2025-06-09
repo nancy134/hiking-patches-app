@@ -23,7 +23,7 @@ export default function UploadedFilesList({ refreshTrigger }: UploadedFilesListP
         const urls = await Promise.all(
           items.map(async (item) => {
             const { url } = await getUrl({ key: item.key, options: {accessLevel: 'private' }});
-            return url;
+            return url.toString();
           })
         );
         setFileUrls(urls);

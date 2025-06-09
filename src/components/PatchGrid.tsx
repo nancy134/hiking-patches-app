@@ -1,12 +1,5 @@
 import { PatchCard } from './PatchCard';
-
-type Patch = {
-  id: string;
-  name: string;
-  region: string;
-  description: string;
-  imageUrl: string;
-};
+import { Patch } from '@/API';
 
 type PatchGridProps = {
   patches: Patch[];
