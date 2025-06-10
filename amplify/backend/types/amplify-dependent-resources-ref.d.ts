@@ -18,7 +18,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "images": {
+    "patchImages": {
       "BucketName": "string",
       "Region": "string"
     }

@@ -77,14 +77,14 @@ export default function AdminPage() {
     try {
       let imageUrl = editingPatch?.imageUrl ?? '';
       if (imageFile) {
-        const filename = `${Date.now()}-${imageFile.name}`;
+        const filename = `public/${Date.now()}-${imageFile.name}`;
         await uploadData({
           path: filename,
           data: imageFile
         }).result;
 
         if (!bucket || !region) throw new Error('Missing S3 bucket or region');
-        imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
+        imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/${filename}`;
       }
       console.log("regions:");
       console.log(regions);
@@ -186,20 +186,7 @@ export default function AdminPage() {
           }
           className="w-full p-2 border rounded"
         >
-          {[
-          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
-          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
-          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
-          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-          'West Virginia', 'Wisconsin', 'Wyoming',
-          'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
-          'Newfoundland and Labrador', 'Nova Scotia', 'Ontario',
-          'Prince Edward Island', 'Quebec', 'Saskatchewan'
+          {[ 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
           ].map((region) => (
         <option key={region} value={region}>{region}</option>
       ))}

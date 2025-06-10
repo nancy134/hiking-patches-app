@@ -15,11 +15,11 @@
       "auth": {
         "hikingpatchesapp368a1661": {}
       },
-      "storage": {
-        "images": {}
-      },
       "api": {
         "hikingpatchesapp": {}
+      },
+      "storage": {
+        "patchImages": {}
       }
     }
   }

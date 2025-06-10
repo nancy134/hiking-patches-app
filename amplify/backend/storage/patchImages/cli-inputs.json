@@ -1,0 +1,15 @@
+{
+  "resourceName": "patchImages",
+  "policyUUID": "9e2c4f31",
+  "bucketName": "hikingpatchesapp0e9048b9369e4b4a8a610d6b803f349",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

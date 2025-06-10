@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { list, getUrl } from 'aws-amplify/storage';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 interface UploadedFilesListProps {
   refreshTrigger: number;
@@ -14,15 +15,16 @@ export default function UploadedFilesList({ refreshTrigger }: UploadedFilesListP
   useEffect(() => {
     const fetchFiles = async () => {
       try {
+        const session = await fetchAuthSession();
+        const userId = session.userSub;
         const { items } = await list({ 
-            prefix: '',
-            options: {
-                accessLevel: 'private'
-            }
+            prefix: `${userId}/` 
         });
+        console.log("items:");
+        console.log(items);
         const urls = await Promise.all(
           items.map(async (item) => {
-            const { url } = await getUrl({ key: item.key, options: {accessLevel: 'private' }});
+            const { url } = await getUrl({ key: item.key });
             return url.toString();
           })
         );
