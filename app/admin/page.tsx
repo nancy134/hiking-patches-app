@@ -10,7 +10,7 @@ import {
   deletePatch
 } from '@/graphql/mutations';
 import { listPatches } from '@/graphql/queries';
-
+import Header from '@/components/Header';
 import awsExports from '@/aws-exports';
 import { Patch } from '@/API';
 
@@ -158,6 +158,7 @@ export default function AdminPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <Header />
       <h1 className="text-2xl font-bold mb-4">🛠️ Admin: Manage Hiking Patches</h1>
 
       {/* Form */}

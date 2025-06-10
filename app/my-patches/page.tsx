@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import FileUploader from '@/components/FileUploader';
 import UploadedFileList from '@/components/UploadedFileList';
+import Header from '@/components/Header';
 
 export default function MyPatchesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -14,6 +15,7 @@ export default function MyPatchesPage() {
 
   return (
     <ProtectedRoute>
+      <Header />
       <h1 className="text-2xl font-bold mb-4">My Hiking Patches</h1>
       <p className="mb-2">Here you can view and manage your earned hiking patches.</p>
       <FileUploader onUploadComplete={handleUploadComplete} />
