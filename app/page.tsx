@@ -87,8 +87,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="p-4">
-    <div className="flex justify-end space-x-4 mb-4">
+<div className="p-4">
+  <div className="flex justify-between items-center mb-4">
+    <div className="flex items-center space-x-2">
+      <img src="/person-hiking-solid.svg" alt="Logo" className="h-8 w-8" />
+      <span className="text-xl font-bold">Hiking-Patches.com</span>
+    </div>
+    <div className="flex space-x-4">
       {!user ? (
         <a
           href="/my-patches"
@@ -125,8 +130,22 @@ export default function HomePage() {
         </>
       )}
     </div>
+  </div>
 
-      <h1 className="text-3xl font-bold mb-4">🏔️ Hiking Patch Explorer</h1>
+<div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
+  <h2 className="text-xl font-semibold mb-2">🥾 Welcome to Hiking-Patches.com</h2>
+  <p className="text-gray-700">
+    I created this site as a place for hiking enthusiasts to discover new patches to pursue and 
+    celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
+    there’s always a new patch waiting.
+  </p>
+  <p className="mt-2 text-gray-700">
+    By logging in and visiting <strong>My Patches</strong>, you can upload photos of the patches 
+    you’ve collected and share your progress with your hiking buddies. It’s a fun way to stay 
+    motivated, track your achievements, and connect with others on the trail.
+  </p>
+</div>
+      <div className="font-semibold">Search for patches</div>
       <SearchBar value={searchTerm} onChange={handleSearch} />
       <div className="my-4">
         <label className="mr-2 font-semibold">Filter by State/Province:</label>
