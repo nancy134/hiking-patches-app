@@ -63,7 +63,7 @@
     }
   },
   "storage": {
-    "images": {
+    "patchImages": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

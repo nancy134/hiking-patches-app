@@ -10,8 +10,10 @@ import {
   deletePatch
 } from '@/graphql/mutations';
 import { listPatches } from '@/graphql/queries';
-
+import Header from '@/components/Header';
 import awsExports from '@/aws-exports';
+import { Patch } from '@/API';
+
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
 
@@ -75,21 +77,20 @@ export default function AdminPage() {
     try {
       let imageUrl = editingPatch?.imageUrl ?? '';
       if (imageFile) {
-        const filename = `${Date.now()}-${imageFile.name}`;
+        const filename = `public/${Date.now()}-${imageFile.name}`;
         await uploadData({
-          key: filename,
-          data: imageFile,
-          options: { accessLevel: 'public', contentType: imageFile.type }
+          path: filename,
+          data: imageFile
         }).result;
 
         if (!bucket || !region) throw new Error('Missing S3 bucket or region');
-        imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${filename}`;
+        imageUrl = `https://${bucket}.s3.${region}.amazonaws.com/${filename}`;
       }
       console.log("regions:");
       console.log(regions);
       console.log("editingPatch:");
       console.log(editingPatch);
-      if (editingPatch) {
+      if (editingPatch?.id) {
         await client.graphql({
           query: updatePatch,
           variables: {
@@ -125,9 +126,9 @@ export default function AdminPage() {
 
   const handleEdit = (patch: Patch) => {
     setEditingPatch(patch);
-    setName(patch.name);
-    setDescription(patch.description);
-    setRegions(patch.regions ?? []);
+    setName(patch.name ?? '');
+    setDescription(patch.description ?? '');
+    setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
   };
 
   const handleDelete = async (id: string) => {
@@ -157,6 +158,7 @@ export default function AdminPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <Header />
       <h1 className="text-2xl font-bold mb-4">🛠️ Admin: Manage Hiking Patches</h1>
 
       {/* Form */}
@@ -185,20 +187,7 @@ export default function AdminPage() {
           }
           className="w-full p-2 border rounded"
         >
-          {[
-          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
-          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
-          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
-          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-          'West Virginia', 'Wisconsin', 'Wyoming',
-          'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
-          'Newfoundland and Labrador', 'Nova Scotia', 'Ontario',
-          'Prince Edward Island', 'Quebec', 'Saskatchewan'
+          {[ 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
           ].map((region) => (
         <option key={region} value={region}>{region}</option>
       ))}
@@ -244,7 +233,7 @@ export default function AdminPage() {
               <td className="border px-4 py-2">{patch.name}</td>
               <td className="border px-4 py-2">{patch.description}</td>
               <td className="border px-4 py-2">
-                <img src={patch.imageUrl} alt={patch.name} className="h-16" />
+                <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
               </td>
               <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
               <td className="border px-4 py-2 space-x-2">
