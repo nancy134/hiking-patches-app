@@ -13,3 +13,18 @@ type Patch @model
   imageUrl: String
   regions: [String]  
 }
+
+type UserPatch @model 
+  @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: owner, operations: [create, update, delete] },
+  ]) {
+  id: ID!
+  patchID: ID!                  # link to the Patch model
+  userID: String!               # owner
+  dateCompleted: AWSDate!
+  notes: String
+  difficulty: Int
+  imageUrl: String
+}
+

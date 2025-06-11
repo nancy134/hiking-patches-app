@@ -65,3 +65,69 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
   APITypes.DeletePatchMutationVariables,
   APITypes.DeletePatchMutation
 >;
+export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
+  $input: CreateUserPatchInput!
+  $condition: ModelUserPatchConditionInput
+) {
+  createUserPatch(input: $input, condition: $condition) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateUserPatchMutationVariables,
+  APITypes.CreateUserPatchMutation
+>;
+export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
+  $input: UpdateUserPatchInput!
+  $condition: ModelUserPatchConditionInput
+) {
+  updateUserPatch(input: $input, condition: $condition) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateUserPatchMutationVariables,
+  APITypes.UpdateUserPatchMutation
+>;
+export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
+  $input: DeleteUserPatchInput!
+  $condition: ModelUserPatchConditionInput
+) {
+  deleteUserPatch(input: $input, condition: $condition) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteUserPatchMutationVariables,
+  APITypes.DeleteUserPatchMutation
+>;

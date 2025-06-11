@@ -45,3 +45,49 @@ export const listPatches = /* GraphQL */ `query ListPatches(
   APITypes.ListPatchesQueryVariables,
   APITypes.ListPatchesQuery
 >;
+export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
+  getUserPatch(id: $id) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetUserPatchQueryVariables,
+  APITypes.GetUserPatchQuery
+>;
+export const listUserPatches = /* GraphQL */ `query ListUserPatches(
+  $filter: ModelUserPatchFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUserPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      patchID
+      userID
+      dateCompleted
+      notes
+      difficulty
+      imageUrl
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListUserPatchesQueryVariables,
+  APITypes.ListUserPatchesQuery
+>;

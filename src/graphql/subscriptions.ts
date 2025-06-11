@@ -56,3 +56,60 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
   APITypes.OnDeletePatchSubscriptionVariables,
   APITypes.OnDeletePatchSubscription
 >;
+export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
+  onCreateUserPatch(filter: $filter) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserPatchSubscriptionVariables,
+  APITypes.OnCreateUserPatchSubscription
+>;
+export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
+  onUpdateUserPatch(filter: $filter) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserPatchSubscriptionVariables,
+  APITypes.OnUpdateUserPatchSubscription
+>;
+export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
+  onDeleteUserPatch(filter: $filter) {
+    id
+    patchID
+    userID
+    dateCompleted
+    notes
+    difficulty
+    imageUrl
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteUserPatchSubscriptionVariables,
+  APITypes.OnDeleteUserPatchSubscription
+>;
