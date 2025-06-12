@@ -114,16 +114,11 @@ export default function HomePage() {
   <div className="p-4">
     <Header />
     <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
-      <h2 className="text-xl font-semibold mb-2">🥾 Welcome to Hiking-Patches.com</h2>
+      <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
       <p className="text-gray-700">
-      I created this site as a place for hiking enthusiasts to discover new patches to pursue and 
+      This site is a place for hiking enthusiasts to discover new patches to pursue and 
       celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
       there’s always a new patch waiting.
-    </p>
-    <p className="mt-2 text-gray-700">
-    By logging in and visiting <strong>My Patches</strong>, you can upload photos of the patches 
-    you’ve collected and share your progress with your hiking buddies. It’s a fun way to stay 
-    motivated, track your achievements, and connect with others on the trail.
     </p>
   </div>
   <div className="font-semibold">Search for patches</div>

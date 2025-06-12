@@ -174,9 +174,8 @@ export default function PatchDetailPage() {
         <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
       </div>
       )}
-      {currentUser && (
+      {currentUser ? (
       <div className="mt-6">
-        <div>Current user is: ${currentUser.userId}</div>
         {userPatch ? (
         <div className="p-4 bg-green-50 border rounded shadow">
           <p className="text-green-800">
@@ -253,6 +252,14 @@ export default function PatchDetailPage() {
         </div>
         )}
       </div>   
+      ) : (
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
+        Want to keep track of your progress?{' '}
+        <a href="/my-patches" className="underline text-blue-700 hover:text-blue-900">
+          Log in
+        </a>{' '}
+         to mark this patch as completed and add your own notes.
+      </div>
       )}
     </div>
   );

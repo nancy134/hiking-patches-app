@@ -27,6 +27,7 @@ export default function MyPatchesPage() {
   const [difficulty, setDifficulty] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [userID, setUserID] = useState('');
+  const [hideForm, setHideForm] = useState(null);
 
   useEffect(() => {
     const loadPatches = async () => {
@@ -80,10 +81,11 @@ export default function MyPatchesPage() {
   return (
     <ProtectedRoute>
       <Header />
-      <h1 className="text-2xl font-bold mb-4">My Hiking Patches</h1>
+      <h1 className="text-2xl font-bold mb-4">My Earned Patches</h1>
       <p className="mb-2">Here you can view and manage your earned hiking patches.</p>
 
       {/* Upload Form */}
+      {hideForm && (
       <div className="space-y-2 p-4 bg-gray-50 rounded shadow mb-6">
         <select
           value={selectedPatchId}
@@ -137,6 +139,7 @@ export default function MyPatchesPage() {
           Upload Patch Completion
         </button>
       </div>
+      )}
       <UserPatchGrid patches={allUserPatches}/>
     </ProtectedRoute>
   );

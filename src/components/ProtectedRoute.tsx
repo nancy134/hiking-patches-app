@@ -9,7 +9,6 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
       {({ signOut, user }) => (
         <>
           <div className="px-4 py-2 text-sm text-gray-600">
-            Logged in as: {user?.username}
             <button onClick={signOut} className="ml-4 underline text-blue-600">
               Sign out
             </button>
