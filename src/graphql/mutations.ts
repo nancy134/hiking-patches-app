@@ -16,6 +16,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt
@@ -35,6 +36,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt
@@ -54,6 +56,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt

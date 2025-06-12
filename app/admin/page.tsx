@@ -24,6 +24,7 @@ export default function AdminPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [howToGet, setHowToGet] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [patches, setPatches] = useState<Patch[]>([]);
@@ -65,13 +66,14 @@ export default function AdminPage() {
     setEditingPatch(null);
     setName('');
     setDescription('');
+    setHowToGet('');
     setImageFile(null);
     setRegions([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !description || (!editingPatch && !imageFile)) return;
+    if (!name || !description || !howToGet || (!editingPatch && !imageFile)) return;
     setLoading(true);
     setSuccess(false);
     try {
@@ -98,6 +100,7 @@ export default function AdminPage() {
               id: editingPatch.id,
               name,
               description,
+              howToGet,
               imageUrl,
               regions
             },
@@ -108,7 +111,7 @@ export default function AdminPage() {
         await client.graphql({
           query: createPatch,
           variables: {
-            input: { name, description, imageUrl, regions },
+            input: { name, description, howToGet, imageUrl, regions },
           },
           authMode: 'userPool',
         });
@@ -128,6 +131,7 @@ export default function AdminPage() {
     setEditingPatch(patch);
     setName(patch.name ?? '');
     setDescription(patch.description ?? '');
+    setHowToGet(patch.howToGet ?? '');
     setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
   };
 
@@ -176,6 +180,13 @@ export default function AdminPage() {
           placeholder="Patch description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        <textarea
+          placeholder="How to get"
+          value={howToGet}
+          onChange={(e) => setHowToGet(e.target.value)}
           className="w-full p-2 border rounded"
           required
         />

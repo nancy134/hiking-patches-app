@@ -13,6 +13,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt
@@ -31,6 +32,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       id
       name
       description
+      howToGet
       imageUrl
       regions
       createdAt

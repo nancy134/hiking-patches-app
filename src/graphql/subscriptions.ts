@@ -13,6 +13,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt
@@ -29,6 +30,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt
@@ -45,6 +47,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     id
     name
     description
+    howToGet
     imageUrl
     regions
     createdAt

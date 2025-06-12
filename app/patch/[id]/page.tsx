@@ -8,6 +8,7 @@ import { generateClient } from 'aws-amplify/api';
 import { getPatch } from '@/graphql/queries';
 import { Patch } from '@/API';
 import Header from '@/components/Header';
+import ReactMarkdown from 'react-markdown';
 
 const client = generateClient();
 
@@ -91,6 +92,12 @@ export default function PatchDetailPage() {
           </p>
           )}
       </div>
+{patch.howToGet && (
+  <div className="mt-6">
+    <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
+    <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
+  </div>
+)}
       {currentUser && (
       <>
         <button
