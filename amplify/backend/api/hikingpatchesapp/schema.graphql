@@ -5,6 +5,7 @@
 type Patch @model 
   @auth(rules: [
     { allow: public, operations: [read] },
+    { allow: owner, operations: [read] },
     { allow: groups, groups: ["Admin"], operations: [create, update, delete]}
   ]) {
   id: ID!
@@ -12,17 +13,19 @@ type Patch @model
   description: String
   howToGet: String
   imageUrl: String
-  regions: [String]  
+  regions: [String]
+  userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
 }
 
 type UserPatch @model 
   @auth(rules: [
   { allow: public, operations: [read] },
-  { allow: owner, operations: [create, update, delete] },
+  { allow: owner, operations: [read, create, update, delete] },
   ]) {
   id: ID!
-  patchID: ID!                  # link to the Patch model
-  userID: String!               # owner
+  patchID: ID! @index(name: "byPatch")
+  patch: Patch @belongsTo(fields: ["patchID"])
+  userID: String!
   dateCompleted: AWSDate!
   notes: String
   difficulty: Int

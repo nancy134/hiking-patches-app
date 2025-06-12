@@ -13,6 +13,7 @@ import { getCurrentUser } from 'aws-amplify/auth';
 import UserPatchGrid from '@/components/UserPatchGrid';
 import { UserPatch } from '@/API';
 import { Patch } from '@/API';
+import { listUserPatchesWithPatch } from '@/graphql/custom-queries';
 
 const client = generateClient();
 
@@ -29,8 +30,12 @@ export default function MyPatchesPage() {
 
   useEffect(() => {
     const loadPatches = async () => {
-      const response = await client.graphql({ query: listUserPatches });
-      setAllUserPatches(response.data.listUserPatches.items);
+      const response = await client.graphql({ query: listUserPatchesWithPatch });
+      if ('data' in response) {
+        setAllUserPatches(response.data.listUserPatches.items);
+      } else {
+        console.error('Unexpected GraphQL response format:', response);
+      }
 
       const response1 = await client.graphql({ query: listPatches });
       setAllPatches(response1.data.listPatches.items);

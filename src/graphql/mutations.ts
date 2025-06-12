@@ -19,8 +19,13 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -39,8 +44,13 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -59,8 +69,13 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -75,6 +90,18 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
   createUserPatch(input: $input, condition: $condition) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes
@@ -97,6 +124,18 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
   updateUserPatch(input: $input, condition: $condition) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes
@@ -119,6 +158,18 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
   deleteUserPatch(input: $input, condition: $condition) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes

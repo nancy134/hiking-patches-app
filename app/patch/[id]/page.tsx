@@ -12,6 +12,23 @@ import ReactMarkdown from 'react-markdown';
 
 const client = generateClient();
 
+const customCreateUserPatch = `
+  mutation CreateUserPatch($input: CreateUserPatchInput!) {
+    createUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      notes
+      difficulty
+      imageUrl
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+
 export default function PatchDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -37,7 +54,7 @@ export default function PatchDetailPage() {
           query: getPatch,
           variables: { id },
         });
-        setPatch(response.data?.getPatch ?? null);
+        setPatch(response.data?.getPatch as Patch);
       } catch (error) {
         console.error('Error fetching patch:', error);
       }
@@ -53,8 +70,15 @@ export default function PatchDetailPage() {
     }
 
     try {
+console.log("UserPatch input:", {
+  patchID: patch.id,
+  userID: currentUser.userId,
+  dateCompleted,
+  difficulty: parseInt(difficulty),
+  notes
+});
       await client.graphql({
-        query: createUserPatch,
+        query: customCreateUserPatch,
         variables: {
           input: {
             patchID: patch.id,

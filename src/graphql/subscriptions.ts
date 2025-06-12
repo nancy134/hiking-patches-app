@@ -8,16 +8,24 @@ type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionOutput: OutputType;
 };
 
-export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onCreatePatch(filter: $filter) {
+export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
+  $filter: ModelSubscriptionPatchFilterInput
+  $owner: String
+) {
+  onCreatePatch(filter: $filter, owner: $owner) {
     id
     name
     description
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -25,16 +33,24 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
   APITypes.OnCreatePatchSubscriptionVariables,
   APITypes.OnCreatePatchSubscription
 >;
-export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onUpdatePatch(filter: $filter) {
+export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch(
+  $filter: ModelSubscriptionPatchFilterInput
+  $owner: String
+) {
+  onUpdatePatch(filter: $filter, owner: $owner) {
     id
     name
     description
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -42,16 +58,24 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
   APITypes.OnUpdatePatchSubscriptionVariables,
   APITypes.OnUpdatePatchSubscription
 >;
-export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onDeletePatch(filter: $filter) {
+export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch(
+  $filter: ModelSubscriptionPatchFilterInput
+  $owner: String
+) {
+  onDeletePatch(filter: $filter, owner: $owner) {
     id
     name
     description
     howToGet
     imageUrl
     regions
+    userPatches {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
+    owner
     __typename
   }
 }
@@ -59,10 +83,25 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
   APITypes.OnDeletePatchSubscriptionVariables,
   APITypes.OnDeletePatchSubscription
 >;
-export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
-  onCreateUserPatch(filter: $filter) {
+export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $owner: String
+) {
+  onCreateUserPatch(filter: $filter, owner: $owner) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes
@@ -78,10 +117,25 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch($
   APITypes.OnCreateUserPatchSubscriptionVariables,
   APITypes.OnCreateUserPatchSubscription
 >;
-export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
-  onUpdateUserPatch(filter: $filter) {
+export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $owner: String
+) {
+  onUpdateUserPatch(filter: $filter, owner: $owner) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes
@@ -97,10 +151,25 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch($
   APITypes.OnUpdateUserPatchSubscriptionVariables,
   APITypes.OnUpdateUserPatchSubscription
 >;
-export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch($filter: ModelSubscriptionUserPatchFilterInput) {
-  onDeleteUserPatch(filter: $filter) {
+export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $owner: String
+) {
+  onDeleteUserPatch(filter: $filter, owner: $owner) {
     id
     patchID
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
     userID
     dateCompleted
     notes

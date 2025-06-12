@@ -22,6 +22,7 @@ export type ModelPatchConditionInput = {
   not?: ModelPatchConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelStringInput = {
@@ -72,8 +73,31 @@ export type Patch = {
   howToGet?: string | null,
   imageUrl?: string | null,
   regions?: Array< string | null > | null,
+  userPatches?: ModelUserPatchConnection | null,
   createdAt: string,
   updatedAt: string,
+  owner?: string | null,
+};
+
+export type ModelUserPatchConnection = {
+  __typename: "ModelUserPatchConnection",
+  items:  Array<UserPatch | null >,
+  nextToken?: string | null,
+};
+
+export type UserPatch = {
+  __typename: "UserPatch",
+  id: string,
+  patchID: string,
+  patch?: Patch | null,
+  userID: string,
+  dateCompleted: string,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
 };
 
 export type UpdatePatchInput = {
@@ -142,20 +166,6 @@ export type ModelIntInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
-export type UserPatch = {
-  __typename: "UserPatch",
-  id: string,
-  patchID: string,
-  userID: string,
-  dateCompleted: string,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
 export type UpdateUserPatchInput = {
   id: string,
   patchID?: string | null,
@@ -182,6 +192,7 @@ export type ModelPatchFilterInput = {
   and?: Array< ModelPatchFilterInput | null > | null,
   or?: Array< ModelPatchFilterInput | null > | null,
   not?: ModelPatchFilterInput | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelPatchConnection = {
@@ -206,11 +217,11 @@ export type ModelUserPatchFilterInput = {
   owner?: ModelStringInput | null,
 };
 
-export type ModelUserPatchConnection = {
-  __typename: "ModelUserPatchConnection",
-  items:  Array<UserPatch | null >,
-  nextToken?: string | null,
-};
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 
 export type ModelSubscriptionPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
@@ -223,6 +234,7 @@ export type ModelSubscriptionPatchFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
   or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -296,8 +308,13 @@ export type CreatePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
@@ -315,8 +332,13 @@ export type UpdatePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
@@ -334,8 +356,13 @@ export type DeletePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
@@ -349,6 +376,18 @@ export type CreateUserPatchMutation = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -370,6 +409,18 @@ export type UpdateUserPatchMutation = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -391,6 +442,18 @@ export type DeleteUserPatchMutation = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -415,8 +478,13 @@ export type GetPatchQuery = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
@@ -439,6 +507,7 @@ export type ListPatchesQuery = {
       regions?: Array< string | null > | null,
       createdAt: string,
       updatedAt: string,
+      owner?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -453,6 +522,18 @@ export type GetUserPatchQuery = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -490,8 +571,37 @@ export type ListUserPatchesQuery = {
   } | null,
 };
 
+export type UserPatchesByPatchIDQueryVariables = {
+  patchID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserPatchesByPatchIDQuery = {
+  userPatchesByPatchID?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      id: string,
+      patchID: string,
+      userID: string,
+      dateCompleted: string,
+      notes?: string | null,
+      difficulty?: number | null,
+      imageUrl?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreatePatchSubscriptionVariables = {
   filter?: ModelSubscriptionPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnCreatePatchSubscription = {
@@ -503,13 +613,19 @@ export type OnCreatePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
 export type OnUpdatePatchSubscriptionVariables = {
   filter?: ModelSubscriptionPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnUpdatePatchSubscription = {
@@ -521,13 +637,19 @@ export type OnUpdatePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
 export type OnDeletePatchSubscriptionVariables = {
   filter?: ModelSubscriptionPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnDeletePatchSubscription = {
@@ -539,13 +661,19 @@ export type OnDeletePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
+    owner?: string | null,
   } | null,
 };
 
 export type OnCreateUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnCreateUserPatchSubscription = {
@@ -553,6 +681,18 @@ export type OnCreateUserPatchSubscription = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -566,6 +706,7 @@ export type OnCreateUserPatchSubscription = {
 
 export type OnUpdateUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnUpdateUserPatchSubscription = {
@@ -573,6 +714,18 @@ export type OnUpdateUserPatchSubscription = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
@@ -586,6 +739,7 @@ export type OnUpdateUserPatchSubscription = {
 
 export type OnDeleteUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
+  owner?: string | null,
 };
 
 export type OnDeleteUserPatchSubscription = {
@@ -593,6 +747,18 @@ export type OnDeleteUserPatchSubscription = {
     __typename: "UserPatch",
     id: string,
     patchID: string,
+    patch?:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null,
     userID: string,
     dateCompleted: string,
     notes?: string | null,
