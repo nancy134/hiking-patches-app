@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import PatchGrid from '@/components/PatchGrid';
 import { generateClient } from 'aws-amplify/api';
 import { listPatches } from '@/graphql/queries';
+import { listUserPatches } from '@/graphql/queries'; 
 import { Patch } from '@/API';
 import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
 import Header from '@/components/Header';
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [user, setUser] = useState<any | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [completedPatchIds, setCompletedPatchIds] = useState<string[]>([]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -41,6 +43,27 @@ export default function HomePage() {
     checkUser();
   }, []);
 
+  useEffect(() => {
+    const fetchCompletedPatches = async () => {
+      if (!user) return;
+
+      try {
+        const result = await client.graphql({
+          query: listUserPatches,
+          variables: { filter: { userID: { eq: user.userId } } },
+          authMode: 'userPool',
+        });
+
+        const items = result.data?.listUserPatches?.items ?? [];
+        const completedIds = items.map((p: any) => p.patchID);
+        setCompletedPatchIds(completedIds);
+      } catch (err) {
+        console.error('Failed to fetch completed patches:', err);
+      }
+    };
+
+    fetchCompletedPatches();
+  }, [user]);
 
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRegion(e.target.value);
@@ -115,7 +138,7 @@ export default function HomePage() {
         <option value="New York">New York</option>
       </select>
     </div>
-    <PatchGrid patches={filteredPatches} />
+    <PatchGrid patches={filteredPatches} completedPatchIds={completedPatchIds} />
   </div>
   );
 }
