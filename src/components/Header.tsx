@@ -35,7 +35,7 @@ export default function Header() {
     <div className="flex justify-between items-center border-b mb-4 p-4 bg-white shadow-sm">
       <Link href="/" className="flex items-center space-x-2 hover:opacity-80">
         {/* Uncomment this line if using a logo */}
-        <Image src="./person-hiking-solid.svg" alt="Hiking Patches Logo" width={20} height={20} /> 
+        <Image src="/person-hiking-solid.svg" alt="Hiking Patches Logo" width={20} height={20} /> 
         <span className="text-xl font-bold text-gray-800">Hiking-Patches.com</span>
       </Link>
       

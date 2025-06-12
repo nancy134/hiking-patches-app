@@ -23,9 +23,12 @@ export default function PatchDetailPage() {
   const [difficulty, setDifficulty] = useState('');
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
-useEffect(() => {
-  getCurrentUser().then(setCurrentUser).catch(() => setCurrentUser(null));
-}, []);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    getCurrentUser().then(setCurrentUser).catch(() => setCurrentUser(null));
+  }, []);
+
   useEffect(() => {
     const fetchPatch = async () => {
       try {
@@ -43,6 +46,11 @@ useEffect(() => {
   }, [id]);
 
   const handleSubmit = async () => {
+    if (!patch || !currentUser?.userId) {
+      setMessage('❌ Missing patch or user information.');
+      return;
+    }
+
     try {
       await client.graphql({
         query: createUserPatch,
@@ -67,68 +75,91 @@ useEffect(() => {
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <Header />
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
-        <h1 className="text-3xl font-bold mb-2 sm:mb-0">{patch.name}</h1>
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
         {patch.imageUrl && (
-          <img
-            src={patch.imageUrl}
-            alt={patch.name}
-            className="w-32 h-auto rounded shadow sm:ml-4"
-          />
+        <img
+          src={patch.imageUrl}
+          alt={patch.name}
+          className="w-40 float-right mr-4 mb-2 rounded shadow"
+        />
         )}
+        <p className="text-lg mb-2">{patch.description}</p>
+          {Array.isArray(patch.regions) && patch.regions.length > 0 && (
+          <p className="text-gray-700 mb-4">
+            <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
+          </p>
+          )}
       </div>
-      <p className="text-lg mb-4">{patch.description}</p>
-      {Array.isArray(patch.regions) && patch.regions.length > 0 && (
-        <p className="text-gray-700">Regions: {patch.regions.filter(Boolean).join(', ')}</p>
-      )}
       {currentUser && (
-      <div className="mt-8 p-4 border rounded shadow bg-gray-50">
-        <h2 className="text-xl font-semibold mb-2">Mark as Completed</h2>
-
-        <label className="block mb-2">
-          Date Completed:
-          <input
-            type="date"
-            value={dateCompleted}
-            onChange={(e) => setDateCompleted(e.target.value)}
-            className="block border p-1 rounded w-full"
-          />
-        </label>
-
-        <label className="block mb-2">
-          Difficulty (1–5):
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-            className="block border p-1 rounded w-full"
-          >
-            <option value="">Select</option>
-            {[1, 2, 3, 4, 5].map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block mb-2">
-          Notes:
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="block border p-1 rounded w-full"
-          />
-        </label>
-
+      <>
         <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700"
-        >
-          Submit
-        </button>
+          onClick={() => setShowModal(true)}
+          className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+         >
+           Mark as Completed
+         </button>
 
-        {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-      </div>
-    )}
-  </div>
+         {showModal && (
+         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
+           <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
+             <h2 className="text-xl font-semibold mb-4">Mark Patch as Completed</h2>
+
+             <label className="block mb-3">
+               Date Completed:
+               <input
+                 type="date"
+                 value={dateCompleted}
+                 onChange={(e) => setDateCompleted(e.target.value)}
+                 className="block w-full border p-2 rounded"
+               />
+             </label>
+
+             <label className="block mb-3">
+               Difficulty (1–5):
+               <select
+                 value={difficulty}
+                 onChange={(e) => setDifficulty(e.target.value)}
+                 className="block w-full border p-2 rounded"
+               >
+                 <option value="">Select</option>
+                 {[1, 2, 3, 4, 5].map((d) => (
+                   <option key={d} value={d}>{d}</option>
+                 ))}
+               </select>
+             </label>
+
+             <label className="block mb-3">
+               Notes:
+               <textarea
+                 value={notes}
+                 onChange={(e) => setNotes(e.target.value)}
+                 className="block w-full border p-2 rounded"
+               />
+             </label>
+
+             <div className="flex justify-between mt-4">
+               <button
+                 onClick={handleSubmit}
+                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                  Submit
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+            </div>
+          </div>
+        )}
+        </>   
+      )}
+    </div>
   );
 }
 
