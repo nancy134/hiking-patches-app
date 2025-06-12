@@ -1,12 +1,21 @@
 // app/patch/[id]/page.tsx
 'use client';
 import { getCurrentUser } from 'aws-amplify/auth';
-import { createUserPatch } from '@/graphql/mutations';
+import { 
+  createUserPatch,
+  updateUserPatch
+} from '@/graphql/mutations';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { generateClient } from 'aws-amplify/api';
-import { getPatch } from '@/graphql/queries';
-import { Patch } from '@/API';
+import { 
+  getPatch,
+  listUserPatches
+} from '@/graphql/queries';
+import { 
+  Patch,
+  UserPatch
+} from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
 
@@ -28,6 +37,21 @@ const customCreateUserPatch = `
   }
 `;
 
+const customUpdateUserPatch = `
+  mutation UpdateUserPatch($input: UpdateUserPatchInput!) {
+    updateUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      notes
+      difficulty
+      imageUrl
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 export default function PatchDetailPage() {
   const params = useParams();
@@ -42,8 +66,10 @@ export default function PatchDetailPage() {
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
 
   useEffect(() => {
+     
     getCurrentUser().then(setCurrentUser).catch(() => setCurrentUser(null));
   }, []);
 
@@ -63,34 +89,60 @@ export default function PatchDetailPage() {
     if (id) fetchPatch();
   }, [id]);
 
+  useEffect(() => {
+    const fetchUserPatch = async () => {
+      console.log("fetchUserPatch");
+      if (!currentUser?.userId || !id) return;
+      try {
+        const response = await client.graphql({
+          query: listUserPatches,
+          variables: {
+            filter: {
+              userID: { eq: currentUser.userId },
+              patchID: { eq: id },
+            },
+          },
+        });
+        const match = response.data?.listUserPatches?.items?.[0];
+        console.log(match);
+        if (match) {
+          setUserPatch(match);
+          setDateCompleted(match.dateCompleted);
+          setDifficulty(match.difficulty?.toString() || '');
+          setNotes(match.notes || '');
+        }
+      } catch (err) {
+        console.error('Error fetching userPatch:', err);
+      }
+    };
+    console.log("useEffect");
+    fetchUserPatch();
+  }, [currentUser, id]);
+
   const handleSubmit = async () => {
     if (!patch || !currentUser?.userId) {
       setMessage('❌ Missing patch or user information.');
       return;
     }
 
+    const input = {
+      patchID: patch.id,
+      userID: currentUser.userId,
+      dateCompleted,
+      difficulty: parseInt(difficulty),
+      notes,
+      ...(userPatch && { id: userPatch.id }), // include ID if updating
+    };
+
     try {
-console.log("UserPatch input:", {
-  patchID: patch.id,
-  userID: currentUser.userId,
-  dateCompleted,
-  difficulty: parseInt(difficulty),
-  notes
-});
+      const mutation = userPatch ? customUpdateUserPatch : customCreateUserPatch;
       await client.graphql({
-        query: customCreateUserPatch,
-        variables: {
-          input: {
-            patchID: patch.id,
-            userID: currentUser?.userId,
-            dateCompleted,
-            difficulty: parseInt(difficulty),
-            notes,
-          },
-        },
+        query: mutation,
+        variables: { input},
         authMode: 'userPool'
       });
       setMessage('🎉 Patch marked as completed!');
+      setShowModal(false);
     } catch (err) {
       console.error('Error submitting UserPatch:', err);
       setMessage('❌ Failed to mark patch as completed.');
@@ -116,79 +168,91 @@ console.log("UserPatch input:", {
           </p>
           )}
       </div>
-{patch.howToGet && (
-  <div className="mt-6">
-    <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
-    <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
-  </div>
-)}
+      {patch.howToGet && (
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
+        <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
+      </div>
+      )}
       {currentUser && (
-      <>
+      <div className="mt-6">
+        <div>Current user is: ${currentUser.userId}</div>
+        {userPatch ? (
+        <div className="p-4 bg-green-50 border rounded shadow">
+          <p className="text-green-800">
+            ✅ You completed this patch on <strong>{userPatch.dateCompleted}</strong>
+          </p>
+          <button
+            onClick={() => setShowModal(true)}
+            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Edit Entry
+          </button>
+        </div>
+        ) : (
         <button
           onClick={() => setShowModal(true)}
           className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-         >
-           Mark as Completed
-         </button>
-
-         {showModal && (
-         <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
-           <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
-             <h2 className="text-xl font-semibold mb-4">Mark Patch as Completed</h2>
-
-             <label className="block mb-3">
-               Date Completed:
-               <input
-                 type="date"
-                 value={dateCompleted}
-                 onChange={(e) => setDateCompleted(e.target.value)}
-                 className="block w-full border p-2 rounded"
-               />
-             </label>
-
-             <label className="block mb-3">
-               Difficulty (1–5):
-               <select
-                 value={difficulty}
-                 onChange={(e) => setDifficulty(e.target.value)}
-                 className="block w-full border p-2 rounded"
-               >
-                 <option value="">Select</option>
-                 {[1, 2, 3, 4, 5].map((d) => (
-                   <option key={d} value={d}>{d}</option>
-                 ))}
-               </select>
-             </label>
-
-             <label className="block mb-3">
-               Notes:
-               <textarea
-                 value={notes}
-                 onChange={(e) => setNotes(e.target.value)}
-                 className="block w-full border p-2 rounded"
-               />
-             </label>
-
-             <div className="flex justify-between mt-4">
-               <button
-                 onClick={handleSubmit}
-                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                >
-                  Submit
-                </button>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-              </div>
-
-              {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-            </div>
-          </div>
+        >
+          Mark as Completed
+        </button>
         )}
-        </>   
+        {showModal && (
+        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
+            <h2 className="text-xl font-semibold mb-4">
+              {userPatch ? 'Edit Completion Info' : 'Mark Patch as Completed'}
+            </h2>
+            <label className="block mb-3">
+              Date Completed:
+              <input
+                type="date"
+                value={dateCompleted}
+                onChange={(e) => setDateCompleted(e.target.value)}
+                className="block w-full border p-2 rounded"
+              />
+            </label>
+
+            <label className="block mb-3">
+              Difficulty (1–5):
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="block w-full border p-2 rounded"
+              >
+                <option value="">Select</option>
+                {[1, 2, 3, 4, 5].map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block mb-3">
+              Notes:
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="block w-full border p-2 rounded"
+              />
+            </label>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={handleSubmit}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+            </div>
+            {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+          </div>
+        </div>
+        )}
+      </div>   
       )}
     </div>
   );
