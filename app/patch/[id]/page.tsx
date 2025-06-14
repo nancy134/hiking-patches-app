@@ -1,6 +1,5 @@
 // app/patch/[id]/page.tsx
 'use client';
-import { getCurrentUser } from 'aws-amplify/auth';
 import { 
   createUserPatch,
   updateUserPatch
@@ -18,6 +17,7 @@ import {
 } from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
 
@@ -60,18 +60,13 @@ export default function PatchDetailPage() {
     return <p>Missing patch ID</p>;
   }
   const [patch, setPatch] = useState<Patch | null>(null);
-  const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [dateCompleted, setDateCompleted] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
-
-  useEffect(() => {
-     
-    getCurrentUser().then(setCurrentUser).catch(() => setCurrentUser(null));
-  }, []);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPatch = async () => {
@@ -92,13 +87,13 @@ export default function PatchDetailPage() {
   useEffect(() => {
     const fetchUserPatch = async () => {
       console.log("fetchUserPatch");
-      if (!currentUser?.userId || !id) return;
+      if (!user?.userId || !id) return;
       try {
         const response = await client.graphql({
           query: listUserPatches,
           variables: {
             filter: {
-              userID: { eq: currentUser.userId },
+              userID: { eq: user.userId },
               patchID: { eq: id },
             },
           },
@@ -117,17 +112,17 @@ export default function PatchDetailPage() {
     };
     console.log("useEffect");
     fetchUserPatch();
-  }, [currentUser, id]);
+  }, [user, id]);
 
   const handleSubmit = async () => {
-    if (!patch || !currentUser?.userId) {
+    if (!patch || !user?.userId) {
       setMessage('❌ Missing patch or user information.');
       return;
     }
 
     const input = {
       patchID: patch.id,
-      userID: currentUser.userId,
+      userID: user.userId,
       dateCompleted,
       difficulty: parseInt(difficulty),
       notes,
@@ -150,7 +145,7 @@ export default function PatchDetailPage() {
   };
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className="p-4">
       <Header />
       <div className="mb-4">
         <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
@@ -174,7 +169,7 @@ export default function PatchDetailPage() {
         <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
       </div>
       )}
-      {currentUser ? (
+      {user ? (
       <div className="mt-6">
         {userPatch ? (
         <div className="p-4 bg-green-50 border rounded shadow">
@@ -254,11 +249,7 @@ export default function PatchDetailPage() {
       </div>   
       ) : (
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-        Want to keep track of your progress?{' '}
-        <a href="/my-patches" className="underline text-blue-700 hover:text-blue-900">
-          Log in
-        </a>{' '}
-         to mark this patch as completed and add your own notes.
+        Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
       </div>
       )}
     </div>

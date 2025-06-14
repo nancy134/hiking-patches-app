@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ProtectedRoute from '@/components/ProtectedRoute';
 import FileUploader from '@/components/FileUploader';
 import UploadedFileList from '@/components/UploadedFileList';
 import Header from '@/components/Header';
@@ -9,11 +8,11 @@ import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
 import { createUserPatch } from '@/graphql/mutations';
 import { uploadData } from 'aws-amplify/storage';
-import { getCurrentUser } from 'aws-amplify/auth';
 import UserPatchGrid from '@/components/UserPatchGrid';
 import { UserPatch } from '@/API';
 import { Patch } from '@/API';
 import { listUserPatchesWithPatch } from '@/graphql/custom-queries';
+import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
 
@@ -28,6 +27,7 @@ export default function MyPatchesPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [userID, setUserID] = useState('');
   const [hideForm, setHideForm] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadPatches = async () => {
@@ -41,8 +41,7 @@ export default function MyPatchesPage() {
       const response1 = await client.graphql({ query: listPatches });
       setAllPatches(response1.data.listPatches.items);
 
-      const user = await getCurrentUser();
-      setUserID(user.userId);
+      if (user) setUserID(user.userId);
     };
     loadPatches();
   }, []);
@@ -79,7 +78,7 @@ export default function MyPatchesPage() {
   };
 
   return (
-    <ProtectedRoute>
+    <div className="p-4">
       <Header />
       <h1 className="text-2xl font-bold mb-4">My Earned Patches</h1>
       <p className="mb-2">Here you can view and manage your earned hiking patches.</p>
@@ -139,9 +138,13 @@ export default function MyPatchesPage() {
           Upload Patch Completion
         </button>
       </div>
-      )}
+      )} 
+      { user ? (
       <UserPatchGrid patches={allUserPatches}/>
-    </ProtectedRoute>
+      ) : (
+      <div>Log in to see your patches</div>
+      )}
+    </div>
   );
 }
 

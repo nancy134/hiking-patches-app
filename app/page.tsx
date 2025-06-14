@@ -8,8 +8,9 @@ import { generateClient } from 'aws-amplify/api';
 import { listPatches } from '@/graphql/queries';
 import { listUserPatches } from '@/graphql/queries'; 
 import { Patch } from '@/API';
-import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
+//import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
 import Header from '@/components/Header';
+import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
 
@@ -18,34 +19,38 @@ export default function HomePage() {
   const [filteredPatches, setFilteredPatches] = useState<Patch[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  const [user, setUser] = useState<any | null>(null);
+  //const [user, setUser] = useState<any | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [completedPatchIds, setCompletedPatchIds] = useState<string[]>([]);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
+//  useEffect(() => {
+//    const checkUser = async () => {
+//      try {
+//        const currentUser = await getCurrentUser();
+//      setUser(currentUser);
 
-        const session = await fetchAuthSession();
-        const idToken = session.tokens?.idToken?.toString();
-        const payload = idToken ? JSON.parse(atob(idToken.split('.')[1])) : {};
-        const groups = payload["cognito:groups"] || [];
+//        const session = await fetchAuthSession();
+//        const idToken = session.tokens?.idToken?.toString();
+//        const payload = idToken ? JSON.parse(atob(idToken.split('.')[1])) : {};
+//        const groups = payload["cognito:groups"] || [];
 
-        setIsAdmin(groups.includes("Admin"));
-      } catch {
-        setUser(null);
-        setIsAdmin(false);
-      }
-    };
+//        setIsAdmin(groups.includes("Admin"));
+//      } catch {
+//        setUser(null);
+//        setIsAdmin(false);
+//      }
+//    };
 
-    checkUser();
-  }, []);
+//    checkUser();
+//  }, []);
 
   useEffect(() => {
     const fetchCompletedPatches = async () => {
-      if (!user) return;
+      if (!user){
+        setCompletedPatchIds([]);
+        return;
+      }
 
       try {
         const result = await client.graphql({

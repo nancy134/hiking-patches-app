@@ -13,6 +13,7 @@ import { listPatches } from '@/graphql/queries';
 import Header from '@/components/Header';
 import awsExports from '@/aws-exports';
 import { Patch } from '@/API';
+import { useAuth} from '@/context/auth-context';
 
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
@@ -20,7 +21,7 @@ const region = awsExports.aws_user_files_s3_bucket_region;
 const client = generateClient();
 
 export default function AdminPage() {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  //const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -31,6 +32,8 @@ export default function AdminPage() {
   const [editingPatch, setEditingPatch] = useState<Partial<Patch> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [regions, setRegions] = useState<string[]>([]);
+  const { user, isAdmin } = useAuth();
+
   const patchesPerPage = 25;
 
   const fetchPatches = async () => {
@@ -38,25 +41,25 @@ export default function AdminPage() {
     setPatches(response.data.listPatches.items);
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-      try {
-        const user = await getCurrentUser();
-        if (!user) return setIsAdmin(false);
-        const session = await fetchAuthSession();
-        const idToken = session.tokens?.idToken?.toString();
-        if (!idToken) return setIsAdmin(false);
-        const payload = JSON.parse(atob(idToken.split('.')[1]));
-        const groups = payload['cognito:groups'] || [];
-        setIsAdmin(groups.includes('Admin'));
-      } catch (err) {
-        console.warn('Access check failed:', err);
-        setIsAdmin(false);
-      }
-    };
+//  useEffect(() => {
+//    const checkAccess = async () => {
+//      try {
+//        const user = await getCurrentUser();
+//        if (!user) return setIsAdmin(false);
+//        const session = await fetchAuthSession();
+//        const idToken = session.tokens?.idToken?.toString();
+//        if (!idToken) return setIsAdmin(false);
+//        const payload = JSON.parse(atob(idToken.split('.')[1]));
+//        const groups = payload['cognito:groups'] || [];
+//        setIsAdmin(groups.includes('Admin'));
+//      } catch (err) {
+//        console.warn('Access check failed:', err);
+//        setIsAdmin(false);
+//      }
+//    };
 
-    checkAccess();
-  }, []);
+//    checkAccess();
+//  }, []);
 
   useEffect(() => {
     fetchPatches();
@@ -158,14 +161,17 @@ export default function AdminPage() {
   };
 
   if (isAdmin === null) return <p className="p-6">Checking permissions...</p>;
-  if (!isAdmin) return <p className="p-6 text-red-600 font-semibold">⛔ Access denied. Admins only.</p>;
-
-  return (
+  if (!isAdmin) return (
     <div className="p-6 max-w-5xl mx-auto">
+    <Header />
+    <p className="p-6 text-red-600 font-semibold">⛔ Access denied. Admins only.</p>
+    </div>);
+ 
+  return (
+    <div className="p-4">
       <Header />
       <h1 className="text-2xl font-bold mb-4">🛠️ Admin: Manage Hiking Patches</h1>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mb-8 bg-gray-50 p-4 rounded shadow">
         <h2 className="text-lg font-semibold">{editingPatch ? 'Edit Patch' : 'Add New Patch'}</h2>
         <input
@@ -227,7 +233,6 @@ export default function AdminPage() {
         {success && <p className="text-green-600 mt-2">✅ Patch saved successfully!</p>}
       </form>
 
-      {/* Patch Table */}
       <table className="w-full table-auto border border-collapse mb-4">
         <thead>
           <tr className="bg-gray-200">
@@ -260,7 +265,6 @@ export default function AdminPage() {
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
       <div className="flex justify-between items-center">
         <button
           onClick={() => goToPage(currentPage - 1)}
