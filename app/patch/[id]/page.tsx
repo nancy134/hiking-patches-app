@@ -166,13 +166,52 @@ export default function PatchDetailPage() {
       {patch.howToGet && (
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
-        <ReactMarkdown>{patch.howToGet}</ReactMarkdown>
+        <div className="prose">
+        <ReactMarkdown
+          components={{
+            a: ({ href, children }) => {
+              const isExternal = href?.startsWith('http');
+
+              return isExternal ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline inline-flex items-center gap-1"
+                >
+                  {children}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 inline"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              ) : (
+                <a href={href} className="text-blue-600 underline">
+                  {children}
+                </a>
+              );
+            },
+          }}
+        >{patch.howToGet}</ReactMarkdown>
+        </div>
       </div>
       )}
       {user ? (
       <div className="mt-6">
+      <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
         {userPatch ? (
-        <div className="p-4 bg-green-50 border rounded shadow">
+        <div>
           <p className="text-green-800">
             ✅ You completed this patch on <strong>{userPatch.dateCompleted}</strong>
           </p>
@@ -188,7 +227,7 @@ export default function PatchDetailPage() {
           onClick={() => setShowModal(true)}
           className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Mark as Completed
+          Mark Your Progress 
         </button>
         )}
         {showModal && (
