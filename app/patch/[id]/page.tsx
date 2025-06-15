@@ -18,6 +18,11 @@ import {
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/auth-context';
+import { GraphQLResult } from '@aws-amplify/api';
+import {
+  UpdateUserPatchMutation,
+  CreateUserPatchMutation,
+} from '@/API';
 
 const client = generateClient();
 
@@ -60,7 +65,7 @@ export default function PatchDetailPage() {
     return <p>Missing patch ID</p>;
   }
   const [patch, setPatch] = useState<Patch | null>(null);
-  const [dateCompleted, setDateCompleted] = useState('');
+  const [dateCompleted, setDateCompleted] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState('');
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
@@ -102,7 +107,8 @@ export default function PatchDetailPage() {
         console.log(match);
         if (match) {
           setUserPatch(match);
-          setDateCompleted(match.dateCompleted);
+          if (match.dateCompleted) setDateCompleted(match.dateCompleted);
+          else setDateCompleted(null);
           setDifficulty(match.difficulty?.toString() || '');
           setNotes(match.notes || '');
         }
@@ -123,19 +129,34 @@ export default function PatchDetailPage() {
     const input = {
       patchID: patch.id,
       userID: user.userId,
-      dateCompleted,
-      difficulty: parseInt(difficulty),
-      notes,
+      dateCompleted: dateCompleted ? dateCompleted : null,
+      difficulty: difficulty ? parseInt(difficulty) : null,
+      notes: notes ? notes : null,
       ...(userPatch && { id: userPatch.id }), // include ID if updating
     };
 
     try {
       const mutation = userPatch ? customUpdateUserPatch : customCreateUserPatch;
-      await client.graphql({
+      const response = await client.graphql({
         query: mutation,
         variables: { input},
         authMode: 'userPool'
-      });
+      }) as GraphQLResult<UpdateUserPatchMutation | CreateUserPatchMutation>;
+     
+
+      let updatedUserPatch;
+
+      if (userPatch) {
+        const updateResponse = response as GraphQLResult<UpdateUserPatchMutation>;
+        updatedUserPatch = updateResponse.data?.updateUserPatch;
+      } else {
+         const createResponse = response as GraphQLResult<CreateUserPatchMutation>;
+         updatedUserPatch = createResponse.data?.createUserPatch;
+     }
+ 
+      //const updatedUserPatch = userPatch ? response.data?.updateUserPatch : response.data?.createUserPatch;
+      console.log(updatedUserPatch);
+      if (updatedUserPatch) setUserPatch(updatedUserPatch);
       setMessage('🎉 Patch marked as completed!');
       setShowModal(false);
     } catch (err) {
@@ -212,9 +233,15 @@ export default function PatchDetailPage() {
       <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
         {userPatch ? (
         <div>
+          {userPatch.dateCompleted ? (
           <p className="text-green-800">
             ✅ You completed this patch on <strong>{userPatch.dateCompleted}</strong>
           </p>
+          ) : (
+          <p className="text-yellow-800">
+             This patch is In Progress
+          </p>         
+          )}
           <button
             onClick={() => setShowModal(true)}
             className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -227,7 +254,7 @@ export default function PatchDetailPage() {
           onClick={() => setShowModal(true)}
           className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Mark Your Progress 
+          Track Your Progress 
         </button>
         )}
         {showModal && (
@@ -240,7 +267,7 @@ export default function PatchDetailPage() {
               Date Completed:
               <input
                 type="date"
-                value={dateCompleted}
+                value={dateCompleted ?? ''}
                 onChange={(e) => setDateCompleted(e.target.value)}
                 className="block w-full border p-2 rounded"
               />

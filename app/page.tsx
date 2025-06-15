@@ -19,36 +19,15 @@ export default function HomePage() {
   const [filteredPatches, setFilteredPatches] = useState<Patch[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  //const [user, setUser] = useState<any | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [completedPatchIds, setCompletedPatchIds] = useState<string[]>([]);
+  const [completedPatches, setCompletedPatches] = useState<{ patchID: string; completedDate: string | null }[]>([]);
+
   const { user } = useAuth();
-
-//  useEffect(() => {
-//    const checkUser = async () => {
-//      try {
-//        const currentUser = await getCurrentUser();
-//      setUser(currentUser);
-
-//        const session = await fetchAuthSession();
-//        const idToken = session.tokens?.idToken?.toString();
-//        const payload = idToken ? JSON.parse(atob(idToken.split('.')[1])) : {};
-//        const groups = payload["cognito:groups"] || [];
-
-//        setIsAdmin(groups.includes("Admin"));
-//      } catch {
-//        setUser(null);
-//        setIsAdmin(false);
-//      }
-//    };
-
-//    checkUser();
-//  }, []);
 
   useEffect(() => {
     const fetchCompletedPatches = async () => {
-      if (!user){
-        setCompletedPatchIds([]);
+      if (!user) {
+        setCompletedPatches([]);
         return;
       }
 
@@ -60,8 +39,16 @@ export default function HomePage() {
         });
 
         const items = result.data?.listUserPatches?.items ?? [];
-        const completedIds = items.map((p: any) => p.patchID);
-        setCompletedPatchIds(completedIds);
+        // Map to list of objects with patchID and completedDate
+        console.log("items:");
+        console.log(items);
+        const completed = items.map((p: any) => ({
+          patchID: p.patchID,
+          completedDate: p.dateCompleted ?? null, // or whatever the actual field is called
+        }));
+        console.log("completed:");
+        console.log(completed);
+        setCompletedPatches(completed);
       } catch (err) {
         console.error('Failed to fetch completed patches:', err);
       }
@@ -138,7 +125,7 @@ export default function HomePage() {
         <option value="New York">New York</option>
       </select>
     </div>
-    <PatchGrid patches={filteredPatches} completedPatchIds={completedPatchIds} />
+    <PatchGrid patches={filteredPatches} userPatchEntries={completedPatches} />
   </div>
   );
 }

@@ -26,7 +26,7 @@ type UserPatch @model
   patchID: ID! @index(name: "byPatch")
   patch: Patch @belongsTo(fields: ["patchID"])
   userID: String!
-  dateCompleted: AWSDate!
+  dateCompleted: AWSDate
   notes: String
   difficulty: Int
   imageUrl: String

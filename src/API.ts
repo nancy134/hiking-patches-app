@@ -2,6 +2,41 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
+export type ModelUserPatchConnection = {
+  __typename: "ModelUserPatchConnection",
+  items:  Array<UserPatch | null >,
+  nextToken?: string | null,
+};
+
+export type UserPatch = {
+  __typename: "UserPatch",
+  id: string,
+  patchID: string,
+  patch?: Patch | null,
+  userID: string,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export type Patch = {
+  __typename: "Patch",
+  id: string,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  userPatches?: ModelUserPatchConnection | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
 export type CreatePatchInput = {
   id?: string | null,
   name: string,
@@ -65,41 +100,6 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type Patch = {
-  __typename: "Patch",
-  id: string,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  userPatches?: ModelUserPatchConnection | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
-export type ModelUserPatchConnection = {
-  __typename: "ModelUserPatchConnection",
-  items:  Array<UserPatch | null >,
-  nextToken?: string | null,
-};
-
-export type UserPatch = {
-  __typename: "UserPatch",
-  id: string,
-  patchID: string,
-  patch?: Patch | null,
-  userID: string,
-  dateCompleted: string,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
 export type UpdatePatchInput = {
   id: string,
   name?: string | null,
@@ -117,7 +117,7 @@ export type CreateUserPatchInput = {
   id?: string | null,
   patchID: string,
   userID: string,
-  dateCompleted: string,
+  dateCompleted?: string | null,
   notes?: string | null,
   difficulty?: number | null,
   imageUrl?: string | null,
@@ -294,6 +294,38 @@ export type ModelSubscriptionIntInput = {
   notIn?: Array< number | null > | null,
 };
 
+export type ListUserPatchesWithPatchQueryVariables = {
+};
+
+export type ListUserPatchesWithPatchQuery = {
+  listUserPatches?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      id: string,
+      patchID: string,
+      userID: string,
+      dateCompleted?: string | null,
+      notes?: string | null,
+      difficulty?: number | null,
+      imageUrl?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      patch?:  {
+        __typename: "Patch",
+        id: string,
+        name: string,
+        description?: string | null,
+        howToGet?: string | null,
+        imageUrl?: string | null,
+        regions?: Array< string | null > | null,
+        createdAt: string,
+        updatedAt: string,
+      } | null,
+    } | null >,
+  } | null,
+};
+
 export type CreatePatchMutationVariables = {
   input: CreatePatchInput,
   condition?: ModelPatchConditionInput | null,
@@ -389,7 +421,7 @@ export type CreateUserPatchMutation = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -422,7 +454,7 @@ export type UpdateUserPatchMutation = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -455,7 +487,7 @@ export type DeleteUserPatchMutation = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -535,7 +567,7 @@ export type GetUserPatchQuery = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -559,7 +591,7 @@ export type ListUserPatchesQuery = {
       id: string,
       patchID: string,
       userID: string,
-      dateCompleted: string,
+      dateCompleted?: string | null,
       notes?: string | null,
       difficulty?: number | null,
       imageUrl?: string | null,
@@ -587,7 +619,7 @@ export type UserPatchesByPatchIDQuery = {
       id: string,
       patchID: string,
       userID: string,
-      dateCompleted: string,
+      dateCompleted?: string | null,
       notes?: string | null,
       difficulty?: number | null,
       imageUrl?: string | null,
@@ -694,7 +726,7 @@ export type OnCreateUserPatchSubscription = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -727,7 +759,7 @@ export type OnUpdateUserPatchSubscription = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
@@ -760,7 +792,7 @@ export type OnDeleteUserPatchSubscription = {
       owner?: string | null,
     } | null,
     userID: string,
-    dateCompleted: string,
+    dateCompleted?: string | null,
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
