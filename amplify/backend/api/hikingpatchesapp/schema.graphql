@@ -33,3 +33,14 @@ type UserPatch @model
   inProgress: Boolean
 }
 
+type PatchRequest @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [create] }
+  ]) {
+  id: ID!
+  email: String!
+  description: String!
+  createdAt: AWSDateTime
+}
+
+

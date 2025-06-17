@@ -8,6 +8,57 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
+export const createPatchRequest = /* GraphQL */ `mutation CreatePatchRequest(
+  $input: CreatePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  createPatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreatePatchRequestMutationVariables,
+  APITypes.CreatePatchRequestMutation
+>;
+export const updatePatchRequest = /* GraphQL */ `mutation UpdatePatchRequest(
+  $input: UpdatePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  updatePatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchRequestMutationVariables,
+  APITypes.UpdatePatchRequestMutation
+>;
+export const deletePatchRequest = /* GraphQL */ `mutation DeletePatchRequest(
+  $input: DeletePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  deletePatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchRequestMutationVariables,
+  APITypes.DeletePatchRequestMutation
+>;
 export const createPatch = /* GraphQL */ `mutation CreatePatch(
   $input: CreatePatchInput!
   $condition: ModelPatchConditionInput

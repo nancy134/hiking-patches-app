@@ -38,27 +38,21 @@ export type Patch = {
   owner?: string | null,
 };
 
-export type CreatePatchInput = {
+export type CreatePatchRequestInput = {
   id?: string | null,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
+  email: string,
+  description: string,
+  createdAt?: string | null,
 };
 
-export type ModelPatchConditionInput = {
-  name?: ModelStringInput | null,
+export type ModelPatchRequestConditionInput = {
+  email?: ModelStringInput | null,
   description?: ModelStringInput | null,
-  howToGet?: ModelStringInput | null,
-  imageUrl?: ModelStringInput | null,
-  regions?: ModelStringInput | null,
-  and?: Array< ModelPatchConditionInput | null > | null,
-  or?: Array< ModelPatchConditionInput | null > | null,
-  not?: ModelPatchConditionInput | null,
   createdAt?: ModelStringInput | null,
+  and?: Array< ModelPatchRequestConditionInput | null > | null,
+  or?: Array< ModelPatchRequestConditionInput | null > | null,
+  not?: ModelPatchRequestConditionInput | null,
   updatedAt?: ModelStringInput | null,
-  owner?: ModelStringInput | null,
 };
 
 export type ModelStringInput = {
@@ -99,6 +93,49 @@ export type ModelSizeInput = {
   ge?: number | null,
   gt?: number | null,
   between?: Array< number | null > | null,
+};
+
+export type PatchRequest = {
+  __typename: "PatchRequest",
+  id: string,
+  email: string,
+  description: string,
+  createdAt?: string | null,
+  updatedAt: string,
+};
+
+export type UpdatePatchRequestInput = {
+  id: string,
+  email?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+};
+
+export type DeletePatchRequestInput = {
+  id: string,
+};
+
+export type CreatePatchInput = {
+  id?: string | null,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+};
+
+export type ModelPatchConditionInput = {
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  howToGet?: ModelStringInput | null,
+  imageUrl?: ModelStringInput | null,
+  regions?: ModelStringInput | null,
+  and?: Array< ModelPatchConditionInput | null > | null,
+  or?: Array< ModelPatchConditionInput | null > | null,
+  not?: ModelPatchConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  owner?: ModelStringInput | null,
 };
 
 export type UpdatePatchInput = {
@@ -191,6 +228,23 @@ export type DeleteUserPatchInput = {
   id: string,
 };
 
+export type ModelPatchRequestFilterInput = {
+  id?: ModelIDInput | null,
+  email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelPatchRequestFilterInput | null > | null,
+  or?: Array< ModelPatchRequestFilterInput | null > | null,
+  not?: ModelPatchRequestFilterInput | null,
+};
+
+export type ModelPatchRequestConnection = {
+  __typename: "ModelPatchRequestConnection",
+  items:  Array<PatchRequest | null >,
+  nextToken?: string | null,
+};
+
 export type ModelPatchFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -235,18 +289,14 @@ export enum ModelSortDirection {
 }
 
 
-export type ModelSubscriptionPatchFilterInput = {
+export type ModelSubscriptionPatchRequestFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  name?: ModelSubscriptionStringInput | null,
+  email?: ModelSubscriptionStringInput | null,
   description?: ModelSubscriptionStringInput | null,
-  howToGet?: ModelSubscriptionStringInput | null,
-  imageUrl?: ModelSubscriptionStringInput | null,
-  regions?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  owner?: ModelStringInput | null,
+  and?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -277,6 +327,20 @@ export type ModelSubscriptionStringInput = {
   beginsWith?: string | null,
   in?: Array< string | null > | null,
   notIn?: Array< string | null > | null,
+};
+
+export type ModelSubscriptionPatchFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  name?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  howToGet?: ModelSubscriptionStringInput | null,
+  imageUrl?: ModelSubscriptionStringInput | null,
+  regions?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionUserPatchFilterInput = {
@@ -341,6 +405,54 @@ export type ListUserPatchesWithPatchQuery = {
         updatedAt: string,
       } | null,
     } | null >,
+  } | null,
+};
+
+export type CreatePatchRequestMutationVariables = {
+  input: CreatePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type CreatePatchRequestMutation = {
+  createPatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchRequestMutationVariables = {
+  input: UpdatePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type UpdatePatchRequestMutation = {
+  updatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchRequestMutationVariables = {
+  input: DeletePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type DeletePatchRequestMutation = {
+  deletePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
   } | null,
 };
 
@@ -518,6 +630,42 @@ export type DeleteUserPatchMutation = {
   } | null,
 };
 
+export type GetPatchRequestQueryVariables = {
+  id: string,
+};
+
+export type GetPatchRequestQuery = {
+  getPatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListPatchRequestsQueryVariables = {
+  filter?: ModelPatchRequestFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchRequestsQuery = {
+  listPatchRequests?:  {
+    __typename: "ModelPatchRequestConnection",
+    items:  Array< {
+      __typename: "PatchRequest",
+      id: string,
+      email: string,
+      description: string,
+      createdAt?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type GetPatchQueryVariables = {
   id: string,
 };
@@ -652,6 +800,51 @@ export type UserPatchesByPatchIDQuery = {
       owner?: string | null,
     } | null >,
     nextToken?: string | null,
+  } | null,
+};
+
+export type OnCreatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnCreatePatchRequestSubscription = {
+  onCreatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnUpdatePatchRequestSubscription = {
+  onUpdatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnDeletePatchRequestSubscription = {
+  onDeletePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
   } | null,
 };
 

@@ -40,15 +40,11 @@ export default function HomePage() {
 
         const items = result.data?.listUserPatches?.items ?? [];
         // Map to list of objects with patchID and completedDate
-        console.log("items:");
-        console.log(items);
         const completed = items.map((p: any) => ({
           patchID: p.patchID,
           completedDate: p.dateCompleted ?? null, // or whatever the actual field is called
           inProgress: p.inProgress
         }));
-        console.log("completed:");
-        console.log(completed);
         setCompletedPatches(completed);
       } catch (err) {
         console.error('Failed to fetch completed patches:', err);
@@ -87,13 +83,10 @@ export default function HomePage() {
         patch.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    console.log("selectedRegion: "+selectedRegion);
     if (selectedRegion) {
       filtered = filtered.filter(patch =>
         patch.regions?.includes(selectedRegion)
       );
-      console.log("filtered:");
-      console.log(filtered);
     }
 
     setFilteredPatches(filtered);
@@ -116,6 +109,16 @@ export default function HomePage() {
   </div>
   <div className="font-semibold">Search for patches</div>
     <SearchBar value={searchTerm} onChange={handleSearch} />
+    <p className="text-right text-gray-700">
+      Don’t see a patch ?{' '}
+      <a
+        href="/request-patch"
+        className="text-blue-600 underline hover:text-blue-800"
+      >
+        Contact us
+      </a>{' '}
+      and we’ll add it!
+    </p>
     <div className="my-4">
       <label className="mr-2 font-semibold">Filter by State/Province:</label>
       <select value={selectedRegion} onChange={handleRegionChange} className="p-2 border rounded">
