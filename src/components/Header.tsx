@@ -12,9 +12,6 @@ export default function Header() {
   const { user, isAdmin, setUser, logout } = useAuth();
 
   useEffect(() => {
-    console.log("Header user userEffect");
-    console.log("user:");
-    console.log(user);
     if (user) {
       setShowLogin(false); // Auto-close modal on sign-in
     }

@@ -45,6 +45,7 @@ export default function HomePage() {
         const completed = items.map((p: any) => ({
           patchID: p.patchID,
           completedDate: p.dateCompleted ?? null, // or whatever the actual field is called
+          inProgress: p.inProgress
         }));
         console.log("completed:");
         console.log(completed);

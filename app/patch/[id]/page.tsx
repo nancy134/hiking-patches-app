@@ -33,6 +33,7 @@ const customCreateUserPatch = `
       patchID
       userID
       dateCompleted
+      inProgress
       notes
       difficulty
       imageUrl
@@ -49,6 +50,7 @@ const customUpdateUserPatch = `
       patchID
       userID
       dateCompleted
+      inProgress
       notes
       difficulty
       imageUrl
@@ -71,7 +73,7 @@ export default function PatchDetailPage() {
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
-  const [isInProgress, setIsInProgress] = useState(false);
+  const [isInProgress, setIsInProgress] = useState<boolean | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -112,7 +114,7 @@ export default function PatchDetailPage() {
           else setDateCompleted(null);
           setDifficulty(match.difficulty?.toString() || '');
           setNotes(match.notes || '');
-          setIsInProgress(match.inProgress ?? false);
+          setIsInProgress(match.inProgress !== undefined ? match.inProgress : null);
         }
       } catch (err) {
         console.error('Error fetching userPatch:', err);
@@ -132,7 +134,8 @@ export default function PatchDetailPage() {
   };
 
   // Determine whether to enable Submit
-  const canSubmit = isInProgress || Boolean(dateCompleted);
+  const canSubmit = isInProgress !== null && (isInProgress || Boolean(dateCompleted));
+
 
   const handleSubmit = async () => {
     if (!patch || !user?.userId) {
@@ -143,8 +146,9 @@ export default function PatchDetailPage() {
     const input = {
       patchID: patch.id,
       userID: user.userId,
-      dateCompleted: dateCompleted ? dateCompleted : null,
+      dateCompleted: isInProgress ? null : dateCompleted || null,
       difficulty: difficulty ? parseInt(difficulty) : null,
+      inProgress: isInProgress,
       notes: notes ? notes : null,
       ...(userPatch && { id: userPatch.id }), // include ID if updating
     };
@@ -245,32 +249,129 @@ export default function PatchDetailPage() {
       {user ? (
       <div className="mt-6">
       <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
-        {userPatch ? (
-        <div>
-          {userPatch.dateCompleted ? (
-          <p className="text-green-800">
-            ✅ You completed this patch on <strong>{userPatch.dateCompleted}</strong>
-          </p>
-          ) : (
-          <p className="text-yellow-800">
-             This patch is In Progress
-          </p>         
-          )}
-          <button
-            onClick={() => setShowModal(true)}
-            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Edit Entry
-          </button>
-        </div>
-        ) : (
-        <button
-          onClick={() => setShowModal(true)}
-          className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+
+
+{user ? (
+  <div className="mt-6">
+    <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
+    <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
+<div className="mb-3">
+  <label className="block font-medium mb-1">Progress Status:</label>
+  <div className="flex gap-4">
+    <label>
+      <input
+        type="radio"
+        name="progressStatus"
+        checked={isInProgress === true}
+        onChange={() => {
+          setIsInProgress(true);
+        }}
+        className="mr-2"
+      />
+      I'm working on this patch
+    </label>
+    <label>
+      <input
+        type="radio"
+        name="progressStatus"
+        checked={isInProgress === false}
+        onChange={() => setIsInProgress(false)}
+        className="mr-2"
+      />
+      I've completed this patch
+    </label>
+  </div>
+</div>
+
+
+<label className="block mb-3">
+  Date Completed:
+  <input
+    type="date"
+    value={dateCompleted ?? ''}
+    onChange={(e) => setDateCompleted(e.target.value)}
+    disabled={isInProgress !== false}
+    className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+  />
+</label>
+      {/*
+      <label className="block mb-3">
+        Difficulty (1–5):
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+          className="block w-full border p-2 rounded"
         >
-          Track Your Progress 
+          <option value="">Select</option>
+          {[1, 2, 3, 4, 5].map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+      </label>
+
+      <label className="block mb-3">
+        Notes (optional):
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="block w-full border p-2 rounded"
+        />
+      </label>
+      */}
+      <div className="flex justify-between gap-2 mt-4">
+        <button
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
+        >
+          Save
         </button>
+
+        {userPatch && (
+          <button
+            onClick={async () => {
+              try {
+                await client.graphql({
+                  query: `
+                    mutation DeleteUserPatch($input: DeleteUserPatchInput!) {
+                      deleteUserPatch(input: $input) {
+                        id
+                      }
+                    }
+                  `,
+                  variables: { input: { id: userPatch.id } },
+                  authMode: 'userPool',
+                });
+                setUserPatch(null);
+                setDateCompleted(null);
+                setNotes('');
+                setDifficulty('');
+                setIsInProgress(false);
+                setMessage('🗑️ Progress cleared.');
+              } catch (err) {
+                console.error('Error clearing user patch:', err);
+                setMessage('❌ Failed to clear progress.');
+              }
+            }}
+            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+          >
+            Clear
+          </button>
         )}
+      </div>
+
+      {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+    </div>
+  </div>
+) : (
+  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
+    Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
+  </div>
+)}
+
+
+
+
         {showModal && (
 <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
   <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
@@ -348,7 +449,7 @@ export default function PatchDetailPage() {
       </div>   
       ) : (
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-        Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
+        Want to keep track of your progress? Log in to track your progress on this patch or indicate completion.
       </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { Patch } from '@/API';
 type PatchEntry = {
   patchID: string;
   completedDate: string | null;
+  inProgress?: boolean;
 };
 
 type PatchGridProps = {
@@ -19,8 +20,11 @@ export default function PatchGrid({ patches, userPatchEntries = [] }: PatchGridP
 
         let status: "Not Started" | "In Progress" | "Completed" = "Not Started";
         if (entry) {
-          console.log("entry.completedDate: "+entry.completedDate);
-          status = entry.completedDate ? "Completed" : "In Progress";
+          if (entry.completedDate) {
+            status = "Completed";
+          } else if (entry.inProgress) {
+            status = "In Progress";
+          }
         }
 
         return (
