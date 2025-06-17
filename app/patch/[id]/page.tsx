@@ -71,6 +71,7 @@ export default function PatchDetailPage() {
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
+  const [isInProgress, setIsInProgress] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -111,6 +112,7 @@ export default function PatchDetailPage() {
           else setDateCompleted(null);
           setDifficulty(match.difficulty?.toString() || '');
           setNotes(match.notes || '');
+          setIsInProgress(match.inProgress ?? false);
         }
       } catch (err) {
         console.error('Error fetching userPatch:', err);
@@ -119,6 +121,18 @@ export default function PatchDetailPage() {
     console.log("useEffect");
     fetchUserPatch();
   }, [user, id]);
+
+  // Update dateCompleted whenever "In Progress" is selected
+  const handleInProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsInProgress(checked);
+    if (checked) {
+      setDateCompleted('');
+    }
+  };
+
+  // Determine whether to enable Submit
+  const canSubmit = isInProgress || Boolean(dateCompleted);
 
   const handleSubmit = async () => {
     if (!patch || !user?.userId) {
@@ -157,7 +171,7 @@ export default function PatchDetailPage() {
       //const updatedUserPatch = userPatch ? response.data?.updateUserPatch : response.data?.createUserPatch;
       console.log(updatedUserPatch);
       if (updatedUserPatch) setUserPatch(updatedUserPatch);
-      setMessage('🎉 Patch marked as completed!');
+      setMessage('🎉 Patch progress updated!');
       setShowModal(false);
     } catch (err) {
       console.error('Error submitting UserPatch:', err);
@@ -258,59 +272,78 @@ export default function PatchDetailPage() {
         </button>
         )}
         {showModal && (
-        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
-            <h2 className="text-xl font-semibold mb-4">
-              {userPatch ? 'Edit Completion Info' : 'Mark Patch as Completed'}
-            </h2>
-            <label className="block mb-3">
-              Date Completed:
-              <input
-                type="date"
-                value={dateCompleted ?? ''}
-                onChange={(e) => setDateCompleted(e.target.value)}
-                className="block w-full border p-2 rounded"
-              />
-            </label>
+<div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
+    <h2 className="text-xl font-semibold mb-4">
+      {userPatch ? 'Edit Completion Info' : 'Mark Patch as Completed'}
+    </h2>
 
-            <label className="block mb-3">
-              Difficulty (1–5):
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-                className="block w-full border p-2 rounded"
-              >
-                <option value="">Select</option>
-                {[1, 2, 3, 4, 5].map((d) => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-            </label>
-            <label className="block mb-3">
-              Notes:
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="block w-full border p-2 rounded"
-              />
-            </label>
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={handleSubmit}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
-            </div>
-            {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-          </div>
-        </div>
+    <label className="block mb-3">
+      <input
+        type="checkbox"
+        checked={isInProgress}
+        onChange={handleInProgressChange}
+        className="mr-2"
+      />
+      I'm still working on this patch
+    </label>
+
+    <label className="block mb-3">
+      Date Completed:
+      <input
+        type="date"
+        value={dateCompleted ?? ''}
+        onChange={(e) => {
+          setDateCompleted(e.target.value);
+          setIsInProgress(false); // uncheck if they choose a date
+        }}
+        className="block w-full border p-2 rounded"
+      />
+    </label>
+
+    <label className="block mb-3">
+      Difficulty (1–5):
+      <select
+        value={difficulty}
+        onChange={(e) => setDifficulty(e.target.value)}
+        className="block w-full border p-2 rounded"
+      >
+        <option value="">Select</option>
+        {[1, 2, 3, 4, 5].map((d) => (
+          <option key={d} value={d}>{d}</option>
+        ))}
+      </select>
+    </label>
+
+    <label className="block mb-3">
+      Notes (optional):
+      <textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        className="block w-full border p-2 rounded"
+      />
+    </label>
+
+    <div className="flex justify-between mt-4">
+      <button
+        onClick={handleSubmit}
+        disabled={!canSubmit}
+        className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
+      >
+        Submit
+      </button>
+      <button
+        onClick={() => setShowModal(false)}
+        className="text-gray-600 hover:text-gray-800"
+      >
+        Cancel
+      </button>
+    </div>
+
+    {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+  </div>
+</div>
+
         )}
       </div>   
       ) : (

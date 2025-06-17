@@ -30,5 +30,6 @@ type UserPatch @model
   notes: String
   difficulty: Int
   imageUrl: String
+  inProgress: Boolean
 }
 

@@ -107,6 +107,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
     notes
     difficulty
     imageUrl
+    inProgress
     createdAt
     updatedAt
     owner
@@ -141,6 +142,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
     notes
     difficulty
     imageUrl
+    inProgress
     createdAt
     updatedAt
     owner
@@ -175,6 +177,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
     notes
     difficulty
     imageUrl
+    inProgress
     createdAt
     updatedAt
     owner

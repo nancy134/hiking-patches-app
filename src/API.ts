@@ -18,6 +18,7 @@ export type UserPatch = {
   notes?: string | null,
   difficulty?: number | null,
   imageUrl?: string | null,
+  inProgress?: boolean | null,
   createdAt: string,
   updatedAt: string,
   owner?: string | null,
@@ -121,6 +122,7 @@ export type CreateUserPatchInput = {
   notes?: string | null,
   difficulty?: number | null,
   imageUrl?: string | null,
+  inProgress?: boolean | null,
 };
 
 export type ModelUserPatchConditionInput = {
@@ -130,6 +132,7 @@ export type ModelUserPatchConditionInput = {
   notes?: ModelStringInput | null,
   difficulty?: ModelIntInput | null,
   imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
   and?: Array< ModelUserPatchConditionInput | null > | null,
   or?: Array< ModelUserPatchConditionInput | null > | null,
   not?: ModelUserPatchConditionInput | null,
@@ -166,6 +169,13 @@ export type ModelIntInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
+export type ModelBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type UpdateUserPatchInput = {
   id: string,
   patchID?: string | null,
@@ -174,6 +184,7 @@ export type UpdateUserPatchInput = {
   notes?: string | null,
   difficulty?: number | null,
   imageUrl?: string | null,
+  inProgress?: boolean | null,
 };
 
 export type DeleteUserPatchInput = {
@@ -209,6 +220,7 @@ export type ModelUserPatchFilterInput = {
   notes?: ModelStringInput | null,
   difficulty?: ModelIntInput | null,
   imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelUserPatchFilterInput | null > | null,
@@ -275,6 +287,7 @@ export type ModelSubscriptionUserPatchFilterInput = {
   notes?: ModelSubscriptionStringInput | null,
   difficulty?: ModelSubscriptionIntInput | null,
   imageUrl?: ModelSubscriptionStringInput | null,
+  inProgress?: ModelSubscriptionBooleanInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
@@ -292,6 +305,11 @@ export type ModelSubscriptionIntInput = {
   between?: Array< number | null > | null,
   in?: Array< number | null > | null,
   notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
 };
 
 export type ListUserPatchesWithPatchQueryVariables = {
@@ -425,6 +443,7 @@ export type CreateUserPatchMutation = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -458,6 +477,7 @@ export type UpdateUserPatchMutation = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -491,6 +511,7 @@ export type DeleteUserPatchMutation = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -571,6 +592,7 @@ export type GetUserPatchQuery = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -595,6 +617,7 @@ export type ListUserPatchesQuery = {
       notes?: string | null,
       difficulty?: number | null,
       imageUrl?: string | null,
+      inProgress?: boolean | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -623,6 +646,7 @@ export type UserPatchesByPatchIDQuery = {
       notes?: string | null,
       difficulty?: number | null,
       imageUrl?: string | null,
+      inProgress?: boolean | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -730,6 +754,7 @@ export type OnCreateUserPatchSubscription = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -763,6 +788,7 @@ export type OnUpdateUserPatchSubscription = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
@@ -796,6 +822,7 @@ export type OnDeleteUserPatchSubscription = {
     notes?: string | null,
     difficulty?: number | null,
     imageUrl?: string | null,
+    inProgress?: boolean | null,
     createdAt: string,
     updatedAt: string,
     owner?: string | null,

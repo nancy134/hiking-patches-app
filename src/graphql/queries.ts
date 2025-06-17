@@ -74,6 +74,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
     notes
     difficulty
     imageUrl
+    inProgress
     createdAt
     updatedAt
     owner
@@ -98,6 +99,7 @@ export const listUserPatches = /* GraphQL */ `query ListUserPatches(
       notes
       difficulty
       imageUrl
+      inProgress
       createdAt
       updatedAt
       owner
@@ -133,6 +135,7 @@ export const userPatchesByPatchID = /* GraphQL */ `query UserPatchesByPatchID(
       notes
       difficulty
       imageUrl
+      inProgress
       createdAt
       updatedAt
       owner
