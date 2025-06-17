@@ -246,64 +246,61 @@ export default function PatchDetailPage() {
         </div>
       </div>
       )}
+
+
       {user ? (
       <div className="mt-6">
-      <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
+        <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
+        <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
+          <div className="mb-3">
+            <label className="block font-medium mb-1">Progress Status:</label>
+            <div className="flex gap-4">
+              <label>
+                <input
+                  type="radio"
+                  name="progressStatus"
+                  checked={isInProgress === true}
+                  onChange={() => {
+                    setIsInProgress(true);
+                  }}
+                  className="mr-2"
+                />
+                  I'm working on this patch
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="progressStatus"
+                  checked={isInProgress === false}
+                  onChange={() => setIsInProgress(false)}
+                  className="mr-2"
+                />
+                  I've completed this patch
+              </label>
+            </div>
+          </div>
 
 
-{user ? (
-  <div className="mt-6">
-    <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
-    <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
-<div className="mb-3">
-  <label className="block font-medium mb-1">Progress Status:</label>
-  <div className="flex gap-4">
-    <label>
-      <input
-        type="radio"
-        name="progressStatus"
-        checked={isInProgress === true}
-        onChange={() => {
-          setIsInProgress(true);
-        }}
-        className="mr-2"
-      />
-      I'm working on this patch
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="progressStatus"
-        checked={isInProgress === false}
-        onChange={() => setIsInProgress(false)}
-        className="mr-2"
-      />
-      I've completed this patch
-    </label>
-  </div>
-</div>
-
-
-<label className="block mb-3">
-  Date Completed:
-  <input
-    type="date"
-    value={dateCompleted ?? ''}
-    onChange={(e) => setDateCompleted(e.target.value)}
-    disabled={isInProgress !== false}
-    className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
-  />
-</label>
-      {/*
-      <label className="block mb-3">
-        Difficulty (1–5):
-        <select
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-          className="block w-full border p-2 rounded"
-        >
-          <option value="">Select</option>
-          {[1, 2, 3, 4, 5].map((d) => (
+          <label className="block mb-3">
+            Date Completed:
+            <input
+              type="date"
+              value={dateCompleted ?? ''}
+              onChange={(e) => setDateCompleted(e.target.value)}
+              disabled={isInProgress !== false}
+              className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+            />
+          </label>
+          {/*
+          <label className="block mb-3">
+            Difficulty (1–5):
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="block w-full border p-2 rounded"
+            >
+            <option value="">Select</option>
+            {[1, 2, 3, 4, 5].map((d) => (
             <option key={d} value={d}>{d}</option>
           ))}
         </select>
@@ -358,101 +355,18 @@ export default function PatchDetailPage() {
             Clear
           </button>
         )}
+        </div>
+
+        {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
       </div>
-
-      {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
     </div>
-  </div>
-) : (
-  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-    Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
-  </div>
-)}
-
-
-
-
-        {showModal && (
-<div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
-  <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg relative">
-    <h2 className="text-xl font-semibold mb-4">
-      {userPatch ? 'Edit Completion Info' : 'Mark Patch as Completed'}
-    </h2>
-
-    <label className="block mb-3">
-      <input
-        type="checkbox"
-        checked={isInProgress}
-        onChange={handleInProgressChange}
-        className="mr-2"
-      />
-      I'm still working on this patch
-    </label>
-
-    <label className="block mb-3">
-      Date Completed:
-      <input
-        type="date"
-        value={dateCompleted ?? ''}
-        onChange={(e) => {
-          setDateCompleted(e.target.value);
-          setIsInProgress(false); // uncheck if they choose a date
-        }}
-        className="block w-full border p-2 rounded"
-      />
-    </label>
-
-    <label className="block mb-3">
-      Difficulty (1–5):
-      <select
-        value={difficulty}
-        onChange={(e) => setDifficulty(e.target.value)}
-        className="block w-full border p-2 rounded"
-      >
-        <option value="">Select</option>
-        {[1, 2, 3, 4, 5].map((d) => (
-          <option key={d} value={d}>{d}</option>
-        ))}
-      </select>
-    </label>
-
-    <label className="block mb-3">
-      Notes (optional):
-      <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="block w-full border p-2 rounded"
-      />
-    </label>
-
-    <div className="flex justify-between mt-4">
-      <button
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
-      >
-        Submit
-      </button>
-      <button
-        onClick={() => setShowModal(false)}
-        className="text-gray-600 hover:text-gray-800"
-      >
-        Cancel
-      </button>
+    ) : (
+    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
+      Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
     </div>
-
-    {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+  )}
   </div>
-</div>
-
-        )}
-      </div>   
-      ) : (
-      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-        Want to keep track of your progress? Log in to track your progress on this patch or indicate completion.
-      </div>
-      )}
-    </div>
   );
 }
+
 
