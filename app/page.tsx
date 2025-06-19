@@ -123,6 +123,7 @@ export default function HomePage() {
       <label className="mr-2 font-semibold">Filter by State/Province:</label>
       <select value={selectedRegion} onChange={handleRegionChange} className="p-2 border rounded">
         <option value="">All Regions</option>
+        <option value="Connecticut">Connecticut</option>
         <option value="Massachusetts">Massachusetts</option>
         <option value="New Hampshire">New Hampshire</option>
         <option value="Vermont">Vermont</option>

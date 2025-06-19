@@ -204,7 +204,7 @@ export default function AdminPage() {
           }
           className="w-full p-2 border rounded"
         >
-          {[ 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
+          {[ 'Connecticut', 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
           ].map((region) => (
         <option key={region} value={region}>{region}</option>
       ))}

@@ -24,11 +24,13 @@ export function PatchCard({ patch, status }: Props) {
           </span>
         )}
         {patch.imageUrl && (
+        <div className="w-32 h-32 flex items-center justify-center mb-2">
           <img
-            src={patch.imageUrl}
-            alt={patch.name}
-            className="w-32 h-32 object-cover mb-2 rounded"
-          />
+             src={patch.imageUrl}
+             alt={patch.name}
+             className="max-w-full max-h-full object-contain rounded"
+           />
+        </div>
         )}
         <h2 className="text-xl font-semibold text-center">{patch.name}</h2>
         <p className="text-sm text-gray-600 line-clamp-2 text-center">{patch.description}</p>
