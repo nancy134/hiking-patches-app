@@ -52,6 +52,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     howToGet
     imageUrl
     regions
+    difficulty
     userPatches {
       nextToken
       __typename
@@ -76,6 +77,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       howToGet
       imageUrl
       regions
+      difficulty
       createdAt
       updatedAt
       owner
@@ -100,6 +102,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       howToGet
       imageUrl
       regions
+      difficulty
       createdAt
       updatedAt
       owner

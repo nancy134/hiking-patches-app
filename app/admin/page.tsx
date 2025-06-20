@@ -13,6 +13,7 @@ import { listPatches } from '@/graphql/queries';
 import Header from '@/components/Header';
 import awsExports from '@/aws-exports';
 import { Patch } from '@/API';
+import { Difficulty } from '@/API';
 import { useAuth} from '@/context/auth-context';
 
 const bucket = awsExports.aws_user_files_s3_bucket;
@@ -33,6 +34,7 @@ export default function AdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [regions, setRegions] = useState<string[]>([]);
   const { user, isAdmin } = useAuth();
+  const [difficulty, setDifficulty] = useState<Difficulty | ''>(''); 
 
   const patchesPerPage = 25;
 
@@ -72,6 +74,7 @@ export default function AdminPage() {
     setHowToGet('');
     setImageFile(null);
     setRegions([]);
+    setDifficulty('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,7 +108,8 @@ export default function AdminPage() {
               description,
               howToGet,
               imageUrl,
-              regions
+              regions,
+              difficulty : difficulty as Difficulty
             },
           },
           authMode: 'userPool',
@@ -114,7 +118,14 @@ export default function AdminPage() {
         await client.graphql({
           query: createPatch,
           variables: {
-            input: { name, description, howToGet, imageUrl, regions },
+            input: { 
+              name, 
+              description, 
+              howToGet, 
+              imageUrl, 
+              regions, 
+              difficulty : difficulty as Difficulty 
+            },
           },
           authMode: 'userPool',
         });
@@ -136,6 +147,7 @@ export default function AdminPage() {
     setDescription(patch.description ?? '');
     setHowToGet(patch.howToGet ?? '');
     setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
+    setDifficulty(patch.difficulty ?? '');
   };
 
   const handleDelete = async (id: string) => {
@@ -206,10 +218,22 @@ export default function AdminPage() {
         >
           {[ 'Connecticut', 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
           ].map((region) => (
-        <option key={region} value={region}>{region}</option>
-      ))}
-      </select>
-
+            <option key={region} value={region}>{region}</option>
+          ))}
+        </select>
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+          className="w-full p-2 border rounded"
+          required
+        >
+          <option value="">Select Difficulty</option>
+          <option value="EASY">Easy</option>
+          <option value="MODERATE">Moderate</option>
+          <option value="HARD">Hard</option>
+          <option value="EXTRA_HARD">Extra Hard</option>
+          <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
+        </select>
         <input
           type="file"
           accept="image/*"
@@ -240,6 +264,7 @@ export default function AdminPage() {
             <th className="border px-4 py-2">Description</th>
             <th className="border px-4 py-2">Image</th>
             <th className="border px-4 py-2">Regions</th>
+            <th className="border px-4 py-2">Difficulty</th>
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -252,6 +277,7 @@ export default function AdminPage() {
                 <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
               </td>
               <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
+              <td className="border px-4 py-2">{patch.difficulty}</td>
               <td className="border px-4 py-2 space-x-2">
                 <button onClick={() => handleEdit(patch)} className="text-blue-600 underline">
                   Edit

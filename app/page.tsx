@@ -65,6 +65,7 @@ export default function HomePage() {
           query: listPatches
         });
         const patches = response?.data?.listPatches?.items || [];
+        console.log(patches);
         setAllPatches(patches);
         setFilteredPatches(patches);
       } catch (error) {

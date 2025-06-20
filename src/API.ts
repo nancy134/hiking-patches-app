@@ -32,11 +32,21 @@ export type Patch = {
   howToGet?: string | null,
   imageUrl?: string | null,
   regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
   userPatches?: ModelUserPatchConnection | null,
   createdAt: string,
   updatedAt: string,
   owner?: string | null,
 };
+
+export enum Difficulty {
+  EASY = "EASY",
+  MODERATE = "MODERATE",
+  HARD = "HARD",
+  EXTRA_HARD = "EXTRA_HARD",
+  EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
+}
+
 
 export type CreatePatchRequestInput = {
   id?: string | null,
@@ -122,6 +132,7 @@ export type CreatePatchInput = {
   howToGet?: string | null,
   imageUrl?: string | null,
   regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
 };
 
 export type ModelPatchConditionInput = {
@@ -130,12 +141,18 @@ export type ModelPatchConditionInput = {
   howToGet?: ModelStringInput | null,
   imageUrl?: ModelStringInput | null,
   regions?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
   and?: Array< ModelPatchConditionInput | null > | null,
   or?: Array< ModelPatchConditionInput | null > | null,
   not?: ModelPatchConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   owner?: ModelStringInput | null,
+};
+
+export type ModelDifficultyInput = {
+  eq?: Difficulty | null,
+  ne?: Difficulty | null,
 };
 
 export type UpdatePatchInput = {
@@ -145,6 +162,7 @@ export type UpdatePatchInput = {
   howToGet?: string | null,
   imageUrl?: string | null,
   regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
 };
 
 export type DeletePatchInput = {
@@ -252,6 +270,7 @@ export type ModelPatchFilterInput = {
   howToGet?: ModelStringInput | null,
   imageUrl?: ModelStringInput | null,
   regions?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchFilterInput | null > | null,
@@ -336,6 +355,7 @@ export type ModelSubscriptionPatchFilterInput = {
   howToGet?: ModelSubscriptionStringInput | null,
   imageUrl?: ModelSubscriptionStringInput | null,
   regions?: ModelSubscriptionStringInput | null,
+  difficulty?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
@@ -470,6 +490,7 @@ export type CreatePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -494,6 +515,7 @@ export type UpdatePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -518,6 +540,7 @@ export type DeletePatchMutation = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -546,6 +569,7 @@ export type CreateUserPatchMutation = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -580,6 +604,7 @@ export type UpdateUserPatchMutation = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -614,6 +639,7 @@ export type DeleteUserPatchMutation = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -679,6 +705,7 @@ export type GetPatchQuery = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -706,6 +733,7 @@ export type ListPatchesQuery = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -731,6 +759,7 @@ export type GetUserPatchQuery = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -862,6 +891,7 @@ export type OnCreatePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -886,6 +916,7 @@ export type OnUpdatePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -910,6 +941,7 @@ export type OnDeletePatchSubscription = {
     howToGet?: string | null,
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -938,6 +970,7 @@ export type OnCreateUserPatchSubscription = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -972,6 +1005,7 @@ export type OnUpdateUserPatchSubscription = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -1006,6 +1040,7 @@ export type OnDeleteUserPatchSubscription = {
       howToGet?: string | null,
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,

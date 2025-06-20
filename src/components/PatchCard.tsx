@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { Patch } from '@/API';
+import { Difficulty } from '@/API';
 
 type Props = {
   patch: Patch;
   status: string;
 };
 
-type DiamonProps = {
-  number: int;
+type DiamondProps = {
+  num: number;
 }
 
 function GreenCircleIcon() {
@@ -17,10 +18,10 @@ function BlueSquareIcon() {
   return <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" fill="blue" /></svg>;
 }
 
-function Diamonds({number} : DiamondProps){
+function Diamonds({num} : DiamondProps){
   return (
     <div className="flex">
-    {Array.from({ length: number}).map((_, i) => (
+    {Array.from({ length: num}).map((_, i) => (
       <svg key={i} viewBox="0 0 24 24" className="w-4 h-5 text-black fill-current">
         <polygon points="12,0 19,12 12,24 5,12" />
       </svg>
@@ -29,23 +30,23 @@ function Diamonds({number} : DiamondProps){
   );
 }
 
-const renderDifficultyIcon = (difficulty?: string) => {
+const renderDifficultyIcon = (difficulty: Difficulty | null | undefined) => {
   const diamond = (
     <svg viewBox="0 0 24 24" className="w-3 h-5 text-black fill-current">
       <polygon points="12,0 19,12 12,24 5,12" />
     </svg>
   );
   switch (difficulty) {
-    case 'Easy':
+    case 'EASY':
       return <GreenCircleIcon />;
-    case 'Moderate':
+    case 'MODERATE':
       return <BlueSquareIcon />;
-    case 'Hard':
-      return <Diamonds number="1" />;
-    case 'Extra Hard':
-      return <Diamonds number="2" />;
-    case 'Extra Extra Hard':
-      return <Diamonds number="3" />;
+    case 'HARD':
+      return <Diamonds num={1} />;
+    case 'EXTRA_HARD':
+      return <Diamonds num={2} />;
+    case 'EXTRA_EXTRA_HARD':
+      return <Diamonds num={3} />;
     default:
       return null;
   }

@@ -70,6 +70,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     howToGet
     imageUrl
     regions
+    difficulty
     userPatches {
       nextToken
       __typename
@@ -95,6 +96,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     howToGet
     imageUrl
     regions
+    difficulty
     userPatches {
       nextToken
       __typename
@@ -120,6 +122,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     howToGet
     imageUrl
     regions
+    difficulty
     userPatches {
       nextToken
       __typename
@@ -148,6 +151,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       howToGet
       imageUrl
       regions
+      difficulty
       createdAt
       updatedAt
       owner
@@ -183,6 +187,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       howToGet
       imageUrl
       regions
+      difficulty
       createdAt
       updatedAt
       owner
@@ -218,6 +223,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       howToGet
       imageUrl
       regions
+      difficulty
       createdAt
       updatedAt
       owner
