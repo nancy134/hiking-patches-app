@@ -362,7 +362,7 @@ export default function PatchDetailPage() {
     </div>
     ) : (
     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-      Want to keep track of your progress? Login to mark this patch as complete and add your own notes.
+      Want to keep track of your progress? Sign in to mark your patches a complete or in progress.
     </div>
   )}
   </div>
