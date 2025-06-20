@@ -99,17 +99,17 @@ export default function HomePage() {
   return (
   <div className="p-4">
     <Header />
-    <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
+    <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
       <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
       <p className="text-gray-700">
       This site is a place for hiking enthusiasts to discover new patches to pursue and 
       celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
       there’s always a new patch waiting.
-    </p>
-  </div>
-  <div className="font-semibold">Search for patches</div>
-    <SearchBar value={searchTerm} onChange={handleSearch} />
-    <p className="text-right text-gray-700">
+      </p>
+    </div>
+    {/*<div className="font-semibold">Search for patches</div>
+    <SearchBar value={searchTerm} onChange={handleSearch} /> */}
+    <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
       Don’t see a patch ?{' '}
       <a
         href="/request-patch"
@@ -118,7 +118,7 @@ export default function HomePage() {
         Contact us
       </a>{' '}
       and we’ll add it!
-    </p>
+    </div>
     <div className="my-4">
       <label className="mr-2 font-semibold">Filter by State/Province:</label>
       <select value={selectedRegion} onChange={handleRegionChange} className="p-2 border rounded">
