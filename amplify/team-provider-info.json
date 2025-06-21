@@ -24,7 +24,8 @@
       "function": {
         "listUsersFunction": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/listUsersFunction-463774416e5752436e73-build.zip"
+          "s3Key": "amplify-builds/listUsersFunction-463774416e5752436e73-build.zip",
+          "authYouruserpoolidUserpoolid": "us-east-1_7sOys7dV8"
         }
       }
     }
