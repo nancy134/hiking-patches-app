@@ -8,42 +8,6 @@ type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryOutput: OutputType;
 };
 
-export const getPatchRequest = /* GraphQL */ `query GetPatchRequest($id: ID!) {
-  getPatchRequest(id: $id) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedQuery<
-  APITypes.GetPatchRequestQueryVariables,
-  APITypes.GetPatchRequestQuery
->;
-export const listPatchRequests = /* GraphQL */ `query ListPatchRequests(
-  $filter: ModelPatchRequestFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listPatchRequests(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      email
-      description
-      createdAt
-      updatedAt
-      __typename
-    }
-    nextToken
-    __typename
-  }
-}
-` as GeneratedQuery<
-  APITypes.ListPatchRequestsQueryVariables,
-  APITypes.ListPatchRequestsQuery
->;
 export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
   getPatch(id: $id) {
     id
@@ -187,4 +151,40 @@ export const userPatchesByPatchID = /* GraphQL */ `query UserPatchesByPatchID(
 ` as GeneratedQuery<
   APITypes.UserPatchesByPatchIDQueryVariables,
   APITypes.UserPatchesByPatchIDQuery
+>;
+export const getPatchRequest = /* GraphQL */ `query GetPatchRequest($id: ID!) {
+  getPatchRequest(id: $id) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetPatchRequestQueryVariables,
+  APITypes.GetPatchRequestQuery
+>;
+export const listPatchRequests = /* GraphQL */ `query ListPatchRequests(
+  $filter: ModelPatchRequestFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPatchRequests(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      email
+      description
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListPatchRequestsQueryVariables,
+  APITypes.ListPatchRequestsQuery
 >;

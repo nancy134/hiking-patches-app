@@ -8,54 +8,6 @@ type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionOutput: OutputType;
 };
 
-export const onCreatePatchRequest = /* GraphQL */ `subscription OnCreatePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onCreatePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnCreatePatchRequestSubscriptionVariables,
-  APITypes.OnCreatePatchRequestSubscription
->;
-export const onUpdatePatchRequest = /* GraphQL */ `subscription OnUpdatePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onUpdatePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnUpdatePatchRequestSubscriptionVariables,
-  APITypes.OnUpdatePatchRequestSubscription
->;
-export const onDeletePatchRequest = /* GraphQL */ `subscription OnDeletePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onDeletePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeletePatchRequestSubscriptionVariables,
-  APITypes.OnDeletePatchRequestSubscription
->;
 export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
   $filter: ModelSubscriptionPatchFilterInput
   $owner: String
@@ -241,4 +193,52 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
 ` as GeneratedSubscription<
   APITypes.OnDeleteUserPatchSubscriptionVariables,
   APITypes.OnDeleteUserPatchSubscription
+>;
+export const onCreatePatchRequest = /* GraphQL */ `subscription OnCreatePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
+) {
+  onCreatePatchRequest(filter: $filter) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreatePatchRequestSubscriptionVariables,
+  APITypes.OnCreatePatchRequestSubscription
+>;
+export const onUpdatePatchRequest = /* GraphQL */ `subscription OnUpdatePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
+) {
+  onUpdatePatchRequest(filter: $filter) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchRequestSubscriptionVariables,
+  APITypes.OnUpdatePatchRequestSubscription
+>;
+export const onDeletePatchRequest = /* GraphQL */ `subscription OnDeletePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
+) {
+  onDeletePatchRequest(filter: $filter) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchRequestSubscriptionVariables,
+  APITypes.OnDeletePatchRequestSubscription
 >;

@@ -246,23 +246,6 @@ export type DeleteUserPatchInput = {
   id: string,
 };
 
-export type ModelPatchRequestFilterInput = {
-  id?: ModelIDInput | null,
-  email?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchRequestFilterInput | null > | null,
-  or?: Array< ModelPatchRequestFilterInput | null > | null,
-  not?: ModelPatchRequestFilterInput | null,
-};
-
-export type ModelPatchRequestConnection = {
-  __typename: "ModelPatchRequestConnection",
-  items:  Array<PatchRequest | null >,
-  nextToken?: string | null,
-};
-
 export type ModelPatchFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -308,14 +291,36 @@ export enum ModelSortDirection {
 }
 
 
-export type ModelSubscriptionPatchRequestFilterInput = {
+export type ModelPatchRequestFilterInput = {
+  id?: ModelIDInput | null,
+  email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelPatchRequestFilterInput | null > | null,
+  or?: Array< ModelPatchRequestFilterInput | null > | null,
+  not?: ModelPatchRequestFilterInput | null,
+};
+
+export type ModelPatchRequestConnection = {
+  __typename: "ModelPatchRequestConnection",
+  items:  Array<PatchRequest | null >,
+  nextToken?: string | null,
+};
+
+export type ModelSubscriptionPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  email?: ModelSubscriptionStringInput | null,
+  name?: ModelSubscriptionStringInput | null,
   description?: ModelSubscriptionStringInput | null,
+  howToGet?: ModelSubscriptionStringInput | null,
+  imageUrl?: ModelSubscriptionStringInput | null,
+  regions?: ModelSubscriptionStringInput | null,
+  difficulty?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -346,21 +351,6 @@ export type ModelSubscriptionStringInput = {
   beginsWith?: string | null,
   in?: Array< string | null > | null,
   notIn?: Array< string | null > | null,
-};
-
-export type ModelSubscriptionPatchFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  name?: ModelSubscriptionStringInput | null,
-  description?: ModelSubscriptionStringInput | null,
-  howToGet?: ModelSubscriptionStringInput | null,
-  imageUrl?: ModelSubscriptionStringInput | null,
-  regions?: ModelSubscriptionStringInput | null,
-  difficulty?: ModelSubscriptionStringInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  owner?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionUserPatchFilterInput = {
@@ -394,6 +384,16 @@ export type ModelSubscriptionIntInput = {
 export type ModelSubscriptionBooleanInput = {
   ne?: boolean | null,
   eq?: boolean | null,
+};
+
+export type ModelSubscriptionPatchRequestFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  email?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
 };
 
 export type ListUserPatchesWithPatchQueryVariables = {
@@ -656,42 +656,6 @@ export type DeleteUserPatchMutation = {
   } | null,
 };
 
-export type GetPatchRequestQueryVariables = {
-  id: string,
-};
-
-export type GetPatchRequestQuery = {
-  getPatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchRequestsQueryVariables = {
-  filter?: ModelPatchRequestFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchRequestsQuery = {
-  listPatchRequests?:  {
-    __typename: "ModelPatchRequestConnection",
-    items:  Array< {
-      __typename: "PatchRequest",
-      id: string,
-      email: string,
-      description: string,
-      createdAt?: string | null,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
 export type GetPatchQueryVariables = {
   id: string,
 };
@@ -832,12 +796,12 @@ export type UserPatchesByPatchIDQuery = {
   } | null,
 };
 
-export type OnCreatePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+export type GetPatchRequestQueryVariables = {
+  id: string,
 };
 
-export type OnCreatePatchRequestSubscription = {
-  onCreatePatchRequest?:  {
+export type GetPatchRequestQuery = {
+  getPatchRequest?:  {
     __typename: "PatchRequest",
     id: string,
     email: string,
@@ -847,33 +811,24 @@ export type OnCreatePatchRequestSubscription = {
   } | null,
 };
 
-export type OnUpdatePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+export type ListPatchRequestsQueryVariables = {
+  filter?: ModelPatchRequestFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
 };
 
-export type OnUpdatePatchRequestSubscription = {
-  onUpdatePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
-};
-
-export type OnDeletePatchRequestSubscription = {
-  onDeletePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
+export type ListPatchRequestsQuery = {
+  listPatchRequests?:  {
+    __typename: "ModelPatchRequestConnection",
+    items:  Array< {
+      __typename: "PatchRequest",
+      id: string,
+      email: string,
+      description: string,
+      createdAt?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
   } | null,
 };
 
@@ -1054,5 +1009,50 @@ export type OnDeleteUserPatchSubscription = {
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
+  } | null,
+};
+
+export type OnCreatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnCreatePatchRequestSubscription = {
+  onCreatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnUpdatePatchRequestSubscription = {
+  onUpdatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnDeletePatchRequestSubscription = {
+  onDeletePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
   } | null,
 };
