@@ -70,6 +70,14 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_listUsersFunction_authYouruserpoolidUserpoolid": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "listUsersFunction"
+        }
+      ]
+    },
     "AMPLIFY_function_listUsersFunction_deploymentBucketName": {
       "usedBy": [
         {
