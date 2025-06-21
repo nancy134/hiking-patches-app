@@ -6,6 +6,7 @@ import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
 import { Patch, Difficulty } from '@/API';
 import awsExports from '@/aws-exports';
+import FileUploader from '@/components/FileUploader';
 
 const client = generateClient();
 const bucket = awsExports.aws_user_files_s3_bucket;
@@ -144,11 +145,9 @@ export default function PatchFormModal({
             <option value="EXTRA_HARD">Extra Hard</option>
             <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
           </select>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-            className="w-full"
+          <FileUploader
+            onFileSelected={(file) => setImageFile(file)}
+            label="Upload Patch Image"
           />
           <div className="flex justify-end gap-4">
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
