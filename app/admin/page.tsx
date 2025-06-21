@@ -10,9 +10,14 @@ export default function AdminDashboard() {
     },
     {
       title: 'Review Requests',
-      description: 'Approve or reject new patch submissions.',
+      description: 'Review new patch submissions.',
       href: '/admin/requests',
     },
+    {
+      title: 'Users',
+      description: 'See list of users',
+      href: '/admin/users',
+    }
   ];
 
   return (
