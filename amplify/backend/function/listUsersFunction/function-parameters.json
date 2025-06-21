@@ -4,6 +4,10 @@
     {
       "cloudFormationParameterName": "authYouruserpoolidUserpoolid",
       "environmentVariableName": "AUTH_YOURUSERPOOLID_USERPOOLID"
+    },
+    {
+      "cloudFormationParameterName": "authYouruserpoolidUserpoolid",
+      "environmentVariableName": "AUTH_YOURUSERPOOLID_USERPOOLID"
     }
   ]
 }
