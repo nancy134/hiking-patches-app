@@ -21,6 +21,8 @@ export default function HomePage() {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [completedPatches, setCompletedPatches] = useState<{ patchID: string; completedDate: string | null }[]>([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState('');
+
 
   const { user } = useAuth();
 
@@ -76,22 +78,29 @@ export default function HomePage() {
     fetchPatches();
   }, []);
 
-  useEffect(() => {
-    let filtered = allPatches;
+useEffect(() => {
+  let filtered = allPatches;
 
-    if (searchTerm) {
-      filtered = filtered.filter(patch =>
-        patch.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (selectedRegion) {
-      filtered = filtered.filter(patch =>
-        patch.regions?.includes(selectedRegion)
-      );
-    }
+  if (searchTerm) {
+    filtered = filtered.filter(patch =>
+      patch.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
 
-    setFilteredPatches(filtered);
-  }, [searchTerm, selectedRegion, allPatches]);
+  if (selectedRegion) {
+    filtered = filtered.filter(patch =>
+      patch.regions?.includes(selectedRegion)
+    );
+  }
+
+  if (selectedDifficulty) {
+    filtered = filtered.filter(patch =>
+      patch.difficulty === selectedDifficulty
+    );
+  }
+
+  setFilteredPatches(filtered);
+}, [searchTerm, selectedRegion, selectedDifficulty, allPatches]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -120,17 +129,41 @@ export default function HomePage() {
       </a>{' '}
       and we’ll add it!
     </div>
-    <div className="my-4">
-      <label className="mr-2 font-semibold">Filter by State/Province:</label>
-      <select value={selectedRegion} onChange={handleRegionChange} className="p-2 border rounded">
-        <option value="">All Regions</option>
-        <option value="Connecticut">Connecticut</option>
-        <option value="Massachusetts">Massachusetts</option>
-        <option value="New Hampshire">New Hampshire</option>
-        <option value="Vermont">Vermont</option>
-        <option value="New York">New York</option>
-      </select>
+
+    <div className="flex flex-wrap gap-4 items-center my-4">
+      <div>
+        <label className="mr-2 font-semibold">State:</label>
+        <select
+          value={selectedRegion}
+          onChange={handleRegionChange}
+          className="p-2 border rounded min-w-[160px]"
+        >
+          <option value="">All Regions</option>
+          <option value="Connecticut">Connecticut</option>
+          <option value="Massachusetts">Massachusetts</option>
+          <option value="New Hampshire">New Hampshire</option>
+          <option value="Vermont">Vermont</option>
+          <option value="New York">New York</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="mr-2 font-semibold">Difficulty:</label>
+        <select
+          value={selectedDifficulty}
+          onChange={(e) => setSelectedDifficulty(e.target.value)}
+          className="p-2 border rounded min-w-[160px]"
+        >
+          <option value="">All Difficulties</option>
+          <option value="EASY">Easy</option>
+          <option value="MODERATE">Moderate</option>
+          <option value="HARD">Hard</option>
+          <option value="EXTRA_HARD">Extra Hard</option>
+          <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
+        </select>
+      </div>
     </div>
+
     <PatchGrid patches={filteredPatches} userPatchEntries={completedPatches} />
   </div>
   );
