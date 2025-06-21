@@ -24,6 +24,9 @@
       },
       "storage": {
         "patchImages": {}
+      },
+      "api": {
+        "hikingpatchesapp": {}
       }
     }
   },
