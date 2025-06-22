@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   //const apiUrl = process.env.LIST_USERS_API_URL; // or hardcode it for now
-  const apiUrl = "https://zlshwrb5h6.execute-api.us-east-1.amazonaws.com/staging";
-
+  const apiUrl = "https://zlshwrb5h6.execute-api.us-east-1.amazonaws.com/staging/list-users";
+  console.log(apiUrl);
   try {
     const res = await fetch(apiUrl!, {
       method: 'GET',
@@ -12,7 +12,7 @@ export async function GET() {
         'Content-Type': 'application/json',
       },
     });
-
+    console.log(res)
     if (!res.ok) {
       throw new Error(`Lambda call failed: ${res.statusText}`);
     }
