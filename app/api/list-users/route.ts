@@ -1,32 +1,36 @@
 // app/api/list-users/route.ts
+import awsExports from '@/aws-exports';
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
-  console.log("authHeader:");
-  console.log(authHeader);
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
   const token = authHeader?.split(' ')[1];
   if (!token) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
+  const apiInfo = awsExports.aws_cloud_logic_custom.find(api => api.name === 'listusers');
+  if (!apiInfo) {
+    return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
+  }
   try {
-    const res = await fetch('https://zlshwrb5h6.execute-api.us-east-1.amazonaws.com/staging/list-users', {
+    const res = await fetch(apiInfo.endpoint + '/list-users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, // if your API Gateway uses Cognito auth
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ token }), // if your Lambda expects it in body
+      body: JSON.stringify({ token }),
     });
 
-    console.log("res:");
-    console.log(res);
     if (!res.ok) {
       throw new Error(`Lambda call failed: ${res.statusText}`);
     }
 
     const data = await res.json();
-    console.log("data:");
-    console.log(data);
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (error) {
     console.error('Error calling Lambda:', error);
