@@ -18,6 +18,9 @@
     },
     "authYouruserpoolidUserpoolid": {
       "Type": "String"
+    },
+    "nextPublicUserPoolId": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -75,6 +78,9 @@
             },
             "AUTH_YOURUSERPOOLID_USERPOOLID": {
               "Ref": "authYouruserpoolidUserpoolid"
+            },
+            "NEXT_PUBLIC_USER_POOL_ID": {
+              "Ref": "nextPublicUserPoolId"
             }
           }
         },

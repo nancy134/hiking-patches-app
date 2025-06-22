@@ -86,6 +86,14 @@
         }
       ]
     },
+    "AMPLIFY_function_listUsersFunction_nextPublicUserPoolId": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "listUsersFunction"
+        }
+      ]
+    },
     "AMPLIFY_function_listUsersFunction_s3Key": {
       "usedBy": [
         {

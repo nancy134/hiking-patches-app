@@ -19,7 +19,8 @@
         "listUsersFunction": {
           "deploymentBucketName": "amplify-hikingpatchesapp-staging-a9b1a-deployment",
           "s3Key": "amplify-builds/listUsersFunction-463774416e5752436e73-build.zip",
-          "authYouruserpoolidUserpoolid": "us-east-1_YUggYUAuX"
+          "authYouruserpoolidUserpoolid": "us-east-1_YUggYUAuX",
+          "nextPublicUserPoolId": "us-east-1_YUggYUAuX"
         }
       },
       "storage": {

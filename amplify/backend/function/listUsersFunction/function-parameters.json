@@ -6,8 +6,8 @@
       "environmentVariableName": "AUTH_YOURUSERPOOLID_USERPOOLID"
     },
     {
-      "cloudFormationParameterName": "authYouruserpoolidUserpoolid",
-      "environmentVariableName": "AUTH_YOURUSERPOOLID_USERPOOLID"
+      "cloudFormationParameterName": "nextPublicUserPoolId",
+      "environmentVariableName": "NEXT_PUBLIC_USER_POOL_ID"
     }
   ]
 }
