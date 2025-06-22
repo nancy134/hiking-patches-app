@@ -19,12 +19,6 @@
     "authhikingpatchesapp368a1661UserPoolId": {
       "Type": "String",
       "Default": "authhikingpatchesapp368a1661UserPoolId"
-    },
-    "authYouruserpoolidUserpoolid": {
-      "Type": "String"
-    },
-    "nextPublicUserPoolId": {
-      "Type": "String"
     }
   },
   "Conditions": {
@@ -82,12 +76,6 @@
             },
             "AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID": {
               "Ref": "authhikingpatchesapp368a1661UserPoolId"
-            },
-            "AUTH_YOURUSERPOOLID_USERPOOLID": {
-              "Ref": "authYouruserpoolidUserpoolid"
-            },
-            "NEXT_PUBLIC_USER_POOL_ID": {
-              "Ref": "nextPublicUserPoolId"
             }
           }
         },

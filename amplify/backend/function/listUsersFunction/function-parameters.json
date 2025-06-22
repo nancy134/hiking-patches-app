@@ -1,15 +1,6 @@
 {
   "lambdaLayers": [],
-  "environmentVariableList": [
-    {
-      "cloudFormationParameterName": "authYouruserpoolidUserpoolid",
-      "environmentVariableName": "AUTH_YOURUSERPOOLID_USERPOOLID"
-    },
-    {
-      "cloudFormationParameterName": "nextPublicUserPoolId",
-      "environmentVariableName": "NEXT_PUBLIC_USER_POOL_ID"
-    }
-  ],
+  "environmentVariableList": [],
   "permissions": {
     "auth": {
       "hikingpatchesapp368a1661": [
