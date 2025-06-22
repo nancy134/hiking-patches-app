@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-hikingpatchesapp-staging-a9b1a-unauthRole",
       "StackName": "amplify-hikingpatchesapp-staging-a9b1a",
       "StackId": "arn:aws:cloudformation:us-east-1:461318555119:stack/amplify-hikingpatchesapp-staging-a9b1a/40afab90-434e-11f0-851c-122773ff3c6b",
-      "AmplifyAppId": "d1gebwofi6iyc4"
+      "AmplifyAppId": "d1gebwofi6iyc4",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-hikingpatchesapp-staging-a9b1a-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "auth": {
@@ -27,7 +28,8 @@
         "patchImages": {}
       },
       "api": {
-        "hikingpatchesapp": {}
+        "hikingpatchesapp": {},
+        "listusers": {}
       }
     }
   },

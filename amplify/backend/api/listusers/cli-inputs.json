@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "paths": {
+    "/list-users": {
+      "name": "/list-users",
+      "lambdaFunction": "listUsersFunction",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "read"
+        ]
+      }
+    }
+  }
+}
