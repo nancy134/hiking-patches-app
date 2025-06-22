@@ -17,7 +17,7 @@ export default function AdminUsersPage() {
     const fetchUsers = async () => {
       try {
         const session = await fetchAuthSession();
-        const token = session.tokens?.idToken; 
+        const token = session.tokens?.idToken?.toString();
 
         const res = await fetch('/api/list-users', {
           headers: {
