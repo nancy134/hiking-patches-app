@@ -1,4 +1,36 @@
 {
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hikingpatchesapp-dev-880ac-authRole",
+      "UnauthRoleArn": "arn:aws:iam::461318555119:role/amplify-hikingpatchesapp-dev-880ac-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::461318555119:role/amplify-hikingpatchesapp-dev-880ac-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
+      "UnauthRoleName": "amplify-hikingpatchesapp-dev-880ac-unauthRole",
+      "StackName": "amplify-hikingpatchesapp-dev-880ac",
+      "StackId": "arn:aws:cloudformation:us-east-1:461318555119:stack/amplify-hikingpatchesapp-dev-880ac/07d1fb00-3e46-11f0-b467-0affebcbdce5",
+      "AmplifyAppId": "d1gebwofi6iyc4",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-hikingpatchesapp-dev-880ac-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "hikingpatchesapp368a1661": {}
+      },
+      "api": {
+        "hikingpatchesapp": {},
+        "listusers": {}
+      },
+      "storage": {
+        "patchImages": {}
+      },
+      "function": {
+        "listUsersFunction": {
+          "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
+          "s3Key": "amplify-builds/listUsersFunction-666c2b31462b46453739-build.zip"
+        }
+      }
+    }
+  },
   "staging": {
     "awscloudformation": {
       "AuthRoleName": "amplify-hikingpatchesapp-staging-a9b1a-authRole",
@@ -28,37 +60,6 @@
       "api": {
         "hikingpatchesapp": {},
         "listusers": {}
-      }
-    }
-  },
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-hikingpatchesapp-dev-880ac-authRole",
-      "UnauthRoleArn": "arn:aws:iam::461318555119:role/amplify-hikingpatchesapp-dev-880ac-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::461318555119:role/amplify-hikingpatchesapp-dev-880ac-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-      "UnauthRoleName": "amplify-hikingpatchesapp-dev-880ac-unauthRole",
-      "StackName": "amplify-hikingpatchesapp-dev-880ac",
-      "StackId": "arn:aws:cloudformation:us-east-1:461318555119:stack/amplify-hikingpatchesapp-dev-880ac/07d1fb00-3e46-11f0-b467-0affebcbdce5",
-      "AmplifyAppId": "d1gebwofi6iyc4"
-    },
-    "categories": {
-      "auth": {
-        "hikingpatchesapp368a1661": {}
-      },
-      "api": {
-        "hikingpatchesapp": {}
-      },
-      "storage": {
-        "patchImages": {}
-      },
-      "function": {
-        "listUsersFunction": {
-          "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/listUsersFunction-463774416e5752436e73-build.zip",
-          "authYouruserpoolidUserpoolid": "us-east-1_7sOys7dV8"
-        }
       }
     }
   }
