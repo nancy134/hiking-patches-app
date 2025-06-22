@@ -9,7 +9,7 @@ export async function GET() {
   const client = new CognitoIdentityProviderClient({ region: 'us-east-1' }); // Replace with your region
 
   const command = new ListUsersCommand({
-    UserPoolId: awsExports.aws_user_pools_id, // or hardcode for testing
+    UserPoolId: process.env.AUTH_YOURUSERPOOLID_USERPOOLID, // or hardcode for testing
     Limit: 25,
   });
 
