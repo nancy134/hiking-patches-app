@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const apiUrl = process.env.LIST_USERS_API_URL; // or hardcode it for now
+  //const apiUrl = process.env.LIST_USERS_API_URL; // or hardcode it for now
+  const apiUrl = "https://zlshwrb5h6.execute-api.us-east-1.amazonaws.com/staging";
 
   try {
     const res = await fetch(apiUrl!, {
