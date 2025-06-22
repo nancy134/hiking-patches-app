@@ -79,6 +79,15 @@
   "function": {
     "listUsersFunction": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "hikingpatchesapp368a1661"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }

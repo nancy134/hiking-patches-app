@@ -1,8 +1,12 @@
-const AWS = require('aws-sdk');
+/* Amplify Params - DO NOT EDIT
+	AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID
+	ENV
+	REGION
+Amplify Params - DO NOT EDIT */const AWS = require('aws-sdk');
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
 exports.handler = async (event) => {
-  const userPoolId = process.env.AUTH_YOURUSERPOOLID_USERPOOLID; // Replace with your actual value
+  const userPoolId = process.env.AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID; // Replace with your actual value
 
   try {
     const users = await cognito.listUsers({

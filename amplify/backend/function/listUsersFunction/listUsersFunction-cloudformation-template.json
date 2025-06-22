@@ -16,6 +16,10 @@
     "s3Key": {
       "Type": "String"
     },
+    "authhikingpatchesapp368a1661UserPoolId": {
+      "Type": "String",
+      "Default": "authhikingpatchesapp368a1661UserPoolId"
+    },
     "authYouruserpoolidUserpoolid": {
       "Type": "String"
     },
@@ -75,6 +79,9 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID": {
+              "Ref": "authhikingpatchesapp368a1661UserPoolId"
             },
             "AUTH_YOURUSERPOOLID_USERPOOLID": {
               "Ref": "authYouruserpoolidUserpoolid"
@@ -172,6 +179,65 @@
                   }
                 ]
               }
+            }
+          ]
+        }
+      }
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-identity:Describe*",
+                "cognito-identity:Get*",
+                "cognito-identity:List*",
+                "cognito-idp:Describe*",
+                "cognito-idp:AdminGetDevice",
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:AdminList*",
+                "cognito-idp:List*",
+                "cognito-sync:Describe*",
+                "cognito-sync:Get*",
+                "cognito-sync:List*",
+                "iam:ListOpenIdConnectProviders",
+                "iam:ListRoles",
+                "sns:ListPlatformApplications"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:cognito-idp:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":userpool/",
+                      {
+                        "Ref": "authhikingpatchesapp368a1661UserPoolId"
+                      }
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }

@@ -9,5 +9,12 @@
       "cloudFormationParameterName": "nextPublicUserPoolId",
       "environmentVariableName": "NEXT_PUBLIC_USER_POOL_ID"
     }
-  ]
+  ],
+  "permissions": {
+    "auth": {
+      "hikingpatchesapp368a1661": [
+        "read"
+      ]
+    }
+  }
 }
