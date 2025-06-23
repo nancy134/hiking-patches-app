@@ -1,41 +1,50 @@
-'use client';
+import { useRef, useState } from 'react';
 
-import { uploadData } from 'aws-amplify/storage';
-import { fetchAuthSession } from 'aws-amplify/auth';
+type FileUploaderProps = {
+  onFileSelected: (file: File) => void;
+  label?: string;
+  accept?: string;
+};
 
-interface FileUploaderProps {
-  onUploadComplete: () => void;
-}
+export default function FileUploader({
+  onFileSelected,
+  label = 'Upload File',
+  accept = 'image/*',
+}: FileUploaderProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState('');
 
-export default function FileUploader({ onUploadComplete }: FileUploaderProps) {
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
 
-    if (!file) return;
-    const session = await fetchAuthSession();
-    const userId = session.userSub; // Unique Cognito user ID
-
-    const uniqueKey = `${userId}/${Date.now()}-${file.name}`;
-    console.log("uniqueKey: "+uniqueKey);
-    try {
-      await uploadData({
-        key: uniqueKey,
-        data: file,
-        options: {
-          contentType: file.type,
-        },
-      }).result;
-
-      console.log('✅ Upload successful');
-      onUploadComplete(); // 👈 Trigger re-fetch
-    } catch (error) {
-      console.error('❌ Upload error:', error);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      onFileSelected(file);
     }
   };
 
   return (
-    <div className="my-4">
-      <input type="file" onChange={handleFileChange} />
+    <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        onClick={handleClick}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+      >
+        {label}
+      </button>
+      <span className="text-sm text-gray-600">
+        {fileName || 'No file selected'}
+      </span>
+      <input
+        type="file"
+        accept={accept}
+        ref={fileInputRef}
+        onChange={handleChange}
+        className="hidden"
+      />
     </div>
   );
 }

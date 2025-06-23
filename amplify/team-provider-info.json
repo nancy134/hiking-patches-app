@@ -17,7 +17,8 @@
         "hikingpatchesapp368a1661": {}
       },
       "api": {
-        "hikingpatchesapp": {}
+        "hikingpatchesapp": {},
+        "listusers": {}
       },
       "storage": {
         "patchImages": {}
