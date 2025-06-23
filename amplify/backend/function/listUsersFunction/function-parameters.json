@@ -1,0 +1,11 @@
+{
+  "lambdaLayers": [],
+  "environmentVariableList": [],
+  "permissions": {
+    "auth": {
+      "hikingpatchesapp368a1661": [
+        "read"
+      ]
+    }
+  }
+}
