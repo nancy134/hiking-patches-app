@@ -8,7 +8,7 @@ type Props = {
 export const UserPatchCard: React.FC<Props> = ({ patch }) => {
   const image = patch.imageUrl ?? patch.patch?.imageUrl;
   const name = patch.patch?.name ?? 'Unknown';
-  const difficulty = patch.difficulty ?? patch.patch?.difficulty;
+  const difficulty = patch.patch?.difficulty;
 
   return (
     <PatchDisplay
