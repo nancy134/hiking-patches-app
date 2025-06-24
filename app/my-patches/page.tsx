@@ -33,6 +33,7 @@ export default function MyPatchesPage() {
     const loadPatches = async () => {
       const response = await client.graphql({ query: listUserPatchesWithPatch });
       if ('data' in response) {
+        console.log(response.data.listUserPatches.items);
         setAllUserPatches(response.data.listUserPatches.items);
       } else {
         console.error('Unexpected GraphQL response format:', response);

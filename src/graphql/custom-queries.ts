@@ -9,6 +9,8 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
         notes
         difficulty
         imageUrl
+	inProgress
+	difficulty
         createdAt
         updatedAt
         patch {
