@@ -9,6 +9,8 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
         notes
         difficulty
         imageUrl
+	inProgress
+	difficulty
         createdAt
         updatedAt
         patch {
@@ -18,6 +20,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
           howToGet
           imageUrl
           regions
+	  difficulty
           createdAt
           updatedAt
         }

@@ -1,13 +1,23 @@
 import { UserPatch } from '@/API';
+import { PatchDisplay } from './PatchDisplay';
 
-export const UserPatchCard: React.FC<{ patch: UserPatch }> = ({ patch }) => {
-  const fallbackImage = patch.imageUrl ?? patch.patch?.imageUrl ?? '';
-  
+type Props = {
+  patch: UserPatch;
+};
+
+export const UserPatchCard: React.FC<Props> = ({ patch }) => {
+  const image = patch.imageUrl ?? patch.patch?.imageUrl;
+  const name = patch.patch?.name ?? 'Unknown';
+  const difficulty = patch.patch?.difficulty;
+
   return (
-    <div className="border rounded shadow p-4 flex flex-col items-center">
-      <img src={fallbackImage} alt="Patch image" className="h-32 w-32 object-cover mb-2 rounded" />
-      <h2 className="text-xl font-semibold">{patch.dateCompleted}</h2>
-      <p className="text-sm text-gray-600">{patch.notes}</p>
-    </div>
+    <PatchDisplay
+      imageUrl={image}
+      name={name}
+      difficulty={difficulty}
+      status={patch.dateCompleted ? 'Completed' : 'In Progress'}
+      dateCompleted={patch.dateCompleted ?? undefined}
+    />
   );
 };
+

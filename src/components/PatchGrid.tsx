@@ -18,7 +18,7 @@ export default function PatchGrid({ patches, userPatchEntries = [] }: PatchGridP
       {patches.map((patch) => {
         const entry = userPatchEntries.find((e) => e.patchID === patch.id);
 
-        let status: "Not Started" | "In Progress" | "Completed" = "Not Started";
+        let status: "" | "In Progress" | "Completed" = "";
         if (entry) {
           if (entry.completedDate) {
             status = "Completed";
