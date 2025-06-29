@@ -8,11 +8,12 @@ import { generateClient } from 'aws-amplify/api';
 import { listPatches } from '@/graphql/queries';
 import { listUserPatches } from '@/graphql/queries'; 
 import { Patch } from '@/API';
-//import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
 import Header from '@/components/Header';
 import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
+
+const ITEMS_PER_PAGE = 16;
 
 export default function HomePage() {
   const [allPatches, setAllPatches] = useState<Patch[]>([]);
@@ -22,7 +23,7 @@ export default function HomePage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [completedPatches, setCompletedPatches] = useState<{ patchID: string; completedDate: string | null }[]>([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
-
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { user } = useAuth();
 
@@ -63,13 +64,9 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPatches = async () => {
       try {
-        const response = await client.graphql({ 
-          query: listPatches
-        });
+        const response = await client.graphql({ query: listPatches });
         const patches = response?.data?.listPatches?.items || [];
-        console.log(patches);
         setAllPatches(patches);
-        setFilteredPatches(patches);
       } catch (error) {
         console.error('Error fetching patches:', error);
       }
@@ -78,33 +75,42 @@ export default function HomePage() {
     fetchPatches();
   }, []);
 
-useEffect(() => {
-  let filtered = allPatches;
 
-  if (searchTerm) {
-    filtered = filtered.filter(patch =>
-      patch.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
+  useEffect(() => {
+    let filtered = allPatches;
 
-  if (selectedRegion) {
-    filtered = filtered.filter(patch =>
-      patch.regions?.includes(selectedRegion)
-    );
-  }
+    if (searchTerm) {
+      filtered = filtered.filter(patch =>
+        patch.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-  if (selectedDifficulty) {
-    filtered = filtered.filter(patch =>
-      patch.difficulty === selectedDifficulty
-    );
-  }
+    if (selectedRegion) {
+      filtered = filtered.filter(patch =>
+        patch.regions?.includes(selectedRegion)
+      );
+    }
 
-  setFilteredPatches(filtered);
-}, [searchTerm, selectedRegion, selectedDifficulty, allPatches]);
+    if (selectedDifficulty) {
+      filtered = filtered.filter(patch =>
+        patch.difficulty === selectedDifficulty
+      );
+    }
+
+    setFilteredPatches(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, selectedRegion, selectedDifficulty, allPatches]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
+
+  const paginatedPatches = filteredPatches.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const totalPages = Math.ceil(filteredPatches.length / ITEMS_PER_PAGE);
 
   return (
   <div className="p-4">
@@ -163,8 +169,26 @@ useEffect(() => {
         </select>
       </div>
     </div>
-
-    <PatchGrid patches={filteredPatches} userPatchEntries={completedPatches} />
+    {totalPages > 1 && (
+      <div className="flex justify-center mt-2 mb-2">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="px-3 py-1">Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    )}
+    <PatchGrid patches={paginatedPatches} userPatchEntries={completedPatches} />
   </div>
   );
 }
