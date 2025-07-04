@@ -1,6 +1,6 @@
 export const listUserPatchesWithPatch = /* GraphQL */ `
-  query ListUserPatchesWithPatch {
-    listUserPatches {
+  query ListUserPatchesWithPatch($filter: ModelUserPatchFilterInput, $limit: Int, $nextToken: String) {
+    listUserPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         patchID
@@ -9,8 +9,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
         notes
         difficulty
         imageUrl
-	inProgress
-	difficulty
+        inProgress
         createdAt
         updatedAt
         patch {
@@ -20,11 +19,12 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
           howToGet
           imageUrl
           regions
-	  difficulty
+          difficulty
           createdAt
           updatedAt
         }
       }
+      nextToken
     }
   }
 `;
