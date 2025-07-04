@@ -31,7 +31,14 @@ export default function MyPatchesPage() {
 
   useEffect(() => {
     const loadPatches = async () => {
-      const response = await client.graphql({ query: listUserPatchesWithPatch });
+      if (!user) return;
+      setUserID(user.userId);
+      console.log("user.userID:"+user.userId);
+
+      const response = await client.graphql({
+        query: listUserPatchesWithPatch,
+        variables: { filter: { userID: { eq: user.userId } } },
+      });
       if ('data' in response) {
         console.log(response.data.listUserPatches.items);
         setAllUserPatches(response.data.listUserPatches.items);
@@ -42,10 +49,9 @@ export default function MyPatchesPage() {
       const response1 = await client.graphql({ query: listPatches });
       setAllPatches(response1.data.listPatches.items);
 
-      if (user) setUserID(user.userId);
     };
     loadPatches();
-  }, []);
+  }, [user]);
 
   const handleUpload = async () => {
     if (!selectedPatchId || !dateCompleted || !difficulty || !imageFile) return;
