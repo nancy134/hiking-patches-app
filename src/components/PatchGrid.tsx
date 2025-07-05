@@ -1,26 +1,21 @@
 import { PatchCard } from './PatchCard';
 import { Patch } from '@/API';
-
-type PatchEntry = {
-  patchID: string;
-  completedDate: string | null;
-  inProgress?: boolean;
-};
+import { UserPatch } from '@/API';
 
 type PatchGridProps = {
   patches: Patch[];
-  userPatchEntries?: PatchEntry[];
+  userPatches?: UserPatch[];
 };
 
-export default function PatchGrid({ patches, userPatchEntries = [] }: PatchGridProps) {
+export default function PatchGrid({ patches, userPatches = [] }: PatchGridProps) {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {patches.map((patch) => {
-        const entry = userPatchEntries.find((e) => e.patchID === patch.id);
+        const entry = userPatches.find((e) => e.patchID === patch.id);
 
         let status: "" | "In Progress" | "Completed" = "";
         if (entry) {
-          if (entry.completedDate) {
+          if (entry.dateCompleted) {
             status = "Completed";
           } else if (entry.inProgress) {
             status = "In Progress";

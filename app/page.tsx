@@ -10,6 +10,8 @@ import { listUserPatches } from '@/graphql/queries';
 import { Patch } from '@/API';
 import Header from '@/components/Header';
 import { useAuth } from '@/context/auth-context';
+import { useMemo } from 'react';
+import { UserPatch } from '@/API';
 
 const client = generateClient();
 
@@ -21,11 +23,24 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [completedPatches, setCompletedPatches] = useState<{ patchID: string; completedDate: string | null }[]>([]);
+  const [completedPatches, setCompletedPatches] = useState<UserPatch[]>([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [showInProgress, setShowInProgress] = useState(true);
+  const [showNotStarted, setShowNotStarted] = useState(true);
   const { user } = useAuth();
+
+  const userPatchMap = useMemo(() => {
+    const map = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    for (const entry of completedPatches) {
+      map.set(entry.patchID, {
+        dateCompleted: entry.dateCompleted ?? null,
+        inProgress: entry.inProgress ?? false,
+      });
+    }
+    return map;
+  }, [completedPatches]);
 
   useEffect(() => {
     const fetchCompletedPatches = async () => {
@@ -42,12 +57,9 @@ export default function HomePage() {
         });
 
         const items = result.data?.listUserPatches?.items ?? [];
-        // Map to list of objects with patchID and completedDate
-        const completed = items.map((p: any) => ({
-          patchID: p.patchID,
-          completedDate: p.dateCompleted ?? null, // or whatever the actual field is called
-          inProgress: p.inProgress
-        }));
+        // Map to list of objects with patchID and dateCompleted 
+        const completed = items
+          .filter((p: any) => p.dateCompleted || p.inProgress) as UserPatch[];
         setCompletedPatches(completed);
       } catch (err) {
         console.error('Failed to fetch completed patches:', err);
@@ -96,10 +108,31 @@ export default function HomePage() {
         patch.difficulty === selectedDifficulty
       );
     }
+    // Filter by patch status
+    filtered = filtered.filter(patch => {
+      const userEntry = userPatchMap.get(patch.id);
+      const isCompleted = userEntry?.dateCompleted;
+      const isInProgress = userEntry?.inProgress && !userEntry?.dateCompleted;
+
+      if (isCompleted && showCompleted) return true;
+      if (isInProgress && showInProgress) return true;
+      if (!userEntry && showNotStarted) return true;
+
+      return false;
+    });
 
     setFilteredPatches(filtered);
     setCurrentPage(1);
-  }, [searchTerm, selectedRegion, selectedDifficulty, allPatches]);
+  }, [
+    searchTerm, 
+    selectedRegion,
+    selectedDifficulty,
+    allPatches,
+    userPatchMap,
+    showCompleted,
+    showInProgress,
+    showNotStarted
+  ]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -169,6 +202,30 @@ export default function HomePage() {
           <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
         </select>
       </div>
+      <label className="flex items-center space-x-1">
+        <input
+          type="checkbox"
+          checked={showCompleted}
+          onChange={(e) => setShowCompleted(e.target.checked)}
+        />
+        <span>Completed</span>
+      </label>
+      <label className="flex items-center space-x-1">
+        <input
+          type="checkbox"
+          checked={showInProgress}
+          onChange={(e) => setShowInProgress(e.target.checked)}
+        />
+        <span>In Progress</span>
+      </label>
+      <label className="flex items-center space-x-1">
+        <input
+          type="checkbox"
+          checked={showNotStarted}
+          onChange={(e) => setShowNotStarted(e.target.checked)}
+        />
+        <span>Not Started</span>
+      </label>
     </div>
     {totalPages > 1 && (
       <div className="flex justify-center mt-2 mb-2">
@@ -189,7 +246,7 @@ export default function HomePage() {
         </button>
       </div>
     )}
-    <PatchGrid patches={paginatedPatches} userPatchEntries={completedPatches} />
+    <PatchGrid patches={paginatedPatches} userPatches={completedPatches} />
   </div>
   );
 }
