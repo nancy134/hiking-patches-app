@@ -12,7 +12,7 @@ export const UserPatchCard: React.FC<Props> = ({ patch }) => {
   const difficulty = patch.patch?.difficulty;
 
   return (
-    <Link href={`/patch/${patch.patch.id}`}>
+    <Link href={`/patch/${patch.patch?.id}`}>
 
     <PatchDisplay
       imageUrl={image}
