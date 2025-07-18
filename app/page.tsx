@@ -202,6 +202,8 @@ export default function HomePage() {
           <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
         </select>
       </div>
+      { user && (
+      <>
       <label className="flex items-center space-x-1">
         <input
           type="checkbox"
@@ -226,6 +228,8 @@ export default function HomePage() {
         />
         <span>Not Started</span>
       </label>
+      </>
+      )}
     </div>
     {totalPages > 1 && (
       <div className="flex justify-center mt-2 mb-2">
