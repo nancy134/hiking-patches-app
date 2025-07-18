@@ -32,13 +32,14 @@ export default function Header() {
 
       <div className="space-x-4">
         <Link href="/" className="text-blue-600 hover:underline">Home</Link>
+        <Link href="/about" className="text-blue-600 hover:underline">About</Link>
+
         {user ? (
           <>
             <Link href="/my-patches" className="text-blue-600 hover:underline">My Patches</Link>
             {isAdmin && (
               <Link href="/admin" className="text-blue-600 hover:underline">Admin</Link>
             )}
-            <Link href="/about" className="text-blue-600 hover:underline">About</Link>
             <button
               onClick={async () => {
                 await logout();
