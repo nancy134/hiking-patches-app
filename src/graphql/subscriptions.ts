@@ -20,6 +20,9 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -46,6 +49,9 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -72,6 +78,9 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -101,6 +110,9 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner
@@ -137,6 +149,9 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner
@@ -173,6 +188,9 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner

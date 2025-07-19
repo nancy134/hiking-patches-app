@@ -29,6 +29,14 @@ export default function HomePage() {
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
+  const [location, setLocation] = useState<null | {
+    city: string;
+    region: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+  }>(null);
+
   const { user } = useAuth();
 
   const userPatchMap = useMemo(() => {
@@ -41,6 +49,26 @@ export default function HomePage() {
     }
     return map;
   }, [completedPatches]);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        setLocation({
+          city: data.city,
+          region: data.region,
+          country: data.country_name,
+          latitude: data.latitude,
+          longitude: data.longitude,
+        });
+      } catch (err) {
+        console.error('Failed to fetch user location', err);
+      }
+    };
+
+    fetchLocation();
+  }, []);
 
   useEffect(() => {
     const fetchCompletedPatches = async () => {
