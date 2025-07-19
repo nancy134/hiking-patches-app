@@ -26,12 +26,25 @@ export default function AdminPage() {
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const { user, isAdmin } = useAuth();
+  const [selectedState, setSelectedState] = useState<string>('All');
+
+  const uniqueStates = Array.from(
+    new Set(patches.flatMap(p => p.regions ?? []))
+  ).sort();
 
   const patchesPerPage = 25;
   const indexOfLastPatch = currentPage * patchesPerPage;
   const indexOfFirstPatch = indexOfLastPatch - patchesPerPage;
-  const currentPatches = patches.slice(indexOfFirstPatch, indexOfLastPatch);
-  const totalPages = Math.ceil(patches.length / patchesPerPage);
+
+  const filteredPatches =
+    selectedState === 'All'
+      ? patches
+      : patches.filter(patch =>
+          patch.regions?.includes(selectedState)
+        );
+
+  const totalPages = Math.ceil(filteredPatches.length / patchesPerPage);
+  const currentPatches = filteredPatches.slice(indexOfFirstPatch, indexOfLastPatch);
 
   useEffect(() => {
     fetchPatches();
@@ -94,6 +107,21 @@ export default function AdminPage() {
         >
           + Add Patch
         </button>
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="stateFilter" className="mr-2 font-semibold">Filter by State:</label>
+        <select
+          id="stateFilter"
+          value={selectedState}
+          onChange={(e) => setSelectedState(e.target.value)}
+          className="border px-2 py-1 rounded"
+        >
+          <option value="All">All</option>
+          {uniqueStates.map(state => (
+            <option key={state} value={state}>{state}</option>
+          ))}
+        </select>
       </div>
 
       {/* Modal */}
