@@ -2,70 +2,24 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type ModelUserPatchConnection = {
-  __typename: "ModelUserPatchConnection",
-  items:  Array<UserPatch | null >,
-  nextToken?: string | null,
-};
-
-export type UserPatch = {
-  __typename: "UserPatch",
-  id: string,
-  patchID: string,
-  patch?: Patch | null,
-  userID: string,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
-export type Patch = {
-  __typename: "Patch",
-  id: string,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  userPatches?: ModelUserPatchConnection | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
-export enum Difficulty {
-  EASY = "EASY",
-  MODERATE = "MODERATE",
-  HARD = "HARD",
-  EXTRA_HARD = "EXTRA_HARD",
-  EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
-}
-
-
-export type CreatePatchRequestInput = {
-  id?: string | null,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-};
-
-export type ModelPatchRequestConditionInput = {
-  email?: ModelStringInput | null,
-  description?: ModelStringInput | null,
+export type ModelUserPatchFilterInput = {
+  id?: ModelIDInput | null,
+  patchID?: ModelIDInput | null,
+  userID?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  notes?: ModelStringInput | null,
+  difficulty?: ModelIntInput | null,
+  imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
   createdAt?: ModelStringInput | null,
-  and?: Array< ModelPatchRequestConditionInput | null > | null,
-  or?: Array< ModelPatchRequestConditionInput | null > | null,
-  not?: ModelPatchRequestConditionInput | null,
   updatedAt?: ModelStringInput | null,
+  and?: Array< ModelUserPatchFilterInput | null > | null,
+  or?: Array< ModelUserPatchFilterInput | null > | null,
+  not?: ModelUserPatchFilterInput | null,
+  owner?: ModelStringInput | null,
 };
 
-export type ModelStringInput = {
+export type ModelIDInput = {
   ne?: string | null,
   eq?: string | null,
   le?: string | null,
@@ -105,98 +59,7 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type PatchRequest = {
-  __typename: "PatchRequest",
-  id: string,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-  updatedAt: string,
-};
-
-export type UpdatePatchRequestInput = {
-  id: string,
-  email?: string | null,
-  description?: string | null,
-  createdAt?: string | null,
-};
-
-export type DeletePatchRequestInput = {
-  id: string,
-};
-
-export type CreatePatchInput = {
-  id?: string | null,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-};
-
-export type ModelPatchConditionInput = {
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  howToGet?: ModelStringInput | null,
-  imageUrl?: ModelStringInput | null,
-  regions?: ModelStringInput | null,
-  difficulty?: ModelDifficultyInput | null,
-  and?: Array< ModelPatchConditionInput | null > | null,
-  or?: Array< ModelPatchConditionInput | null > | null,
-  not?: ModelPatchConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  owner?: ModelStringInput | null,
-};
-
-export type ModelDifficultyInput = {
-  eq?: Difficulty | null,
-  ne?: Difficulty | null,
-};
-
-export type UpdatePatchInput = {
-  id: string,
-  name?: string | null,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-};
-
-export type DeletePatchInput = {
-  id: string,
-};
-
-export type CreateUserPatchInput = {
-  id?: string | null,
-  patchID: string,
-  userID: string,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-};
-
-export type ModelUserPatchConditionInput = {
-  patchID?: ModelIDInput | null,
-  userID?: ModelStringInput | null,
-  dateCompleted?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
-  difficulty?: ModelIntInput | null,
-  imageUrl?: ModelStringInput | null,
-  inProgress?: ModelBooleanInput | null,
-  and?: Array< ModelUserPatchConditionInput | null > | null,
-  or?: Array< ModelUserPatchConditionInput | null > | null,
-  not?: ModelUserPatchConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  owner?: ModelStringInput | null,
-};
-
-export type ModelIDInput = {
+export type ModelStringInput = {
   ne?: string | null,
   eq?: string | null,
   le?: string | null,
@@ -231,6 +94,184 @@ export type ModelBooleanInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
+export type ModelUserPatchConnection = {
+  __typename: "ModelUserPatchConnection",
+  items:  Array<UserPatch | null >,
+  nextToken?: string | null,
+};
+
+export type UserPatch = {
+  __typename: "UserPatch",
+  id: string,
+  patchID: string,
+  patch?: Patch | null,
+  userID: string,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export type Patch = {
+  __typename: "Patch",
+  id: string,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  popularity?: number | null,
+  userPatches?: ModelUserPatchConnection | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export enum Difficulty {
+  EASY = "EASY",
+  MODERATE = "MODERATE",
+  HARD = "HARD",
+  EXTRA_HARD = "EXTRA_HARD",
+  EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
+}
+
+
+export type CreatePatchRequestInput = {
+  id?: string | null,
+  email: string,
+  description: string,
+  createdAt?: string | null,
+};
+
+export type ModelPatchRequestConditionInput = {
+  email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  and?: Array< ModelPatchRequestConditionInput | null > | null,
+  or?: Array< ModelPatchRequestConditionInput | null > | null,
+  not?: ModelPatchRequestConditionInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type PatchRequest = {
+  __typename: "PatchRequest",
+  id: string,
+  email: string,
+  description: string,
+  createdAt?: string | null,
+  updatedAt: string,
+};
+
+export type UpdatePatchRequestInput = {
+  id: string,
+  email?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+};
+
+export type DeletePatchRequestInput = {
+  id: string,
+};
+
+export type CreatePatchInput = {
+  id?: string | null,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  popularity?: number | null,
+};
+
+export type ModelPatchConditionInput = {
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  howToGet?: ModelStringInput | null,
+  imageUrl?: ModelStringInput | null,
+  regions?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  popularity?: ModelIntInput | null,
+  and?: Array< ModelPatchConditionInput | null > | null,
+  or?: Array< ModelPatchConditionInput | null > | null,
+  not?: ModelPatchConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  owner?: ModelStringInput | null,
+};
+
+export type ModelDifficultyInput = {
+  eq?: Difficulty | null,
+  ne?: Difficulty | null,
+};
+
+export type ModelFloatInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
+export type UpdatePatchInput = {
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  popularity?: number | null,
+};
+
+export type DeletePatchInput = {
+  id: string,
+};
+
+export type CreateUserPatchInput = {
+  id?: string | null,
+  patchID: string,
+  userID: string,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+};
+
+export type ModelUserPatchConditionInput = {
+  patchID?: ModelIDInput | null,
+  userID?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  notes?: ModelStringInput | null,
+  difficulty?: ModelIntInput | null,
+  imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
+  and?: Array< ModelUserPatchConditionInput | null > | null,
+  or?: Array< ModelUserPatchConditionInput | null > | null,
+  not?: ModelUserPatchConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  owner?: ModelStringInput | null,
+};
+
 export type UpdateUserPatchInput = {
   id: string,
   patchID?: string | null,
@@ -254,6 +295,9 @@ export type ModelPatchFilterInput = {
   imageUrl?: ModelStringInput | null,
   regions?: ModelStringInput | null,
   difficulty?: ModelDifficultyInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  popularity?: ModelIntInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchFilterInput | null > | null,
@@ -266,23 +310,6 @@ export type ModelPatchConnection = {
   __typename: "ModelPatchConnection",
   items:  Array<Patch | null >,
   nextToken?: string | null,
-};
-
-export type ModelUserPatchFilterInput = {
-  id?: ModelIDInput | null,
-  patchID?: ModelIDInput | null,
-  userID?: ModelStringInput | null,
-  dateCompleted?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
-  difficulty?: ModelIntInput | null,
-  imageUrl?: ModelStringInput | null,
-  inProgress?: ModelBooleanInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelUserPatchFilterInput | null > | null,
-  or?: Array< ModelUserPatchFilterInput | null > | null,
-  not?: ModelUserPatchFilterInput | null,
-  owner?: ModelStringInput | null,
 };
 
 export enum ModelSortDirection {
@@ -316,6 +343,9 @@ export type ModelSubscriptionPatchFilterInput = {
   imageUrl?: ModelSubscriptionStringInput | null,
   regions?: ModelSubscriptionStringInput | null,
   difficulty?: ModelSubscriptionStringInput | null,
+  latitude?: ModelSubscriptionFloatInput | null,
+  longitude?: ModelSubscriptionFloatInput | null,
+  popularity?: ModelSubscriptionIntInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
@@ -353,6 +383,30 @@ export type ModelSubscriptionStringInput = {
   notIn?: Array< string | null > | null,
 };
 
+export type ModelSubscriptionFloatInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  in?: Array< number | null > | null,
+  notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  in?: Array< number | null > | null,
+  notIn?: Array< number | null > | null,
+};
+
 export type ModelSubscriptionUserPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   patchID?: ModelSubscriptionIDInput | null,
@@ -367,18 +421,6 @@ export type ModelSubscriptionUserPatchFilterInput = {
   and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
   owner?: ModelStringInput | null,
-};
-
-export type ModelSubscriptionIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  in?: Array< number | null > | null,
-  notIn?: Array< number | null > | null,
 };
 
 export type ModelSubscriptionBooleanInput = {
@@ -397,6 +439,9 @@ export type ModelSubscriptionPatchRequestFilterInput = {
 };
 
 export type ListUserPatchesWithPatchQueryVariables = {
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
 };
 
 export type ListUserPatchesWithPatchQuery = {
@@ -411,6 +456,7 @@ export type ListUserPatchesWithPatchQuery = {
       notes?: string | null,
       difficulty?: number | null,
       imageUrl?: string | null,
+      inProgress?: boolean | null,
       createdAt: string,
       updatedAt: string,
       patch?:  {
@@ -421,10 +467,12 @@ export type ListUserPatchesWithPatchQuery = {
         howToGet?: string | null,
         imageUrl?: string | null,
         regions?: Array< string | null > | null,
+        difficulty?: Difficulty | null,
         createdAt: string,
         updatedAt: string,
       } | null,
     } | null >,
+    nextToken?: string | null,
   } | null,
 };
 
@@ -491,6 +539,9 @@ export type CreatePatchMutation = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -516,6 +567,9 @@ export type UpdatePatchMutation = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -541,6 +595,9 @@ export type DeletePatchMutation = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -570,6 +627,9 @@ export type CreateUserPatchMutation = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -605,6 +665,9 @@ export type UpdateUserPatchMutation = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -640,6 +703,9 @@ export type DeleteUserPatchMutation = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -670,6 +736,9 @@ export type GetPatchQuery = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -698,6 +767,9 @@ export type ListPatchesQuery = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -724,6 +796,9 @@ export type GetUserPatchQuery = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -847,6 +922,9 @@ export type OnCreatePatchSubscription = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -872,6 +950,9 @@ export type OnUpdatePatchSubscription = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -897,6 +978,9 @@ export type OnDeletePatchSubscription = {
     imageUrl?: string | null,
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    popularity?: number | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -926,6 +1010,9 @@ export type OnCreateUserPatchSubscription = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -961,6 +1048,9 @@ export type OnUpdateUserPatchSubscription = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,
@@ -996,6 +1086,9 @@ export type OnDeleteUserPatchSubscription = {
       imageUrl?: string | null,
       regions?: Array< string | null > | null,
       difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
       createdAt: string,
       updatedAt: string,
       owner?: string | null,

@@ -28,6 +28,9 @@ export default function PatchFormModal({
   const [regions, setRegions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty | ''>('');
   const [loading, setLoading] = useState(false);
+  const [latitude, setLatitude] = useState<number | null>(null); 
+  const [longitude, setLongitude] = useState<number | null>(null); 
+  const [popularity, setPopularity] = useState<number | null>(null);
 
   useEffect(() => {
     if (patch) {
@@ -36,6 +39,9 @@ export default function PatchFormModal({
       setHowToGet(patch.howToGet ?? '');
       setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
       setDifficulty(patch.difficulty ?? '');
+      setLatitude(isNaN(Number(patch.latitude)) ? null : patch.latitude ?? null);
+      setLongitude(isNaN(Number(patch.longitude)) ? null : patch.longitude ?? null);
+      setPopularity(isNaN(Number(patch.popularity)) ? null : Number(patch.popularity));
     }
   }, [patch]);
 
@@ -61,7 +67,10 @@ export default function PatchFormModal({
               howToGet,
               imageUrl,
               regions,
-              difficulty: difficulty as Difficulty
+              difficulty: difficulty as Difficulty,
+              latitude,
+              longitude,
+              popularity
             }
           },
           authMode: 'userPool'
@@ -76,7 +85,10 @@ export default function PatchFormModal({
               howToGet,
               imageUrl,
               regions,
-              difficulty: difficulty as Difficulty 
+              difficulty: difficulty as Difficulty,
+              latitude,
+              longitude,
+              popularity
             }
           },
           authMode: 'userPool'
@@ -145,6 +157,33 @@ export default function PatchFormModal({
             <option value="EXTRA_HARD">Extra Hard</option>
             <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
           </select>
+          <input
+            type="text"
+            value={latitude ?? ''}
+            onChange={(e) => setLatitude(parseFloat(e.target.value))}
+            placeholder="Latitude"
+            className="w-full p-2 border rounded"
+          />
+          <input
+            type="text"
+            value={longitude ?? ''}
+            onChange={(e) => setLongitude(parseFloat(e.target.value))}
+            placeholder="Longitude"
+            className="w-full p-2 border rounded"
+          />
+          <label>
+            Popularity (1–5):
+            <input
+              type="number"
+              min={1}
+              max={5}
+              value={popularity ?? ''}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setPopularity(isNaN(val) ? null : val);
+              }}
+            />
+          </label>
           <FileUploader
             onFileSelected={(file) => setImageFile(file)}
             label="Upload Patch Image"

@@ -23,6 +23,9 @@ type Patch @model
   imageUrl: String
   regions: [String]
   difficulty: Difficulty
+  latitude: Float
+  longitude: Float
+  popularity: Int
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
 }
 

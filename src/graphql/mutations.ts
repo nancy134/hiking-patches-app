@@ -71,6 +71,9 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -97,6 +100,9 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -123,6 +129,9 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     imageUrl
     regions
     difficulty
+    latitude
+    longitude
+    popularity
     userPatches {
       nextToken
       __typename
@@ -152,6 +161,9 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner
@@ -188,6 +200,9 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner
@@ -224,6 +239,9 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       imageUrl
       regions
       difficulty
+      latitude
+      longitude
+      popularity
       createdAt
       updatedAt
       owner
