@@ -149,7 +149,8 @@ export default function HomePage() {
       return false;
     });
 
-    setFilteredPatches(filtered);
+    const sorted = filtered.slice().sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+    setFilteredPatches(sorted);
     setCurrentPage(1);
   }, [
     searchTerm, 
