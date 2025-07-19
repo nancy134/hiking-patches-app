@@ -29,7 +29,7 @@ export default function AdminPage() {
   const [selectedState, setSelectedState] = useState<string>('All');
 
   const uniqueStates = Array.from(
-    new Set(patches.flatMap(p => p.regions ?? []))
+    new Set(patches.flatMap(p => p.regions ?? []).filter((r): r is string => !!r))
   ).sort();
 
   const patchesPerPage = 25;
@@ -119,8 +119,8 @@ export default function AdminPage() {
         >
           <option value="All">All</option>
           {uniqueStates.map(state => (
-            <option key={state} value={state}>{state}</option>
-          ))}
+          <option key={state} value={state}>{state}</option>
+          ))}        
         </select>
       </div>
 
