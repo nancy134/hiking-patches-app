@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { user, isAdmin } = useAuth();
   const [selectedState, setSelectedState] = useState<string>('All');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const uniqueStates = Array.from(
     new Set(patches.flatMap(p => p.regions ?? []).filter((r): r is string => !!r))
@@ -36,12 +37,15 @@ export default function AdminPage() {
   const indexOfLastPatch = currentPage * patchesPerPage;
   const indexOfFirstPatch = indexOfLastPatch - patchesPerPage;
 
-  const filteredPatches =
-    selectedState === 'All'
-      ? patches
-      : patches.filter(patch =>
-          patch.regions?.includes(selectedState)
-        );
+  const filteredPatches = patches.filter(patch => {
+    const matchesState =
+      selectedState === 'All' || patch.regions?.includes(selectedState);
+
+    const matchesName =
+      patch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false;
+
+    return matchesState && matchesName;
+  });
 
   const totalPages = Math.ceil(filteredPatches.length / patchesPerPage);
   const currentPatches = filteredPatches.slice(indexOfFirstPatch, indexOfLastPatch);
@@ -109,19 +113,33 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="stateFilter" className="mr-2 font-semibold">Filter by State:</label>
-        <select
-          id="stateFilter"
-          value={selectedState}
-          onChange={(e) => setSelectedState(e.target.value)}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="All">All</option>
-          {uniqueStates.map(state => (
-          <option key={state} value={state}>{state}</option>
-          ))}        
-        </select>
+      <div className="flex flex-wrap items-center gap-4 mb-4">
+        <div className="flex items-center">
+          <label htmlFor="stateFilter" className="mr-2 font-semibold">Filter by State:</label>
+          <select
+            id="stateFilter"
+            value={selectedState}
+            onChange={(e) => setSelectedState(e.target.value)}
+            className="border px-2 py-1 rounded"
+          >
+            <option value="All">All</option>
+            {uniqueStates.map(state => (
+              <option key={state} value={state}>{state}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center">
+          <label htmlFor="search" className="mr-2 font-semibold">Search by Name:</label>
+          <input
+            id="search"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border px-2 py-1 rounded w-64"
+            placeholder="Enter patch name..."
+          />
+        </div>
       </div>
 
       {/* Modal */}
