@@ -26,13 +26,14 @@ export default function Header() {
   return (
     <header className="flex justify-between items-center p-4 border-b mb-4">
       <Link href="/" className="text-2xl font-bold flex items-center space-x-2">
-        <img src="/person-hiking-solid.svg" alt="Logo" className="h-6 w-6" />
+        <img src="/images/person-hiking-solid.svg" alt="Logo" className="h-6 w-6" />
         <span>Hiking Patches</span>
       </Link>
 
       <div className="space-x-4">
         <Link href="/" className="text-blue-600 hover:underline">Home</Link>
         <Link href="/about" className="text-blue-600 hover:underline">About</Link>
+        <Link href="/safety" className="text-blue-600 hover:underlin">Safety</Link>
 
         {user ? (
           <>
