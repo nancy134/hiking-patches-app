@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 
 type User = {
   Username: string;
+  UserCreateDate: string;
   Attributes: { Name: string; Value: string }[];
 };
 
@@ -24,9 +25,7 @@ export default function AdminUsersPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(res);
         const data = await res.json();
-        console.log(data);
         setUsers(data);
       } catch (err) {
         console.error('Failed to fetch users:', err);
@@ -42,23 +41,34 @@ export default function AdminUsersPage() {
     <div className="p-4">
       <Header />
       <h1 className="text-xl font-semibold mb-4">Registered Users</h1>
+
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul className="space-y-3">
-          {users.map((user) => (
-            <li key={user.Username} className="border p-2 rounded">
-              <strong>{user.Username}</strong>
-              <ul className="text-sm text-gray-700">
-                {user.Attributes.map((attr) => (
-                  <li key={attr.Name}>
-                    {attr.Name}: {attr.Value}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-auto">
+          <table className="min-w-full table-auto border border-gray-300 text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border px-4 py-2 text-left">Email</th>
+                <th className="border px-4 py-2 text-left">Id</th>
+                <th className="border px-4 py-2 text-left">Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.Username} className="border-t">
+                  <td className="border px-4 py-2">
+                    {user.Attributes.find((attr) => attr.Name === 'email')?.Value || (
+                      <span className="text-gray-400 italic">No email</span>
+                     )}
+                  </td>
+                  <td className="border px-4 py-2 font-medium">{user.Username}</td>
+                  <td className="border px-4 py-2">{user.UserCreateDate}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
