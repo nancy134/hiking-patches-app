@@ -6,6 +6,8 @@ import { listMountains } from '@/graphql/queries';
 import { listPatchMountains } from '@/graphql/queries';
 import { createPatchMountain } from '@/graphql/mutations';
 import { Mountain } from '@/API';
+import { Patch } from '@/API';
+import { PatchMountain} from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
 
 const client = generateClient();
@@ -31,10 +33,11 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
         query: getPatchWithMountains,
         variables: { id: patchId }
       });
-      setPatch(response.data.getPatch);
+      if ('data' in response) {
+        setPatch(response.data.getPatch);
+      }
     } catch (err) {
       console.error('Error fetching patch:', err);
-      setError('Failed to load patch.');
     }
   };
 
@@ -156,7 +159,7 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
           <p className="text-gray-600">No mountains linked yet.</p>
         ) : (
           <ul className="list-disc list-inside">
-            {patch.patchMountains?.items?.map((m) =>
+            {patch.patchMountains?.items?.map((m: PatchMountain | null) =>
               m?.mountain && (
                 <li key={m.mountain.id}>
                   {m.mountain.name} ({m.mountain.elevation} ft)

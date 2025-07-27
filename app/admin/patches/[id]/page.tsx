@@ -57,7 +57,9 @@ useEffect(() => {
         query: getPatchWithMountains,
         variables: { id: patchId }
       });
-      setPatch(response.data.getPatch);
+      if ('data' in response) {
+        setPatch(response.data.getPatch);
+      }
     } catch (err) {
       console.error('Error fetching patch:', err);
       setError('Failed to load patch.');
