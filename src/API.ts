@@ -612,6 +612,33 @@ export type ListUserPatchesWithPatchQuery = {
   } | null,
 };
 
+export type GetPatchWithMountainsQueryVariables = {
+  id: string,
+};
+
+export type GetPatchWithMountainsQuery = {
+  getPatch?:  {
+    __typename: "Patch",
+    id: string,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      items:  Array< {
+        __typename: "PatchMountain",
+        id: string,
+        mountain:  {
+          __typename: "Mountain",
+          id: string,
+          name: string,
+          elevation?: number | null,
+          latitude?: number | null,
+          longitude?: number | null,
+        },
+      } | null >,
+    } | null,
+  } | null,
+};
+
 export type CreatePatchRequestMutationVariables = {
   input: CreatePatchRequestInput,
   condition?: ModelPatchRequestConditionInput | null,

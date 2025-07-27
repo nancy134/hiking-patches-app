@@ -28,7 +28,6 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
 
   const fetchPatch = async (patchId: string) => {
     try {
-      console.log("patchId: "+patchId);
       const response = await client.graphql({
         query: getPatchWithMountains,
         variables: { id: patchId }
@@ -90,6 +89,7 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
         });
         setMessage('Mountain added!');
         setSelectedMountainId(null);
+        fetchPatch(patchId);
         fetchMountains(); // optional refresh
       } catch (err) {
         setMessage('Failed to add mountain.');
