@@ -13,13 +13,26 @@ interface Props {
   onSaved: () => void;
 }
 
+const US_STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
+  'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa',
+  'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan',
+  'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+  'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina',
+  'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
 export default function MountainFormModal({ mountain, onClose, onSaved }: Props) {
   const isEdit = Boolean(mountain?.id);
   const [form, setForm] = useState({
     name: '',
     elevation: '',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    city: '',
+    state: ''
   });
 
   useEffect(() => {
@@ -29,6 +42,8 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
         elevation: mountain.elevation?.toString() || '',
         latitude: mountain.latitude?.toString() || '',
         longitude: mountain.longitude?.toString() || '',
+        city: mountain.city || '',
+        state: mountain.state || ''
       });
     }
   }, [mountain]);
@@ -46,6 +61,8 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
       elevation: parseInt(form.elevation, 10),
       latitude: parseFloat(form.latitude),
       longitude: parseFloat(form.longitude),
+      city: form.city.trim(),
+      state: form.state.trim()
     };
 
     if (isEdit && mountain?.id) {
@@ -125,6 +142,33 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
               className="w-full border px-3 py-2 rounded"
               required
             />
+          </div>
+
+          <div>
+            <label className="block font-medium">City</label>
+            <input
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium">State</label>
+            <select
+              name="state"
+              value={form.state}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded"
+              required
+            >
+             <option value="">Select a state</option>
+              {US_STATES.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+
           </div>
 
           <div className="flex justify-end gap-3 mt-6">

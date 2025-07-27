@@ -122,6 +122,8 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
               <th className="p-2">Select</th>
               <th className="p-2">Name</th>
               <th className="p-2">Elevation</th>
+              <th className="p-2">City</th>
+              <th className="p-2">State</th>
             </tr>
           </thead>
           <tbody>
@@ -138,6 +140,8 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
                 </td>
                 <td className="p-2">{mountain.name}</td>
                 <td className="p-2">{mountain.elevation}</td>
+                <td className="p-2">{mountain.city}</td>
+                <td className="p-2">{mountain.state}</td>
               </tr>
             ))}
           </tbody>
@@ -162,7 +166,10 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
             {patch.patchMountains?.items?.map((m: PatchMountain | null) =>
               m?.mountain && (
                 <li key={m.mountain.id}>
-                  {m.mountain.name} ({m.mountain.elevation} ft)
+                  {m.mountain.name}
+                  {m.mountain.city && ` — ${m.mountain.city}`}
+                  {m.mountain.state && `, ${m.mountain.state}`}
+                  {m.mountain.elevation && ` — (${Number(m.mountain.elevation).toLocaleString()} ft)`}
                 </li>
               )
             )}

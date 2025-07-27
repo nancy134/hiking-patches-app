@@ -279,6 +279,8 @@ export const createMountain = /* GraphQL */ `mutation CreateMountain(
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -302,6 +304,8 @@ export const updateMountain = /* GraphQL */ `mutation UpdateMountain(
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -325,6 +329,8 @@ export const deleteMountain = /* GraphQL */ `mutation DeleteMountain(
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -365,6 +371,8 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
@@ -407,6 +415,8 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
@@ -449,6 +459,8 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename

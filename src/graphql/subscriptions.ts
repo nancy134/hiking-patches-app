@@ -264,6 +264,8 @@ export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($fi
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -284,6 +286,8 @@ export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($fi
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -304,6 +308,8 @@ export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($fi
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -343,6 +349,8 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
@@ -384,6 +392,8 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
@@ -425,6 +435,8 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename

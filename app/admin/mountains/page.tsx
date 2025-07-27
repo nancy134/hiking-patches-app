@@ -94,6 +94,8 @@ export default function AdminMountainsPage() {
             <th className="border px-4 py-2">Elevation (ft)</th>
             <th className="border px-4 py-2">Latitude</th>
             <th className="border px-4 py-2">Longitude</th>
+            <th className="border px-4 py-2">City</th>
+            <th className="border px-4 py-2">State</th>
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -104,6 +106,8 @@ export default function AdminMountainsPage() {
               <td className="border px-4 py-2">{mtn.elevation}</td>
               <td className="border px-4 py-2">{mtn.latitude}</td>
               <td className="border px-4 py-2">{mtn.longitude}</td>
+              <td className="border px-4 py-2">{mtn.city}</td>
+              <td className="border px-4 py-2">{mtn.state}</td>
               <td className="border px-4 py-2 space-x-2">
                 <button onClick={() => handleEdit(mtn)} className="text-blue-600 underline">
                   Edit

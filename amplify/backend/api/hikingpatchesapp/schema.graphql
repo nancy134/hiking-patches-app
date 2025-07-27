@@ -66,6 +66,8 @@ type Mountain @model
   elevation: Int
   latitude: Float
   longitude: Float
+  city: String
+  state: String
   patchMountains: [PatchMountain] @hasMany
 }
 

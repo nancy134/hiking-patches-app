@@ -43,6 +43,8 @@ export const getPatchWithMountains = /* GraphQL */ `
             elevation
             latitude
             longitude
+	    city
+	    state
           }
         }
       }

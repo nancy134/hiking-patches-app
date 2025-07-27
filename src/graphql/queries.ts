@@ -205,6 +205,8 @@ export const getMountain = /* GraphQL */ `query GetMountain($id: ID!) {
     elevation
     latitude
     longitude
+    city
+    state
     patchMountains {
       nextToken
       __typename
@@ -230,6 +232,8 @@ export const listMountains = /* GraphQL */ `query ListMountains(
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
@@ -266,6 +270,8 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       elevation
       latitude
       longitude
+      city
+      state
       createdAt
       updatedAt
       __typename
