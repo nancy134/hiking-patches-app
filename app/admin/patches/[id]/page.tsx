@@ -87,11 +87,6 @@ useEffect(() => {
       <div className="bg-white shadow rounded p-4 space-y-2">
         <p><strong>ID:</strong> {patch.id}</p>
         <p><strong>Name:</strong> {patch.name}</p>
-        <p><strong>Description:</strong> {patch.description}</p>
-        <p><strong>Regions:</strong> {(patch.regions ?? []).join(', ')}</p>
-        <p><strong>Difficulty:</strong> {patch.difficulty}</p>
-        <p><strong>Popularity:</strong> {patch.popularity}</p>
-        <p><strong>Image:</strong> {patch.imageUrl && <img src={patch.imageUrl} alt={patch.name ?? ''} className="h-32 mt-2" />}</p>
       </div>
       <MountainSelector patchId={id}/>
     </div>
