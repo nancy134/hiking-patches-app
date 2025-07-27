@@ -8,11 +8,8 @@ type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionOutput: OutputType;
 };
 
-export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
-  $filter: ModelSubscriptionPatchFilterInput
-  $owner: String
-) {
-  onCreatePatch(filter: $filter, owner: $owner) {
+export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onCreatePatch(filter: $filter) {
     id
     name
     description
@@ -27,9 +24,12 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
       nextToken
       __typename
     }
+    patchMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -37,11 +37,8 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch(
   APITypes.OnCreatePatchSubscriptionVariables,
   APITypes.OnCreatePatchSubscription
 >;
-export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch(
-  $filter: ModelSubscriptionPatchFilterInput
-  $owner: String
-) {
-  onUpdatePatch(filter: $filter, owner: $owner) {
+export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onUpdatePatch(filter: $filter) {
     id
     name
     description
@@ -56,9 +53,12 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch(
       nextToken
       __typename
     }
+    patchMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -66,11 +66,8 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch(
   APITypes.OnUpdatePatchSubscriptionVariables,
   APITypes.OnUpdatePatchSubscription
 >;
-export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch(
-  $filter: ModelSubscriptionPatchFilterInput
-  $owner: String
-) {
-  onDeletePatch(filter: $filter, owner: $owner) {
+export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onDeletePatch(filter: $filter) {
     id
     name
     description
@@ -85,9 +82,12 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch(
       nextToken
       __typename
     }
+    patchMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -115,7 +115,6 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       popularity
       createdAt
       updatedAt
-      owner
       __typename
     }
     userID
@@ -154,7 +153,6 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       popularity
       createdAt
       updatedAt
-      owner
       __typename
     }
     userID
@@ -193,7 +191,6 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       popularity
       createdAt
       updatedAt
-      owner
       __typename
     }
     userID
@@ -259,4 +256,187 @@ export const onDeletePatchRequest = /* GraphQL */ `subscription OnDeletePatchReq
 ` as GeneratedSubscription<
   APITypes.OnDeletePatchRequestSubscriptionVariables,
   APITypes.OnDeletePatchRequestSubscription
+>;
+export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($filter: ModelSubscriptionMountainFilterInput) {
+  onCreateMountain(filter: $filter) {
+    id
+    name
+    elevation
+    latitude
+    longitude
+    patchMountains {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateMountainSubscriptionVariables,
+  APITypes.OnCreateMountainSubscription
+>;
+export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($filter: ModelSubscriptionMountainFilterInput) {
+  onUpdateMountain(filter: $filter) {
+    id
+    name
+    elevation
+    latitude
+    longitude
+    patchMountains {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateMountainSubscriptionVariables,
+  APITypes.OnUpdateMountainSubscription
+>;
+export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($filter: ModelSubscriptionMountainFilterInput) {
+  onDeleteMountain(filter: $filter) {
+    id
+    name
+    elevation
+    latitude
+    longitude
+    patchMountains {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteMountainSubscriptionVariables,
+  APITypes.OnDeleteMountainSubscription
+>;
+export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMountain(
+  $filter: ModelSubscriptionPatchMountainFilterInput
+) {
+  onCreatePatchMountain(filter: $filter) {
+    id
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      createdAt
+      updatedAt
+      __typename
+    }
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    patchPatchMountainsId
+    mountainPatchMountainsId
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreatePatchMountainSubscriptionVariables,
+  APITypes.OnCreatePatchMountainSubscription
+>;
+export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMountain(
+  $filter: ModelSubscriptionPatchMountainFilterInput
+) {
+  onUpdatePatchMountain(filter: $filter) {
+    id
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      createdAt
+      updatedAt
+      __typename
+    }
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    patchPatchMountainsId
+    mountainPatchMountainsId
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchMountainSubscriptionVariables,
+  APITypes.OnUpdatePatchMountainSubscription
+>;
+export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMountain(
+  $filter: ModelSubscriptionPatchMountainFilterInput
+) {
+  onDeletePatchMountain(filter: $filter) {
+    id
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      createdAt
+      updatedAt
+      __typename
+    }
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    patchPatchMountainsId
+    mountainPatchMountainsId
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchMountainSubscriptionVariables,
+  APITypes.OnDeletePatchMountainSubscription
 >;
