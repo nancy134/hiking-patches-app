@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hiking Patches",
   description: "Hiking Patches",
+  icons: {
+     icon: '/favicon.svg'
+  }
 };
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-GY7ZJX0E4M';
@@ -28,7 +31,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(GA_MEASUREMENT_ID);
   return (
     <html lang="en">
       <head>
