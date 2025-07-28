@@ -17,6 +17,11 @@ export default function AdminDashboard() {
       title: 'Users',
       description: 'See list of users',
       href: '/admin/users',
+    },
+    {
+      title: "Mountains",
+      description: "Management mountains",
+      href: "/admin/mountains"
     }
   ];
 

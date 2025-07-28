@@ -15,6 +15,7 @@ import awsExports from '@/aws-exports';
 import { Patch, Difficulty } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import PatchFormModal from '@/components/PatchFormModal';
+import Link from 'next/link';
 
 const bucket = awsExports.aws_user_files_s3_bucket;
 const region = awsExports.aws_user_files_s3_bucket_region;
@@ -169,7 +170,14 @@ export default function AdminPage() {
         <tbody>
           {currentPatches.map((patch) => (
             <tr key={patch.id}>
-              <td className="border px-4 py-2">{patch.name}</td>
+<td className="border px-4 py-2">
+  <Link href={`/admin/patches/${patch.id}`} className="text-blue-600 underline">
+    {patch.name}
+  </Link>
+  <br />
+  <span className="text-xs text-gray-500">{patch.id}</span>
+</td>
+
               <td className="border px-4 py-2">{patch.description}</td>
               <td className="border px-4 py-2">
                 <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
@@ -180,7 +188,7 @@ export default function AdminPage() {
               <td className="border px-4 py-2 space-x-2">
                 <button onClick={() => handleEdit(patch)} className="text-blue-600 underline">
                   Edit
-                </button>
+                </button><br/>
                 <button onClick={() => handleDelete(patch.id)} className="text-red-600 underline">
                   Delete
                 </button>

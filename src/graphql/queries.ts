@@ -24,9 +24,12 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
       nextToken
       __typename
     }
+    patchMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -50,7 +53,6 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       popularity
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -78,7 +80,6 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       popularity
       createdAt
       updatedAt
-      owner
       __typename
     }
     userID
@@ -196,4 +197,115 @@ export const listPatchRequests = /* GraphQL */ `query ListPatchRequests(
 ` as GeneratedQuery<
   APITypes.ListPatchRequestsQueryVariables,
   APITypes.ListPatchRequestsQuery
+>;
+export const getMountain = /* GraphQL */ `query GetMountain($id: ID!) {
+  getMountain(id: $id) {
+    id
+    name
+    elevation
+    latitude
+    longitude
+    city
+    state
+    patchMountains {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetMountainQueryVariables,
+  APITypes.GetMountainQuery
+>;
+export const listMountains = /* GraphQL */ `query ListMountains(
+  $filter: ModelMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListMountainsQueryVariables,
+  APITypes.ListMountainsQuery
+>;
+export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) {
+  getPatchMountain(id: $id) {
+    id
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      createdAt
+      updatedAt
+      __typename
+    }
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    patchPatchMountainsId
+    mountainPatchMountainsId
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetPatchMountainQueryVariables,
+  APITypes.GetPatchMountainQuery
+>;
+export const listPatchMountains = /* GraphQL */ `query ListPatchMountains(
+  $filter: ModelPatchMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      createdAt
+      updatedAt
+      patchPatchMountainsId
+      mountainPatchMountainsId
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListPatchMountainsQueryVariables,
+  APITypes.ListPatchMountainsQuery
 >;

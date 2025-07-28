@@ -13,8 +13,7 @@ enum Difficulty {
 type Patch @model 
   @auth(rules: [
     { allow: public, operations: [read] },
-    { allow: owner, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [create, update, delete]}
+    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete]}
   ]) {
   id: ID!
   name: String!
@@ -27,6 +26,7 @@ type Patch @model
   longitude: Float
   popularity: Int
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
+  patchMountains: [PatchMountain] @hasMany
 }
 
 type UserPatch @model 
@@ -54,6 +54,31 @@ type PatchRequest @model
   email: String!
   description: String!
   createdAt: AWSDateTime
+}
+
+type Mountain @model
+  @auth(rules: [
+    { allow: public, operations: [read] },
+    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+  ]) {
+  id: ID!
+  name: String!
+  elevation: Int
+  latitude: Float
+  longitude: Float
+  city: String
+  state: String
+  patchMountains: [PatchMountain] @hasMany
+}
+
+type PatchMountain @model
+  @auth(rules: [
+    { allow: public, operations: [read] },
+    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+  ]) {
+  id: ID!
+  patch: Patch! @belongsTo
+  mountain: Mountain! @belongsTo
 }
 
 

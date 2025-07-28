@@ -29,3 +29,25 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
   }
 `;
 
+export const getPatchWithMountains = /* GraphQL */ `
+  query GetPatchWithMountains($id: ID!) {
+    getPatch(id: $id) {
+      id
+      name
+      patchMountains {
+        items {
+          id
+          mountain {
+            id
+            name
+            elevation
+            latitude
+            longitude
+	    city
+	    state
+          }
+        }
+      }
+    }
+  }
+`;
