@@ -9,7 +9,8 @@ import { useParams } from 'next/navigation';
 import { generateClient } from 'aws-amplify/api';
 import { 
   getPatch,
-  listUserPatches
+  listUserPatches,
+  listUserMountains
 } from '@/graphql/queries';
 import { 
   Patch,
@@ -23,7 +24,11 @@ import {
   UpdateUserPatchMutation,
   CreateUserPatchMutation,
 } from '@/API';
+import { getPatchWithMountains } from '@/graphql/custom-queries';
 
+type UserMountainMap = {
+  [mountainID: string]: UserMountain[];
+};
 const client = generateClient();
 
 const customCreateUserPatch = `
@@ -60,6 +65,17 @@ const customUpdateUserPatch = `
   }
 `;
 
+const customCreateUserMountain = `
+mutation CreateUserMountain($input: CreateUserMountainInput!) {
+  createUserMountain(input: $input) {
+    id
+    userID
+    mountainID
+    dateClimbed
+  }
+}
+`;
+
 export default function PatchDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -74,13 +90,16 @@ export default function PatchDetailPage() {
   const [showModal, setShowModal] = useState(false);
   const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
   const [isInProgress, setIsInProgress] = useState<boolean | null>(null);
+  const [dates, setDates] = useState<{ [mountainId: string]: string }>({});
+  const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
+
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchPatch = async () => {
       try {
         const response = await client.graphql({
-          query: getPatch,
+          query: getPatchWithMountains,
           variables: { id },
         });
         setPatch(response.data?.getPatch as Patch);
@@ -94,7 +113,6 @@ export default function PatchDetailPage() {
 
   useEffect(() => {
     const fetchUserPatch = async () => {
-      console.log("fetchUserPatch");
       if (!user?.userId || !id) return;
       try {
         const response = await client.graphql({
@@ -107,7 +125,6 @@ export default function PatchDetailPage() {
           },
         });
         const match = response.data?.listUserPatches?.items?.[0];
-        console.log(match);
         if (match) {
           setUserPatch(match);
           if (match.dateCompleted) setDateCompleted(match.dateCompleted);
@@ -120,9 +137,65 @@ export default function PatchDetailPage() {
         console.error('Error fetching userPatch:', err);
       }
     };
-    console.log("useEffect");
     fetchUserPatch();
   }, [user, id]);
+
+  const handleDateChange = (mountainId: string, value: string) => {
+    setDates((prev) => ({ ...prev, [mountainId]: value }))
+  }
+
+  const handleSave = async (mountainId: string) => {
+    const dateCompleted = dates[mountainId]
+    if (!dateCompleted || !user?.username) return
+
+    try {
+      await client.graphql({
+        query: customCreateUserMountain,
+        variables: {
+          input: {
+            userID: user.username,
+            mountainID: mountainId,
+            dateClimbed: dateCompleted,
+          },
+        },
+        authMode: 'userPool'
+      })
+      alert('Saved!')
+    } catch (err) {
+      console.error('Error saving UserMountain:', err)
+      alert('Failed to save')
+    }
+  }
+
+  useEffect(() => {
+    const fetchUserMountains = async () => {
+      if (!user?.userId) return;
+      try {
+        const response = await client.graphql({
+          query: listUserMountains,
+          variables: {
+            userID: user.userId
+          },
+          authMode: 'userPool'
+        });
+        const c_userMountainMap: Record<string, UserMountain> = {};
+        response.data?.listUserMountains?.items?.forEach((um: UserMountain | null) => {
+          if (um?.mountainID) {
+            if (!c_userMountainMap[um.mountainID]) {
+              c_userMountainMap[um.mountainID] = [];
+            }
+            c_userMountainMap[um.mountainID].push(um);
+          }
+        });
+        console.log(c_userMountainMap);
+        setUserMountainMap(c_userMountainMap);
+      } catch (err) {
+        console.error('Error fetching user mountains:', err);
+      }
+    };
+
+    fetchUserMountains();
+  }, [user]);
 
   // Update dateCompleted whenever "In Progress" is selected
   const handleInProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +246,6 @@ export default function PatchDetailPage() {
      }
  
       //const updatedUserPatch = userPatch ? response.data?.updateUserPatch : response.data?.createUserPatch;
-      console.log(updatedUserPatch);
       if (updatedUserPatch) setUserPatch(updatedUserPatch);
       setMessage('🎉 Patch progress updated!');
       setShowModal(false);
@@ -359,6 +431,60 @@ export default function PatchDetailPage() {
 
         {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
       </div>
+
+
+{userMountainMap && (
+  <>
+    <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
+
+    {(patch.patchMountains?.items ?? []).length === 0 ? (
+      <p className="text-gray-600">No mountains linked yet.</p>
+    ) : (
+      <div className="space-y-2">
+        {patch.patchMountains.items.map((m: PatchMountain | null) =>
+          m?.mountain ? (
+            <div key={m.mountain.id} className="flex flex-col space-y-1">
+              <span className="font-medium">{m.mountain.name}</span>
+
+
+
+          <label className="text-sm text-gray-600 whitespace-nowrap">Date Completed:</label>
+              <input
+                type="date"
+                className="border p-1 rounded w-40"
+                value={dates[m.mountain.id] || ''}
+                onChange={(e) => handleDateChange(m.mountain.id, e.target.value)}
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                onClick={() => handleSave(m.mountain.id)}
+              >
+               Save
+              </button>
+
+
+
+
+              {user && userMountainMap[m.mountain.id] && (
+                <div className="flex flex-wrap gap-2 pl-4">
+                  {userMountainMap[m.mountain.id].map((d, i) => (
+                    <span key={d.id} className="text-sm text-gray-700">
+                      {d.dateClimbed}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null
+        )}
+      </div>
+    )}
+  </>
+)}
+
+
+
+
     </div>
     ) : (
     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">

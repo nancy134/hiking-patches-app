@@ -34,6 +34,12 @@ export const getPatchWithMountains = /* GraphQL */ `
     getPatch(id: $id) {
       id
       name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      popularity
       patchMountains {
         items {
           id
