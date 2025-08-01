@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { UserMountain } from '@/API';
 import { format } from 'date-fns';
@@ -9,31 +10,45 @@ type MountainAscentModalProps = {
   open: boolean;
   onClose: () => void;
   userMountain: UserMountain[];
-  onSave: (newDate: string | null) => void;
+  onSave: (dates: string[]) => void;
 };
 
 export default function MountainAscentModal({
   open,
   onClose,
-  mountain,
   userMountain,
   onSave,
 }: MountainAscentModalProps) {
-  console.log(userMountain);
-  console.log("open: "+open);
   const mostRecentDate = userMountain.length > 0
     ? userMountain[userMountain.length - 1].dateClimbed
     : '';
 
   const [dateClimbed, setDateClimbed] = useState(mostRecentDate || '');
   const [cleared, setCleared] = useState(false);
+  const [ascentDates, setAscentDates] = useState<string[]>([]);
+
+  useEffect(() => {
+    const dates = userMountain.map((c) => c.dateClimbed).filter(Boolean);
+    setAscentDates(dates);
+  }, [userMountain]);
+
+  const handleDateChange = (index: number, newDate: string) => {
+    const newDates = [...ascentDates];
+    newDates[index] = newDate;
+    setAscentDates(newDates);
+  };
+
+  const handleRemoveDate = (index: number) => {
+    const newDates = ascentDates.filter((_, i) => i !== index);
+    setAscentDates(newDates);
+  };
+
+  const handleAddDate = () => {
+    setAscentDates([...ascentDates, '']);
+  };
 
   const handleSave = () => {
-    if (cleared) {
-      onSave(null); // Clear date
-    } else {
-      onSave(dateClimbed);
-    }
+    onSave(ascentDates.filter(Boolean)); // Remove blanks
     onClose();
   };
 
@@ -43,51 +58,69 @@ export default function MountainAscentModal({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
-      <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+    <Dialog open={open} onClose={onClose} className="relative z-50">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-      <div className="relative bg-white rounded-xl shadow-lg p-6 w-full max-w-md z-50">
-        <Dialog.Title className="text-xl font-bold mb-2">
-          Edit Ascent for -get mountain name- 
-        </Dialog.Title>
+      {/* Centered modal container */}
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+          <Dialog.Title className="text-xl font-bold mb-2">
+            Edit Ascents
+          </Dialog.Title>
 
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-              Date Hiked
-            </label>
-            <input
-              id="date"
-              type="date"
-              value={dateClimbed || ''}
-              onChange={(e) => {
-                setDateClimbed(e.target.value);
-                setCleared(false);
-              }}
-              className="mt-1 w-full"
-            />
-          </div>
 
-          {userMountain.length > 0 && (
-            <div className="text-sm text-gray-600">
-              Previous dates: {userMountain.map((c) => format(new Date(c.dateClimbed), 'yyyy-MM-dd')).join(', ')}
+          <div className="space-y-2">
+            {ascentDates.map((date, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="date"
+                value={date}
+                 onChange={(e) => handleDateChange(index, e.target.value)}
+                 className="flex-1"
+              />
+              <button
+                onClick={() => handleRemoveDate(index)}
+                className="text-red-600 text-sm"
+              >
+                Remove
+              </button>
             </div>
-          )}
-
-          <div className="flex justify-between gap-3 pt-4">
-            <button variant="destructive" onClick={handleClear}>
-              Clear All
+            ))}
+            <button
+              onClick={handleAddDate}
+              className="text-blue-600 text-sm mt-2"
+            >
+              + Add another ascent 
             </button>
-            <div className="flex gap-2">
-              <button variant="outline" onClick={onClose}>
-                Cancel
+          </div>
+
+
+          <div>
+            <div className="flex justify-between gap-3 pt-4">
+              <button
+                onClick={handleClear}
+                className="text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50"
+              >
+                Clear All
               </button>
-              <button onClick={handleSave}>
-                Save Date Hiked
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={onClose}
+                  className="border border-gray-400 px-3 py-1 rounded hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                >
+                  Save Ascents 
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </Dialog.Panel>
       </div>
     </Dialog>
   );

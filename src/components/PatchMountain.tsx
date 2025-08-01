@@ -6,6 +6,8 @@ import { ListPatchMountainsQuery, ListUserMountainsQuery, PatchMountain, UserMou
 import { listPatchMountainsWithMountain } from '@/graphql/custom-queries';
 import MountainAscentModal from '@/components/MountainAscentModal';
 import { generateClient } from 'aws-amplify/api';
+import { deleteUserMountainMinimal } from '@/graphql/custom-mutations';
+import { createUserMountainMinimal } from '@/graphql/custom-mutations';
 
 const client = generateClient();
 
@@ -70,6 +72,68 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
     setModalMountain(pm);
   };
 
+const handleSave = async (newDates: string[]) => {
+  setModalMountain(null);
+  const mountainId = modalMountain?.mountain?.id;
+  if (!mountainId || !userId) return;
+
+  const existingUMs = userMountainMap[mountainId] || [];
+
+  const existingDates = new Set(
+    existingUMs.map((um) => um.dateClimbed.split('T')[0])
+  );
+
+  const newDatesSet = new Set(newDates);
+
+  const datesToDelete = existingUMs.filter(
+    (um) => !newDatesSet.has(um.dateClimbed.split('T')[0])
+  );
+
+  const datesToAdd = newDates.filter(
+    (date) => !existingDates.has(date)
+  );
+
+  // Delete removed ascents
+  for (const um of datesToDelete) {
+    await client.graphql({
+      query: deleteUserMountainMinimal,
+      variables: { input: { id: um.id } },
+      authMode: 'userPool',
+    });
+  }
+
+  // Add new ascents
+  for (const date of datesToAdd) {
+    await client.graphql({
+      query: createUserMountainMinimal,
+      variables: {
+        input: {
+          userID: userId,
+          mountainID: mountainId,
+          dateClimbed: date,
+        },
+      },
+      authMode: 'userPool',
+    });
+  }
+
+  // Refresh
+  const userResponse = await client.graphql({
+    query: listUserMountains,
+    variables: { filter: { userID: { eq: userId } } },
+    authMode: 'userPool',
+  }) as { data: ListUserMountainsQuery };
+
+  const map: UserMountainMap = {};
+  userResponse.data?.listUserMountains?.items?.forEach((um) => {
+    if (um?.mountainID) {
+      if (!map[um.mountainID]) map[um.mountainID] = [];
+      map[um.mountainID]!.push(um);
+    }
+  });
+  setUserMountainMap(map);
+};
+
   const completed = patchMountains.filter((pm) => {
     const userMountains = userMountainMap[pm.mountain?.id || ''];
     return userMountains && userMountains.length > 0;
@@ -85,7 +149,7 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
         <thead>
           <tr className="bg-gray-100">
             <th className="text-left p-2">Mountain</th>
-            <th className="text-left p-2">Dates Hiked</th>
+            <th className="text-left p-2">Dates Ascended</th>
             {userId && <th className="text-left p-2">Action</th>}
           </tr>
         </thead>
@@ -114,7 +178,7 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
                       onClick={() => setModalMountain(pm)}
                       className="text-blue-600 hover:underline text-sm"
                     >
-                      Edit
+                      Edit Ascents
                     </button>
                   </td>
                 )}
@@ -129,24 +193,7 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
           open={!!modalMountain}
           userMountain={userMountainMap[modalMountain.mountain!.id] || []}
           onClose={() => setModalMountain(null)}
-          onSave={async () => {
-            setModalMountain(null);
-            // refetch user mountains
-            const userResponse = await client.graphql({
-              query: listUserMountains,
-              variables: { filter: { userID: { eq: userId } } },
-              authMode: 'AMAZON_COGNITO_USER_POOLS',
-            }) as { data: ListUserMountainsQuery };
-
-            const map: UserMountainMap = {};
-            userResponse.data?.listUserMountains?.items?.forEach((um) => {
-              if (um?.mountainID) {
-                if (!map[um.mountainID]) map[um.mountainID] = [];
-                map[um.mountainID]!.push(um);
-              }
-            });
-            setUserMountainMap(map);
-          }}
+          onSave={handleSave}
         />
       )}
     </div>
