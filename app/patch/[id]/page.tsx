@@ -14,7 +14,8 @@ import {
 } from '@/graphql/queries';
 import { 
   Patch,
-  UserPatch
+  UserPatch,
+  UserMountain
 } from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
@@ -25,6 +26,7 @@ import {
   CreateUserPatchMutation,
 } from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
+import PatchMountain from '@/components/PatchMountain';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -102,7 +104,9 @@ export default function PatchDetailPage() {
           query: getPatchWithMountains,
           variables: { id },
         });
-        setPatch(response.data?.getPatch as Patch);
+        if ('data' in response) {
+          setPatch(response.data?.getPatch as Patch);
+        }
       } catch (error) {
         console.error('Error fetching patch:', error);
       }
@@ -173,12 +177,10 @@ export default function PatchDetailPage() {
       try {
         const response = await client.graphql({
           query: listUserMountains,
-          variables: {
-            userID: user.userId
-          },
+          variables: { filter: { userID: { eq: user.userId } } },
           authMode: 'userPool'
         });
-        const c_userMountainMap: Record<string, UserMountain> = {};
+        const c_userMountainMap: Record<string, UserMountain[]> = {};
         response.data?.listUserMountains?.items?.forEach((um: UserMountain | null) => {
           if (um?.mountainID) {
             if (!c_userMountainMap[um.mountainID]) {
@@ -431,65 +433,19 @@ export default function PatchDetailPage() {
 
         {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
       </div>
+      <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
+      <PatchMountain patchMountains={patch.patchMountains?.items ?? []} userId={user.userId} />
 
 
-{userMountainMap && (
-  <>
-    <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
-
-    {(patch.patchMountains?.items ?? []).length === 0 ? (
-      <p className="text-gray-600">No mountains linked yet.</p>
+    </div>
     ) : (
-      <div className="space-y-2">
-        {patch.patchMountains.items.map((m: PatchMountain | null) =>
-          m?.mountain ? (
-            <div key={m.mountain.id} className="flex flex-col space-y-1">
-              <span className="font-medium">{m.mountain.name}</span>
-
-
-
-          <label className="text-sm text-gray-600 whitespace-nowrap">Date Completed:</label>
-              <input
-                type="date"
-                className="border p-1 rounded w-40"
-                value={dates[m.mountain.id] || ''}
-                onChange={(e) => handleDateChange(m.mountain.id, e.target.value)}
-              />
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-                onClick={() => handleSave(m.mountain.id)}
-              >
-               Save
-              </button>
-
-
-
-
-              {user && userMountainMap[m.mountain.id] && (
-                <div className="flex flex-wrap gap-2 pl-4">
-                  {userMountainMap[m.mountain.id].map((d, i) => (
-                    <span key={d.id} className="text-sm text-gray-700">
-                      {d.dateClimbed}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : null
-        )}
+    <>
+      <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
+      <PatchMountain patchMountains={patch.patchMountains?.items ?? []} />
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
+        Want to keep track of your progress? Sign in to mark your progress.
       </div>
-    )}
-  </>
-)}
-
-
-
-
-    </div>
-    ) : (
-    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-      Want to keep track of your progress? Sign in to mark your patches a complete or in progress.
-    </div>
+    </>
   )}
   </div>
   );
