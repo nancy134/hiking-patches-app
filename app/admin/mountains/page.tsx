@@ -8,6 +8,7 @@ import { createMountain, updateMountain, deleteMountain } from '@/graphql/mutati
 import { Mountain } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import MountainFormModal from '@/components/MountainFormModal';
+import Papa from 'papaparse';
 
 const client = generateClient();
 
@@ -25,6 +26,58 @@ export default function AdminMountainsPage() {
     const response = await client.graphql({ query: listMountains });
     setMountains(response.data.listMountains.items);
   };
+
+
+
+
+const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async (results) => {
+      const mountainsToCreate = results.data as Partial<Mountain>[];
+
+      for (const mtn of mountainsToCreate) {
+        // Optional: validate required fields before submitting
+        if (!mtn.name) continue;
+
+        const input: CreateMountainInput = {
+          name: mtn.name!,
+          elevation: mtn.elevation ? Number(mtn.elevation) : undefined,
+          latitude: mtn.latitude ? parseFloat(mtn.latitude as string) : undefined,
+          longitude: mtn.longitude ? parseFloat(mtn.longitude as string) : undefined,
+          city: mtn.city ?? '',
+          state: mtn.state ?? '',
+        };
+
+        try {
+          await client.graphql({
+            query: createMountain,
+            variables: { input },
+            authMode: 'userPool',
+          });
+        } catch (err) {
+          console.error('Failed to create mountain:', input.name, err);
+        }
+      }
+
+      fetchMountains();
+    },
+    error: (err) => {
+      console.error('CSV parsing error:', err);
+    },
+  });
+
+  // Reset the file input
+  event.target.value = '';
+};
+
+
+
+
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Delete this mountain?');
@@ -74,6 +127,17 @@ export default function AdminMountainsPage() {
         >
           + Add Mountain
         </button>
+
+        <label className="ml-2 cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Import CSV
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleImportCSV}
+            className="hidden"
+          />
+        </label>
+
       </div>
 
       {showModal && (
@@ -86,7 +150,6 @@ export default function AdminMountainsPage() {
           }}
         />
       )}
-
       <table className="w-full table-auto border border-collapse mb-4">
         <thead>
           <tr className="bg-gray-200">
@@ -120,6 +183,7 @@ export default function AdminMountainsPage() {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 }
