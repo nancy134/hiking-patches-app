@@ -44,11 +44,11 @@ const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
         // Optional: validate required fields before submitting
         if (!mtn.name) continue;
 
-        const input: CreateMountainInput = {
+        const input = {
           name: mtn.name!,
           elevation: mtn.elevation ? Number(mtn.elevation) : undefined,
-          latitude: mtn.latitude ? parseFloat(mtn.latitude as string) : undefined,
-          longitude: mtn.longitude ? parseFloat(mtn.longitude as string) : undefined,
+          latitude: mtn.latitude ?? undefined,
+          longitude: mtn.longitude ?? undefined,
           city: mtn.city ?? '',
           state: mtn.state ?? '',
         };
