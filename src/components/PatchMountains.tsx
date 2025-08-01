@@ -18,7 +18,7 @@ interface PatchMountainProps {
   userId?: string;
 }
 
-export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
+export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
   const [patchMountains, setPatchMountains] = useState<PatchMountain[]>([]);
   const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
   const [modalMountain, setModalMountain] = useState<PatchMountain | null>(null);
@@ -32,11 +32,12 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
       }) as { data: ListPatchMountainsQuery };
 
       console.log(patchResponse.data?.listPatchMountains?.items)
-      const sorted = patchResponse.data?.listPatchMountains?.items
-        ?.filter((pm): pm is PatchMountain => !!pm && !!pm.mountain)
-        ?.sort((a, b) => a.mountain!.name.localeCompare(b.mountain!.name)) || [];
+      //const sorted = patchResponse.data?.listPatchMountains?.items
+      //  ?.filter((pm): pm is PatchMountain => !!pm && !!pm.mountain)
+      //  ?.sort((a, b) => a.mountain!.name.localeCompare(b.mountain!.name)) || [];
 
-      setPatchMountains(sorted);
+      setPatchMountains((patchResponse.data?.listPatchMountains?.items ?? []).filter((item): item is PatchMountain => item !== null));
+
     };
 
     fetchData();
@@ -68,7 +69,7 @@ export default function PatchMountain({ patchId, userId }: PatchMountainProps) {
     fetchUserMountains();
   }, [userId]);
 
-  const handleEdit = (pm) => {
+  const handleEdit = (pm: PatchMountain) => {
     setModalMountain(pm);
   };
 

@@ -26,7 +26,7 @@ import {
   CreateUserPatchMutation,
 } from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
-import PatchMountain from '@/components/PatchMountain';
+import PatchMountains from '@/components/PatchMountains';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -433,15 +433,14 @@ export default function PatchDetailPage() {
 
         {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
       </div>
-      <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
-<PatchMountain patchId={patch.id} userId={user.userId} />
+      <PatchMountains patchId={patch.id} userId={user.userId} />
 
 
     </div>
     ) : (
     <>
       <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
-<PatchMountain patchId={patch.id} />
+<PatchMountains patchId={patch.id} />
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
         Want to keep track of your progress? Sign in to mark your progress.
       </div>
