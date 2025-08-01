@@ -57,3 +57,32 @@ export const getPatchWithMountains = /* GraphQL */ `
     }
   }
 `;
+
+export const listPatchMountainsWithMountain = /* GraphQL */ `
+  query ListPatchMountainsWithMountain(
+    $filter: ModelPatchMountainFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        patchPatchMountainsId
+        mountainPatchMountainsId
+        mountain {
+          id
+          name
+          elevation
+	  city
+	  state
+	  latitude
+	  longitude
+        }
+      }
+      nextToken
+    }
+  }
+`;
+
