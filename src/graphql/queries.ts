@@ -20,6 +20,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -51,6 +52,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -78,6 +80,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -264,6 +267,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename

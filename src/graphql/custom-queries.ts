@@ -40,6 +40,7 @@ export const getPatchWithMountains = /* GraphQL */ `
       regions
       difficulty
       popularity
+      hasPeaks
       patchMountains {
         items {
           id

@@ -125,6 +125,7 @@ return (
 
     {/* Radio buttons */}
     <div className="space-y-2">
+      { /*
       <label className="inline-flex items-center gap-2">
         <input
           type="radio"
@@ -134,6 +135,7 @@ return (
         />
         I plan to work on this patch
       </label>
+      */ }
       <label className="inline-flex items-center gap-2">
         <input
           type="radio"

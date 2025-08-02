@@ -25,6 +25,7 @@ type Patch @model
   latitude: Float
   longitude: Float
   popularity: Int
+  hasPeaks: Boolean
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
   patchMountains: [PatchMountain] @hasMany
 }

@@ -74,6 +74,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -106,6 +107,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -138,6 +140,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -173,6 +176,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -211,6 +215,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -249,6 +254,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -373,6 +379,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -417,6 +424,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -461,6 +469,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename

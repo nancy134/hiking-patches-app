@@ -2,6 +2,119 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
+export type DeleteUserMountainInput = {
+  id: string,
+};
+
+export type UserMountain = {
+  __typename: "UserMountain",
+  id: string,
+  userID: string,
+  mountainID: string,
+  dateClimbed: string,
+  notes?: string | null,
+  mountain?: Mountain | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export type Mountain = {
+  __typename: "Mountain",
+  id: string,
+  name: string,
+  elevation?: number | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  city?: string | null,
+  state?: string | null,
+  patchMountains?: ModelPatchMountainConnection | null,
+  userMountains?: ModelUserMountainConnection | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type ModelPatchMountainConnection = {
+  __typename: "ModelPatchMountainConnection",
+  items:  Array<PatchMountain | null >,
+  nextToken?: string | null,
+};
+
+export type PatchMountain = {
+  __typename: "PatchMountain",
+  id: string,
+  patch: Patch,
+  mountain: Mountain,
+  createdAt: string,
+  updatedAt: string,
+  patchPatchMountainsId?: string | null,
+  mountainPatchMountainsId?: string | null,
+};
+
+export type Patch = {
+  __typename: "Patch",
+  id: string,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  popularity?: number | null,
+  hasPeaks?: boolean | null,
+  userPatches?: ModelUserPatchConnection | null,
+  patchMountains?: ModelPatchMountainConnection | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export enum Difficulty {
+  EASY = "EASY",
+  MODERATE = "MODERATE",
+  HARD = "HARD",
+  EXTRA_HARD = "EXTRA_HARD",
+  EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
+}
+
+
+export type ModelUserPatchConnection = {
+  __typename: "ModelUserPatchConnection",
+  items:  Array<UserPatch | null >,
+  nextToken?: string | null,
+};
+
+export type UserPatch = {
+  __typename: "UserPatch",
+  id: string,
+  patchID: string,
+  patch?: Patch | null,
+  userID: string,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  createdAt: string,
+  updatedAt: string,
+  owner?: string | null,
+};
+
+export type ModelUserMountainConnection = {
+  __typename: "ModelUserMountainConnection",
+  items:  Array<UserMountain | null >,
+  nextToken?: string | null,
+};
+
+export type CreateUserMountainInput = {
+  id?: string | null,
+  userID: string,
+  mountainID: string,
+  dateClimbed: string,
+  notes?: string | null,
+};
+
 export type ModelUserPatchFilterInput = {
   id?: ModelIDInput | null,
   patchID?: ModelIDInput | null,
@@ -94,104 +207,15 @@ export type ModelBooleanInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
-export type ModelUserPatchConnection = {
-  __typename: "ModelUserPatchConnection",
-  items:  Array<UserPatch | null >,
-  nextToken?: string | null,
-};
-
-export type UserPatch = {
-  __typename: "UserPatch",
-  id: string,
-  patchID: string,
-  patch?: Patch | null,
-  userID: string,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
-};
-
-export type Patch = {
-  __typename: "Patch",
-  id: string,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  popularity?: number | null,
-  userPatches?: ModelUserPatchConnection | null,
-  patchMountains?: ModelPatchMountainConnection | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export enum Difficulty {
-  EASY = "EASY",
-  MODERATE = "MODERATE",
-  HARD = "HARD",
-  EXTRA_HARD = "EXTRA_HARD",
-  EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
-}
-
-
-export type ModelPatchMountainConnection = {
-  __typename: "ModelPatchMountainConnection",
-  items:  Array<PatchMountain | null >,
-  nextToken?: string | null,
-};
-
-export type PatchMountain = {
-  __typename: "PatchMountain",
-  id: string,
-  patch: Patch,
-  mountain: Mountain,
-  createdAt: string,
-  updatedAt: string,
-  patchPatchMountainsId?: string | null,
-  mountainPatchMountainsId?: string | null,
-};
-
-export type Mountain = {
-  __typename: "Mountain",
-  id: string,
-  name: string,
-  elevation?: number | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  city?: string | null,
-  state?: string | null,
-  patchMountains?: ModelPatchMountainConnection | null,
-  userMountains?: ModelUserMountainConnection | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type ModelUserMountainConnection = {
-  __typename: "ModelUserMountainConnection",
-  items:  Array<UserMountain | null >,
-  nextToken?: string | null,
-};
-
-export type UserMountain = {
-  __typename: "UserMountain",
-  id: string,
-  userID: string,
-  mountainID: string,
-  dateClimbed: string,
-  notes?: string | null,
-  mountain?: Mountain | null,
-  createdAt: string,
-  updatedAt: string,
-  owner?: string | null,
+export type ModelPatchMountainFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelPatchMountainFilterInput | null > | null,
+  or?: Array< ModelPatchMountainFilterInput | null > | null,
+  not?: ModelPatchMountainFilterInput | null,
+  patchPatchMountainsId?: ModelIDInput | null,
+  mountainPatchMountainsId?: ModelIDInput | null,
 };
 
 export type CreatePatchRequestInput = {
@@ -242,6 +266,7 @@ export type CreatePatchInput = {
   latitude?: number | null,
   longitude?: number | null,
   popularity?: number | null,
+  hasPeaks?: boolean | null,
 };
 
 export type ModelPatchConditionInput = {
@@ -254,6 +279,7 @@ export type ModelPatchConditionInput = {
   latitude?: ModelFloatInput | null,
   longitude?: ModelFloatInput | null,
   popularity?: ModelIntInput | null,
+  hasPeaks?: ModelBooleanInput | null,
   and?: Array< ModelPatchConditionInput | null > | null,
   or?: Array< ModelPatchConditionInput | null > | null,
   not?: ModelPatchConditionInput | null,
@@ -289,6 +315,7 @@ export type UpdatePatchInput = {
   latitude?: number | null,
   longitude?: number | null,
   popularity?: number | null,
+  hasPeaks?: boolean | null,
 };
 
 export type DeletePatchInput = {
@@ -401,14 +428,6 @@ export type DeletePatchMountainInput = {
   id: string,
 };
 
-export type CreateUserMountainInput = {
-  id?: string | null,
-  userID: string,
-  mountainID: string,
-  dateClimbed: string,
-  notes?: string | null,
-};
-
 export type ModelUserMountainConditionInput = {
   userID?: ModelIDInput | null,
   mountainID?: ModelIDInput | null,
@@ -430,10 +449,6 @@ export type UpdateUserMountainInput = {
   notes?: string | null,
 };
 
-export type DeleteUserMountainInput = {
-  id: string,
-};
-
 export type ModelPatchFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -445,6 +460,7 @@ export type ModelPatchFilterInput = {
   latitude?: ModelFloatInput | null,
   longitude?: ModelFloatInput | null,
   popularity?: ModelIntInput | null,
+  hasPeaks?: ModelBooleanInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchFilterInput | null > | null,
@@ -502,17 +518,6 @@ export type ModelMountainConnection = {
   nextToken?: string | null,
 };
 
-export type ModelPatchMountainFilterInput = {
-  id?: ModelIDInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchMountainFilterInput | null > | null,
-  or?: Array< ModelPatchMountainFilterInput | null > | null,
-  not?: ModelPatchMountainFilterInput | null,
-  patchPatchMountainsId?: ModelIDInput | null,
-  mountainPatchMountainsId?: ModelIDInput | null,
-};
-
 export type ModelUserMountainFilterInput = {
   id?: ModelIDInput | null,
   userID?: ModelIDInput | null,
@@ -538,6 +543,7 @@ export type ModelSubscriptionPatchFilterInput = {
   latitude?: ModelSubscriptionFloatInput | null,
   longitude?: ModelSubscriptionFloatInput | null,
   popularity?: ModelSubscriptionIntInput | null,
+  hasPeaks?: ModelSubscriptionBooleanInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
@@ -599,6 +605,11 @@ export type ModelSubscriptionIntInput = {
   notIn?: Array< number | null > | null,
 };
 
+export type ModelSubscriptionBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+};
+
 export type ModelSubscriptionUserPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   patchID?: ModelSubscriptionIDInput | null,
@@ -613,11 +624,6 @@ export type ModelSubscriptionUserPatchFilterInput = {
   and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
   owner?: ModelStringInput | null,
-};
-
-export type ModelSubscriptionBooleanInput = {
-  ne?: boolean | null,
-  eq?: boolean | null,
 };
 
 export type ModelSubscriptionPatchRequestFilterInput = {
@@ -664,6 +670,35 @@ export type ModelSubscriptionUserMountainFilterInput = {
   and?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
   owner?: ModelStringInput | null,
+};
+
+export type DeleteUserMountainMinimalMutationVariables = {
+  input: DeleteUserMountainInput,
+};
+
+export type DeleteUserMountainMinimalMutation = {
+  deleteUserMountain?:  {
+    __typename: "UserMountain",
+    id: string,
+  } | null,
+};
+
+export type CreateUserMountainMinimalMutationVariables = {
+  input: CreateUserMountainInput,
+};
+
+export type CreateUserMountainMinimalMutation = {
+  createUserMountain?:  {
+    __typename: "UserMountain",
+    id: string,
+    userID: string,
+    mountainID: string,
+    dateClimbed: string,
+    notes?: string | null,
+    createdAt: string,
+    updatedAt: string,
+    owner?: string | null,
+  } | null,
 };
 
 export type ListUserPatchesWithPatchQueryVariables = {
@@ -713,6 +748,12 @@ export type GetPatchWithMountainsQuery = {
     __typename: "Patch",
     id: string,
     name: string,
+    description?: string | null,
+    howToGet?: string | null,
+    imageUrl?: string | null,
+    regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
+    popularity?: number | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
       items:  Array< {
@@ -730,6 +771,37 @@ export type GetPatchWithMountainsQuery = {
         },
       } | null >,
     } | null,
+  } | null,
+};
+
+export type ListPatchMountainsWithMountainQueryVariables = {
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchMountainsWithMountainQuery = {
+  listPatchMountains?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      patchPatchMountainsId?: string | null,
+      mountainPatchMountainsId?: string | null,
+      mountain:  {
+        __typename: "Mountain",
+        id: string,
+        name: string,
+        elevation?: number | null,
+        city?: string | null,
+        state?: string | null,
+        latitude?: number | null,
+        longitude?: number | null,
+      },
+    } | null >,
+    nextToken?: string | null,
   } | null,
 };
 
@@ -799,6 +871,7 @@ export type CreatePatchMutation = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -830,6 +903,7 @@ export type UpdatePatchMutation = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -861,6 +935,7 @@ export type DeletePatchMutation = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -896,6 +971,7 @@ export type CreateUserPatchMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -933,6 +1009,7 @@ export type UpdateUserPatchMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -970,6 +1047,7 @@ export type DeleteUserPatchMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1090,6 +1168,7 @@ export type CreatePatchMountainMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1133,6 +1212,7 @@ export type UpdatePatchMountainMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1176,6 +1256,7 @@ export type DeletePatchMountainMutation = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1308,6 +1389,7 @@ export type GetPatchQuery = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1342,6 +1424,7 @@ export type ListPatchesQuery = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1370,6 +1453,7 @@ export type GetUserPatchQuery = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1549,6 +1633,7 @@ export type GetPatchMountainQuery = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1715,6 +1800,7 @@ export type OnCreatePatchSubscription = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1745,6 +1831,7 @@ export type OnUpdatePatchSubscription = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1775,6 +1862,7 @@ export type OnDeletePatchSubscription = {
     latitude?: number | null,
     longitude?: number | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1810,6 +1898,7 @@ export type OnCreateUserPatchSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1847,6 +1936,7 @@ export type OnUpdateUserPatchSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1884,6 +1974,7 @@ export type OnDeleteUserPatchSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -2045,6 +2136,7 @@ export type OnCreatePatchMountainSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2087,6 +2179,7 @@ export type OnUpdatePatchMountainSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2129,6 +2222,7 @@ export type OnDeletePatchMountainSubscription = {
       latitude?: number | null,
       longitude?: number | null,
       popularity?: number | null,
+      hasPeaks?: boolean | null,
       createdAt: string,
       updatedAt: string,
     },

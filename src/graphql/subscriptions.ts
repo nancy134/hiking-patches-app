@@ -20,6 +20,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -49,6 +50,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -78,6 +80,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -113,6 +116,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -151,6 +155,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -189,6 +194,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -351,6 +357,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -394,6 +401,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -437,6 +445,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
