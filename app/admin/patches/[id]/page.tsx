@@ -85,11 +85,7 @@ useEffect(() => {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <Header />
-      <h1 className="text-2xl font-bold mb-4">🧭 Patch Details</h1>
-      <div className="bg-white shadow rounded p-4 space-y-2">
-        <p><strong>ID:</strong> {patch.id}</p>
-        <p><strong>Name:</strong> {patch.name}</p>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Patch Details for {patch.name}</h1>
       <MountainSelector patchId={id}/>
     </div>
 

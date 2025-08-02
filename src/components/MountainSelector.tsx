@@ -19,6 +19,8 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [patch, setPatch] = useState<Patch | null>(null);
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
 
   useEffect(() => {
     if (typeof patchId === 'string') {
@@ -44,25 +46,34 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
     fetchMountains();
   }, [search]);
 
-  async function fetchMountains() {
-    setLoading(true);
-    try {
-      const response = await client.graphql({
-        query: listMountains,
-        variables: {
-          filter: {
-            name: { contains: search },
-          },
-          limit: 20,
+async function fetchMountains() {
+  setLoading(true);
+  try {
+    const response = await client.graphql({
+      query: listMountains,
+      variables: {
+        filter: {
+          name: { contains: search },
         },
-      });
-      setMountains(response.data.listMountains.items);
-    } catch (err) {
-      console.error('Error fetching mountains:', err);
-    } finally {
-      setLoading(false);
-    }
+      },
+    });
+    setMountains(response.data.listMountains.items);
+  } catch (err) {
+    console.error('Error fetching mountains:', err);
+  } finally {
+    setLoading(false);
   }
+}
+const filteredMountains = mountains.filter((mtn) =>
+  mtn.name?.toLowerCase().includes(search.toLowerCase())
+);
+
+const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
+
+const paginatedMountains = filteredMountains.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
 
   async function handleAddMountain() {
     if (!selectedMountainId) return;
@@ -134,7 +145,7 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
             </tr>
           </thead>
           <tbody>
-            {mountains.map((mountain) => (
+            {paginatedMountains.map((mountain) => (
               <tr key={mountain.id} className="border-b hover:bg-gray-50">
                 <td className="p-2">
                   <input
@@ -154,6 +165,25 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
           </tbody>
         </table>
       )}
+<div className="flex justify-center items-center space-x-4 mt-2">
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Previous
+  </button>
+  <span>
+    Page {currentPage} of {totalPages}
+  </span>
+  <button
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
 
       {message && <p className="mt-2 text-sm">{message}</p>}
       <div className="mt-6">
