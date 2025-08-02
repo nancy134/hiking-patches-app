@@ -32,6 +32,12 @@ export default function MountainAscentModal({
     setAscentDates(dates);
   }, [userMountain]);
 
+useEffect(() => {
+  if (open && userMountain.length === 0) {
+    setAscentDates(['']);
+  }
+}, [open, userMountain]);
+
   const handleDateChange = (index: number, newDate: string) => {
     const newDates = [...ascentDates];
     newDates[index] = newDate;
@@ -66,7 +72,7 @@ export default function MountainAscentModal({
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
           <Dialog.Title className="text-xl font-bold mb-2">
-            Edit Ascents
+            Update Ascents for ...
           </Dialog.Title>
 
 
@@ -91,19 +97,21 @@ export default function MountainAscentModal({
               onClick={handleAddDate}
               className="text-blue-600 text-sm mt-2"
             >
-              + Add another ascent 
+              + Add another ascent date
             </button>
           </div>
 
 
           <div>
             <div className="flex justify-between gap-3 pt-4">
+               { /*
               <button
                 onClick={handleClear}
                 className="text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50"
               >
                 Clear All
               </button>
+              */ }
               <div className="flex gap-2">
                 <button
                   onClick={onClose}
@@ -115,7 +123,7 @@ export default function MountainAscentModal({
                   onClick={handleSave}
                   className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
                 >
-                  Save Ascents 
+                  Save
                 </button>
               </div>
             </div>

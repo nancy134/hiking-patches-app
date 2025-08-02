@@ -179,7 +179,7 @@ const handleSave = async (newDates: string[]) => {
                       onClick={() => setModalMountain(pm)}
                       className="text-blue-600 hover:underline text-sm"
                     >
-                      Edit Ascents
+                      Ascent Log 
                     </button>
                   </td>
                 )}

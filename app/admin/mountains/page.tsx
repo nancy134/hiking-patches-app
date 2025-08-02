@@ -19,6 +19,8 @@ export default function AdminMountainsPage() {
   const { user, isAdmin } = useAuth();
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
 
   useEffect(() => {
     fetchMountains();
@@ -116,6 +118,12 @@ export default function AdminMountainsPage() {
     );
   }
 
+  const totalPages = Math.ceil(mountains.length / itemsPerPage);
+  const paginatedMountains = mountains.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="p-4">
       <Header />
@@ -168,7 +176,7 @@ export default function AdminMountainsPage() {
           </tr>
         </thead>
         <tbody>
-          {mountains.map((mtn) => (
+          {paginatedMountains.map((mtn) => (
             <tr key={mtn.id}>
               <td className="border px-4 py-2">{mtn.name}</td>
               <td className="border px-4 py-2">{mtn.elevation}</td>
@@ -188,6 +196,25 @@ export default function AdminMountainsPage() {
           ))}
         </tbody>
       </table>
+<div className="flex justify-center items-center space-x-2 mt-4">
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Previous
+  </button>
+  <span>
+    Page {currentPage} of {totalPages}
+  </span>
+  <button
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
 
     </div>
   );
