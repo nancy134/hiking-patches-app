@@ -17,6 +17,8 @@ export default function AdminMountainsPage() {
   const [editingMountain, setEditingMountain] = useState<Partial<Mountain> | null>(null);
   const [showModal, setShowModal] = useState(false);
   const { user, isAdmin } = useAuth();
+  const [importing, setImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
 
   useEffect(() => {
     fetchMountains();
@@ -27,57 +29,55 @@ export default function AdminMountainsPage() {
     setMountains(response.data.listMountains.items);
   };
 
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const mountainsToCreate = results.data as Partial<Mountain>[];
+        setImporting(true);
+        setImportProgress({ current: 0, total: mountainsToCreate.length });
 
+        for (let i = 0; i < mountainsToCreate.length; i++) {
+          const mtn = mountainsToCreate[i];
+          if (!mtn.name) continue;
 
-const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
+          const input = {
+            name: mtn.name!,
+            elevation: mtn.elevation ? Number(mtn.elevation) : undefined,
+            latitude: mtn.latitude ?? undefined,
+            longitude: mtn.longitude ?? undefined,
+            city: mtn.city ?? '',
+            state: mtn.state ?? '',
+          };
 
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: async (results) => {
-      const mountainsToCreate = results.data as Partial<Mountain>[];
+          try {
+            await client.graphql({
+              query: createMountain,
+              variables: { input },
+              authMode: 'userPool',
+            });
+          } catch (err) {
+            console.error('Failed to create mountain:', input.name, err);
+          }
 
-      for (const mtn of mountainsToCreate) {
-        // Optional: validate required fields before submitting
-        if (!mtn.name) continue;
-
-        const input = {
-          name: mtn.name!,
-          elevation: mtn.elevation ? Number(mtn.elevation) : undefined,
-          latitude: mtn.latitude ?? undefined,
-          longitude: mtn.longitude ?? undefined,
-          city: mtn.city ?? '',
-          state: mtn.state ?? '',
-        };
-
-        try {
-          await client.graphql({
-            query: createMountain,
-            variables: { input },
-            authMode: 'userPool',
-          });
-        } catch (err) {
-          console.error('Failed to create mountain:', input.name, err);
+          setImportProgress({ current: i + 1, total: mountainsToCreate.length });
         }
-      }
 
-      fetchMountains();
-    },
-    error: (err) => {
-      console.error('CSV parsing error:', err);
-    },
-  });
+        setImporting(false);
+        fetchMountains();
+      },
+      error: (err) => {
+        console.error('CSV parsing error:', err);
+        setImporting(false);
+      },
+    });
 
-  // Reset the file input
-  event.target.value = '';
-};
-
-
-
-
+    event.target.value = '';
+  };
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Delete this mountain?');
@@ -135,9 +135,14 @@ const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
             accept=".csv"
             onChange={handleImportCSV}
             className="hidden"
+            disabled={importing}
           />
         </label>
-
+        {importing && (
+          <div className="text-blue-600 mt-2">
+            Importing {importProgress.current} of {importProgress.total} mountains...
+          </div>
+        )}
       </div>
 
       {showModal && (
