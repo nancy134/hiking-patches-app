@@ -27,6 +27,7 @@ import {
 } from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
 import PatchMountains from '@/components/PatchMountains';
+import PatchProgress from '@/components/PatchProgress';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -326,116 +327,20 @@ export default function PatchDetailPage() {
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
         <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
-          <div className="mb-3">
-            <label className="block font-medium mb-1">Progress Status:</label>
-            <div className="flex gap-4">
-              <label>
-                <input
-                  type="radio"
-                  name="progressStatus"
-                  checked={isInProgress === true}
-                  onChange={() => {
-                    setIsInProgress(true);
-                  }}
-                  className="mr-2"
-                />
-                  I'm working on this patch
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="progressStatus"
-                  checked={isInProgress === false}
-                  onChange={() => setIsInProgress(false)}
-                  className="mr-2"
-                />
-                  I've completed this patch
-              </label>
-            </div>
-          </div>
 
-
-          <label className="block mb-3">
-            Date Completed:
-            <input
-              type="date"
-              value={dateCompleted ?? ''}
-              onChange={(e) => setDateCompleted(e.target.value)}
-              disabled={isInProgress !== false}
-              className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
-            />
-          </label>
-          {/*
-          <label className="block mb-3">
-            Difficulty (1–5):
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="block w-full border p-2 rounded"
-            >
-            <option value="">Select</option>
-            {[1, 2, 3, 4, 5].map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
-      </label>
-
-      <label className="block mb-3">
-        Notes (optional):
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className="block w-full border p-2 rounded"
+        <PatchProgress
+          patchId={patch.id}
+          userId={user.userId}
+          initialUserPatch={userPatch}
+          onUpdate={(newPatch) => {
+            setUserPatch(newPatch);
+            if (newPatch?.dateCompleted) {
+              setDateCompleted(newPatch.dateCompleted);
+            }
+          }}
         />
-      </label>
-      */}
-      <div className="flex justify-between gap-2 mt-4">
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
-        >
-          Save
-        </button>
-
-        {userPatch && (
-          <button
-            onClick={async () => {
-              try {
-                await client.graphql({
-                  query: `
-                    mutation DeleteUserPatch($input: DeleteUserPatchInput!) {
-                      deleteUserPatch(input: $input) {
-                        id
-                      }
-                    }
-                  `,
-                  variables: { input: { id: userPatch.id } },
-                  authMode: 'userPool',
-                });
-                setUserPatch(null);
-                setDateCompleted(null);
-                setNotes('');
-                setDifficulty('');
-                setIsInProgress(false);
-                setMessage('🗑️ Progress cleared.');
-              } catch (err) {
-                console.error('Error clearing user patch:', err);
-                setMessage('❌ Failed to clear progress.');
-              }
-            }}
-            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-          >
-            Clear
-          </button>
-        )}
-        </div>
-
-        {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
       </div>
       <PatchMountains patchId={patch.id} userId={user.userId} />
-
-
     </div>
     ) : (
     <>
