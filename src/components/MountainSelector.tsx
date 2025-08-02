@@ -104,6 +104,13 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
   return (
     <div className="p-4 bg-white border rounded shadow mt-6">
       <h2 className="text-lg font-semibold mb-2">Add a Mountain to this Patch</h2>
+      <button
+        onClick={handleAddMountain}
+        disabled={!selectedMountainId}
+        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+      >
+        Add
+      </button>
 
       <input
         type="text"
@@ -147,14 +154,6 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
           </tbody>
         </table>
       )}
-
-      <button
-        onClick={handleAddMountain}
-        disabled={!selectedMountainId}
-        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-      >
-        Add
-      </button>
 
       {message && <p className="mt-2 text-sm">{message}</p>}
       <div className="mt-6">
