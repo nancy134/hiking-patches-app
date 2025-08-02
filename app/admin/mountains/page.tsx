@@ -163,6 +163,26 @@ export default function AdminMountainsPage() {
           }}
         />
       )}
+      <div className="flex justify-center items-center space-x-2 mt-4 mb-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
       <table className="w-full table-auto border border-collapse mb-4">
         <thead>
           <tr className="bg-gray-200">
@@ -196,25 +216,6 @@ export default function AdminMountainsPage() {
           ))}
         </tbody>
       </table>
-<div className="flex justify-center items-center space-x-2 mt-4">
-  <button
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Previous
-  </button>
-  <span>
-    Page {currentPage} of {totalPages}
-  </span>
-  <button
-    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-    disabled={currentPage === totalPages}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
 
     </div>
   );
