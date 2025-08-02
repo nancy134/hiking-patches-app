@@ -20,7 +20,9 @@ export default function AdminMountainsPage() {
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25;
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const itemsPerPage = 15;
 
   useEffect(() => {
     fetchMountains();
@@ -118,11 +120,17 @@ export default function AdminMountainsPage() {
     );
   }
 
-  const totalPages = Math.ceil(mountains.length / itemsPerPage);
-  const paginatedMountains = mountains.slice(
+  const filteredMountains = mountains.filter((mtn) =>
+    mtn.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
+  const paginatedMountains = filteredMountains.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+
 
   return (
     <div className="p-4">
@@ -163,6 +171,20 @@ export default function AdminMountainsPage() {
           }}
         />
       )}
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by mountain name..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset to first page on new search
+          }}
+          className="border border-gray-300 px-3 py-2 rounded w-full max-w-sm"
+        />
+      </div>
+
       <div className="flex justify-center items-center space-x-2 mt-4 mb-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
