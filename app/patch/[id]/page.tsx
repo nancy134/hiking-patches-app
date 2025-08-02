@@ -439,8 +439,7 @@ export default function PatchDetailPage() {
     </div>
     ) : (
     <>
-      <h2 className="text-xl font-semibold mb-2 mt-4">Mountains Completed</h2>
-<PatchMountains patchId={patch.id} />
+      <PatchMountains patchId={patch.id} />
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
         Want to keep track of your progress? Sign in to mark your progress.
       </div>
