@@ -13,6 +13,39 @@ interface PatchProgressProps {
   onUpdate: (patch: UserPatch | null) => void;
 }
 
+const customCreateUserPatch = `
+  mutation CreateUserPatch($input: CreateUserPatchInput!) {
+    createUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      inProgress
+      notes
+      difficulty
+      imageUrl
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const customUpdateUserPatch = `
+  mutation UpdateUserPatch($input: UpdateUserPatchInput!) {
+    updateUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      inProgress
+      notes
+      difficulty
+      imageUrl
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export default function PatchProgress({
   patchId,
   userId,
@@ -36,7 +69,7 @@ export default function PatchProgress({
       ...(initialUserPatch && { id: initialUserPatch.id }),
     };
 
-    const mutation = initialUserPatch ? updateUserPatch : createUserPatch;
+    const mutation = initialUserPatch ? customUpdateUserPatch : customCreateUserPatch;
 
     try {
       const response = await client.graphql({
@@ -86,61 +119,73 @@ export default function PatchProgress({
 
   const canSubmit = isInProgress !== null && (isInProgress || Boolean(dateCompleted));
 
-  return (
-    <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
-      <div className="mb-3">
-        <div className="flex gap-4">
-          <label>
-            <input
-              type="radio"
-              checked={isInProgress === true}
-              onChange={() => setIsInProgress(true)}
-              className="mr-2"
-            />
-            I'm working on this patch
-          </label>
-          <label>
-            <input
-              type="radio"
-              checked={isInProgress === false}
-              onChange={() => setIsInProgress(false)}
-              className="mr-2"
-            />
-            I've completed this patch
-          </label>
-        </div>
-      </div>
-
-      <label className="block mb-3">
-        Date Completed:
+return (
+  <div className="bg-gray-100 p-4 rounded shadow-md max-w-2xl">
+    <div className="mb-4 space-y-2">
+      <label className="block">
         <input
-          type="date"
-          value={dateCompleted ?? ''}
-          onChange={(e) => setDateCompleted(e.target.value)}
-          disabled={isInProgress !== false}
-          className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+          type="radio"
+          checked={isInProgress === null}
+          onChange={() => setIsInProgress(null)}
+          className="mr-2"
         />
+        I plan to work on this patch
       </label>
 
-      <div className="flex justify-between gap-2 mt-4">
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
-        >
-          Save
-        </button>
-        {initialUserPatch && (
-          <button
-            onClick={handleClear}
-            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-          >
-            Clear
-          </button>
-        )}
+      <label className="block">
+        <input
+          type="radio"
+          checked={isInProgress === true}
+          onChange={() => setIsInProgress(true)}
+          className="mr-2"
+        />
+        I'm working on this patch
+      </label>
+
+      <div className="flex items-center">
+        <label className="flex items-center mr-4">
+          <input
+            type="radio"
+            checked={isInProgress === false}
+            onChange={() => setIsInProgress(false)}
+            className="mr-2"
+          />
+          I've completed this patch
+        </label>
+        <label className="flex items-center gap-2">
+          <span className="whitespace-nowrap">Date Completed:</span>
+          <input
+            type="date"
+            value={dateCompleted ?? ''}
+            onChange={(e) => setDateCompleted(e.target.value)}
+            disabled={isInProgress !== false}
+            className={`border p-1 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+          />
+        </label>
       </div>
-      {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
     </div>
-  );
+
+    <div className="flex justify-between gap-2 mt-4">
+      <button
+        onClick={handleSubmit}
+        disabled={!canSubmit}
+        className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
+      >
+        Save
+      </button>
+      {initialUserPatch && (
+        <button
+          onClick={handleClear}
+          className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+        >
+          Clear
+        </button>
+      )}
+    </div>
+
+    {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+  </div>
+);
+
 }
 

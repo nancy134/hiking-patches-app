@@ -326,7 +326,6 @@ export default function PatchDetailPage() {
       {user ? (
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
-        <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
 
         <PatchProgress
           patchId={patch.id}
@@ -339,7 +338,6 @@ export default function PatchDetailPage() {
             }
           }}
         />
-      </div>
       <PatchMountains patchId={patch.id} userId={user.userId} />
     </div>
     ) : (
