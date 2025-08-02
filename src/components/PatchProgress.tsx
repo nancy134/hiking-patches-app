@@ -120,72 +120,82 @@ export default function PatchProgress({
   const canSubmit = isInProgress !== null && (isInProgress || Boolean(dateCompleted));
 
 return (
-  <div className="p-4 max-w-xl">
-    <h2 className="text-xl font-semibold mb-2">Patch Progress</h2>
-    <div className="mb-4 space-y-2">
-      { /*
-      <label className="block">
+  <div className="space-y-4">
+    <h2 className="text-xl font-semibold">Patch Progress</h2>
+
+    {/* Radio buttons */}
+    <div className="space-y-2">
+      <label className="inline-flex items-center gap-2">
         <input
           type="radio"
           checked={isInProgress === null}
           onChange={() => setIsInProgress(null)}
-          className="mr-2"
+          className="accent-blue-500"
         />
         I plan to work on this patch
       </label>
-      */ }
-      <label className="block">
+      <label className="inline-flex items-center gap-2">
         <input
           type="radio"
           checked={isInProgress === true}
           onChange={() => setIsInProgress(true)}
-          className="mr-2"
+          className="accent-blue-500"
         />
         I'm working on this patch
       </label>
 
-      <div className="flex items-center">
-        <label className="flex items-center mr-4">
+      <div className="flex flex-wrap items-center gap-4">
+        <label className="inline-flex items-center gap-2">
           <input
             type="radio"
             checked={isInProgress === false}
             onChange={() => setIsInProgress(false)}
-            className="mr-2"
+            className="accent-blue-500"
           />
           I've completed this patch
         </label>
+
         <label className="flex items-center gap-2">
-          <span className="whitespace-nowrap">Date Completed:</span>
+          <span>Date Completed:</span>
           <input
             type="date"
             value={dateCompleted ?? ''}
             onChange={(e) => setDateCompleted(e.target.value)}
             disabled={isInProgress !== false}
-            className={`border p-1 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+            className={`border p-1 rounded text-sm ${
+              isInProgress !== false
+                ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                : 'bg-white'
+            }`}
           />
         </label>
       </div>
     </div>
 
-    <div className="flex justify-between gap-2 mt-4">
+    {/* Buttons */}
+    <div className="flex items-center gap-3">
       <button
         onClick={handleSubmit}
         disabled={!canSubmit}
-        className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
+        className={`px-3 py-1.5 rounded text-sm font-medium text-white ${
+          canSubmit
+            ? 'bg-green-600 hover:bg-green-700'
+            : 'bg-gray-300 cursor-not-allowed'
+        }`}
       >
         Save
       </button>
       {initialUserPatch && (
         <button
           onClick={handleClear}
-          className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+          className="px-3 py-1.5 rounded text-sm font-medium text-white bg-red-500 hover:bg-red-600"
         >
           Clear
         </button>
       )}
     </div>
 
-    {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+    {message && <p className="text-sm text-gray-600">{message}</p>}
   </div>
 );
 
