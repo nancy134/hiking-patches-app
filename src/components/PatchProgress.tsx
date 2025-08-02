@@ -120,8 +120,10 @@ export default function PatchProgress({
   const canSubmit = isInProgress !== null && (isInProgress || Boolean(dateCompleted));
 
 return (
-  <div className="bg-gray-100 p-4 rounded shadow-md max-w-2xl">
+  <div className="p-4 max-w-xl">
+    <h2 className="text-xl font-semibold mb-2">Patch Progress</h2>
     <div className="mb-4 space-y-2">
+      { /*
       <label className="block">
         <input
           type="radio"
@@ -131,7 +133,7 @@ return (
         />
         I plan to work on this patch
       </label>
-
+      */ }
       <label className="block">
         <input
           type="radio"

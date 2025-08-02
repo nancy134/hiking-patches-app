@@ -259,96 +259,105 @@ export default function PatchDetailPage() {
   };
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
-    <div className="p-4">
+    <>
+    <div className="p-4 max-w-4xl mx-auto">
       <Header />
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
-        {patch.imageUrl && (
-        <img
-          src={patch.imageUrl}
-          alt={patch.name}
-          className="w-40 float-right mr-4 mb-2 rounded shadow"
-        />
-        )}
-        <p className="text-lg mb-2">{patch.description}</p>
+      <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
+          <p className="text-lg mb-2">{patch.description}</p>
           {Array.isArray(patch.regions) && patch.regions.length > 0 && (
-          <p className="text-gray-700 mb-4">
-            <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
-          </p>
+            <p className="text-gray-700">
+              <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
+            </p>
           )}
+        </div>
+        {patch.imageUrl && (
+          <img
+            src={patch.imageUrl}
+            alt={patch.name}
+            className="w-40 h-auto rounded shadow"
+          />
+        )}
       </div>
       {patch.howToGet && (
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
-        <div className="prose">
-        <ReactMarkdown
-          components={{
-            a: ({ href, children }) => {
-              const isExternal = href?.startsWith('http');
+        <div className="mt-6 bg-white p-4 rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
+          <div className="prose max-w-none">
+            <ReactMarkdown
+              components={{
+                a: ({ href, children }) => {
+                  const isExternal = href?.startsWith('http');
 
-              return isExternal ? (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline inline-flex items-center gap-1"
-                >
-                  {children}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 inline"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
-              ) : (
-                <a href={href} className="text-blue-600 underline">
-                  {children}
-                </a>
-              );
-            },
-          }}
-        >{patch.howToGet}</ReactMarkdown>
+                  return isExternal ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline inline-flex items-center gap-1"
+                     >
+                       {children}
+                       <svg
+                         xmlns="http://www.w3.org/2000/svg"
+                         className="h-4 w-4 inline"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         strokeWidth={2}
+                         aria-hidden="true"
+                        >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  ) : (
+                    <a href={href} className="text-blue-600 underline">
+                      {children}
+                    </a>
+                  );
+                },
+              }}
+            >{patch.howToGet}</ReactMarkdown>
+          </div>
         </div>
-      </div>
       )}
 
 
       {user ? (
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
-
-        <PatchProgress
-          patchId={patch.id}
-          userId={user.userId}
-          initialUserPatch={userPatch}
-          onUpdate={(newPatch) => {
-            setUserPatch(newPatch);
-            if (newPatch?.dateCompleted) {
-              setDateCompleted(newPatch.dateCompleted);
-            }
-          }}
-        />
-      <PatchMountains patchId={patch.id} userId={user.userId} />
+        <>
+        <div className="bg-white p-4 rounded shadow mt-6">
+          <PatchProgress
+            patchId={patch.id}
+            userId={user.userId}
+            initialUserPatch={userPatch}
+            onUpdate={(newPatch) => {
+              setUserPatch(newPatch);
+              if (newPatch?.dateCompleted) {
+                setDateCompleted(newPatch.dateCompleted);
+              }
+            }}
+          />
+        </div>
+        <div className="bg-white p-4 rounded shadow mt-6">
+          <PatchMountains patchId={patch.id} userId={user.userId} />
+        </div>
+        </>
+      ) : (
+        <>
+          <div className="bg-white p-4 mt-6 rounded shadow">
+            <PatchMountains patchId={patch.id} />
+          </div>
+          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded text-blue-800">
+            <p className="text-lg font-medium mb-2">Want to keep track of your progress?</p>
+            <p>Sign in to mark your patch progress and log your climbs.</p>
+          </div>
+        </>
+      )}
     </div>
-    ) : (
-    <>
-      <PatchMountains patchId={patch.id} />
-      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-        Want to keep track of your progress? Sign in to mark your progress.
-      </div>
     </>
-  )}
-  </div>
   );
 }
 
