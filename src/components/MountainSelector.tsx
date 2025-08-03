@@ -35,6 +35,8 @@ const itemsPerPage = 10;
         variables: { id: patchId }
       });
       if ('data' in response) {
+        console.log("patch:");
+        console.log(response.data.getPatch);
         setPatch(response.data.getPatch);
       }
     } catch (err) {
@@ -75,54 +77,40 @@ const paginatedMountains = filteredMountains.slice(
   currentPage * itemsPerPage
 );
 
-  async function handleAddMountain() {
-    if (!selectedMountainId) return;
-    const existing = await client.graphql({
-      query: listPatchMountains,
-      variables: {
-        filter: {
-          patchPatchMountainsId: { eq: patchId },
-          mountainPatchMountainsId: { eq: selectedMountainId },
-        },
-      },
-    });
-    if (existing.data.listPatchMountains.items.length === 0) {
-      try {
-        await client.graphql({
-          query: createPatchMountain,
-          variables: {
-            input: {
-              patchPatchMountainsId: patchId,
-              mountainPatchMountainsId: selectedMountainId,
-            },
+
+async function handleAddMountain(mountainId: string) {
+  if (!mountainId) return;
+
+    try {
+      await client.graphql({
+        query: createPatchMountain,
+        variables: {
+          input: {
+            patchPatchMountainsId: patchId,
+            mountainPatchMountainsId: mountainId,
           },
-          authMode: 'userPool',
-        });
-        setMessage('Mountain added!');
-        setSelectedMountainId(null);
-        fetchPatch(patchId);
-        fetchMountains(); // optional refresh
-      } catch (err) {
-        setMessage('Failed to add mountain.');
-        console.error('Add error:', err);
-      }
-    } else {
-      console.log("Mountain already added to patch");
+        },
+        authMode: 'userPool',
+      });
+      setMessage('Mountain added!');
+      setSelectedMountainId(null); // optional, or remove if not needed
+      fetchPatch(patchId);
+      fetchMountains(); // optional refresh
+    } catch (err) {
+      setMessage('Failed to add mountain.');
+      console.error('Add error:', err);
     }
-  }
+}
+
+
+
+
+
   if (!patch) return <p className="p-6">Patch not found.</p>;
 
   return (
     <div className="p-4 bg-white border rounded shadow mt-6">
       <h2 className="text-lg font-semibold mb-2">Add a Mountain to this Patch</h2>
-      <button
-        onClick={handleAddMountain}
-        disabled={!selectedMountainId}
-        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-      >
-        Add
-      </button>
-
       <input
         type="text"
         placeholder="Search mountains..."
@@ -134,56 +122,71 @@ const paginatedMountains = filteredMountains.slice(
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table className="w-full text-left border-collapse mb-4">
-          <thead>
-            <tr className="border-b">
-              <th className="p-2">Select</th>
-              <th className="p-2">Name</th>
-              <th className="p-2">Elevation</th>
-              <th className="p-2">City</th>
-              <th className="p-2">State</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedMountains.map((mountain) => (
-              <tr key={mountain.id} className="border-b hover:bg-gray-50">
-                <td className="p-2">
-                  <input
-                    type="radio"
-                    name="selectedMountain"
-                    value={mountain.id}
-                    checked={selectedMountainId === mountain.id}
-                    onChange={() => setSelectedMountainId(mountain.id!)}
-                  />
-                </td>
-                <td className="p-2">{mountain.name}</td>
-                <td className="p-2">{mountain.elevation}</td>
-                <td className="p-2">{mountain.city}</td>
-                <td className="p-2">{mountain.state}</td>
+        <>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900">Mountain</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900">Elevation</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900">City</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900">State</th>
+                <th className="px-4 py-2"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {paginatedMountains.map((mountain) => {
+                console.log("Rendering mountain:", mountain.name, "ID:", mountain.id);
+                const isInPatch = patch.patchMountains?.items?.some((pm) => {
+                  console.log(pm);
+                  console.log("  Comparing to patch mountain ID:", pm?.mountain.id);
+                  return pm?.mountain.id === mountain.id;
+                });
+                console.log("  => isInPatch:", isInPatch);
+                return (
+                  <tr key={mountain.id}>
+                    <td className="px-4 py-2">{mountain.name}</td>
+                    <td className="px-4 py-2">{mountain.elevation}</td>
+                    <td className="px-4 py-2">{mountain.city}</td>
+                    <td className="px-4 py-2">{mountain.state}</td>
+                    <td className="px-4 py-2">
+                      <button
+                        onClick={() => handleAddMountain(mountain.id)}
+                        disabled={isInPatch}
+                        className={`px-3 py-1 rounded text-sm ${
+                          isInPatch
+                            ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {isInPatch ? 'Added' : 'Add'}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
       )}
-<div className="flex justify-center items-center space-x-4 mt-2">
-  <button
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Previous
-  </button>
-  <span>
-    Page {currentPage} of {totalPages}
-  </span>
-  <button
-    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-    disabled={currentPage === totalPages}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
+      <div className="flex justify-center items-center space-x-4 mt-2">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
 
       {message && <p className="mt-2 text-sm">{message}</p>}
       <div className="mt-6">
@@ -191,22 +194,24 @@ const paginatedMountains = filteredMountains.slice(
         {(patch.patchMountains?.items ?? []).length === 0 ? (
           <p className="text-gray-600">No mountains linked yet.</p>
         ) : (
-          <ul className="list-disc list-inside">
-            {patch.patchMountains?.items?.map((m: PatchMountain | null) =>
-              m?.mountain && (
+        <>
+          <ol className="list-decimal list-inside">
+            {[...(patch.patchMountains?.items ?? [])]
+              .filter((m): m is PatchMountain & { mountain: Mountain } => !!m?.mountain)
+              .sort((a, b) => (b.mountain.elevation ?? 0) - (a.mountain.elevation ?? 0))
+              .map((m) => (
                 <li key={m.mountain.id}>
                   {m.mountain.name}
                   {m.mountain.city && ` — ${m.mountain.city}`}
                   {m.mountain.state && `, ${m.mountain.state}`}
                   {m.mountain.elevation && ` — (${Number(m.mountain.elevation).toLocaleString()} ft)`}
                 </li>
-              )
-            )}
-          </ul>
+              ))
+            }
+          </ol>
+        </>
         )}
       </div>
-
-
     </div>
   );
 }
