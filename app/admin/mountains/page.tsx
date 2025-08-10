@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import Header from '@/components/Header';
 import { listMountains } from '@/graphql/queries';
+import { GraphQLResult } from '@aws-amplify/api';
+import { ListMountainsQuery } from '@/API';
 import { createMountain, updateMountain, deleteMountain } from '@/graphql/mutations';
 import { Mountain } from '@/API';
 import { useAuth } from '@/context/auth-context';
@@ -29,8 +31,21 @@ export default function AdminMountainsPage() {
   }, []);
 
   const fetchMountains = async () => {
-    const response = await client.graphql({ query: listMountains });
-    setMountains(response.data.listMountains.items);
+    let allMountains: any[] = [];
+    let nextToken: string | null = null;
+
+    do {
+      const response: GraphQLResult<ListMountainsQuery> = await client.graphql({
+        query: listMountains,
+        variables: { limit: 1000, nextToken }
+      });
+
+      const data = response.data?.listMountains;
+      allMountains = allMountains.concat(data?.items ?? []);
+      nextToken = data?.nextToken ?? null;
+    } while (nextToken);
+
+    setMountains(allMountains);
   };
 
   const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
