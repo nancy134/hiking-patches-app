@@ -46,65 +46,74 @@ const itemsPerPage = 10;
 
   useEffect(() => {
     fetchMountains();
-  }, [search]);
-
-async function fetchMountains() {
-  setLoading(true);
-  try {
-    const response = await client.graphql({
-      query: listMountains,
-      variables: {
-        filter: {
-          name: { contains: search },
-        },
-      },
-    });
-    setMountains(response.data.listMountains.items);
-  } catch (err) {
-    console.error('Error fetching mountains:', err);
-  } finally {
-    setLoading(false);
-  }
-}
-const filteredMountains = mountains.filter((mtn) =>
-  mtn.name?.toLowerCase().includes(search.toLowerCase())
-);
-
-const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
-
-const paginatedMountains = filteredMountains.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+  }, []);
 
 
-async function handleAddMountain(mountainId: string) {
-  if (!mountainId) return;
-
+  async function fetchMountains() {
+    setLoading(true);
     try {
-      await client.graphql({
-        query: createPatchMountain,
-        variables: {
-          input: {
-            patchPatchMountainsId: patchId,
-            mountainPatchMountainsId: mountainId,
+      let nextToken: string | null = null;
+      const mountains: any[] = []; // Replace `any` with your Mountain type
+
+      do {
+        const response = await client.graphql({
+          query: listMountains,
+          variables: {
+            limit: 1000,
+            nextToken,
           },
-        },
-        authMode: 'userPool',
-      });
-      setMessage('Mountain added!');
-      setSelectedMountainId(null); // optional, or remove if not needed
-      fetchPatch(patchId);
-      fetchMountains(); // optional refresh
+        });
+
+        const data = response.data?.listMountains;
+        nextToken = data?.nextToken ?? null;
+
+        if (data?.items) {
+          mountains.push(...data.items);
+        }
+      } while (nextToken);
+
+      setMountains(mountains);
     } catch (err) {
-      setMessage('Failed to add mountain.');
-      console.error('Add error:', err);
+      console.error("Error fetching mountains:", err);
+    } finally {
+      setLoading(false);
     }
-}
+  }
 
+  const filteredMountains = mountains.filter((mtn) =>
+    mtn.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
+  const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
 
+  const paginatedMountains = filteredMountains.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
+  async function handleAddMountain(mountainId: string) {
+    if (!mountainId) return;
+
+      try {
+        await client.graphql({
+          query: createPatchMountain,
+          variables: {
+            input: {
+              patchPatchMountainsId: patchId,
+              mountainPatchMountainsId: mountainId,
+            },
+          },
+          authMode: 'userPool',
+        });
+        setMessage('Mountain added!');
+        setSelectedMountainId(null); // optional, or remove if not needed
+        fetchPatch(patchId);
+        fetchMountains(); // optional refresh
+      } catch (err) {
+        setMessage('Failed to add mountain.');
+        console.error('Add error:', err);
+      }
+  }
 
   if (!patch) return <p className="p-6">Patch not found.</p>;
 

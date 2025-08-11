@@ -27,7 +27,6 @@ export default function AdminPatchDetailPage() {
   const [patch, setPatch] = useState<Patch | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [allMountains, setAllMountains] = useState<Mountain[]>([]);
   const [selectedMountainId, setSelectedMountainId] = useState<string>('');
 
   useEffect(() => {
@@ -36,20 +35,6 @@ export default function AdminPatchDetailPage() {
     }
 
   }, [id]);
-
-useEffect(() => {
-  if (!id) return;
-
-  const fetchData = async () => {
-    // Fetch all available mountains
-    const allMountainData = await client.graphql({
-      query: listMountains,
-    });
-    setAllMountains(allMountainData.data.listMountains.items);
-  };
-
-  fetchData();
-}, [id]);
 
   const fetchPatch = async (patchId: string) => {
     try {
