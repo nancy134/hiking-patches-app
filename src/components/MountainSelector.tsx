@@ -9,6 +9,8 @@ import { Mountain } from '@/API';
 import { Patch } from '@/API';
 import { PatchMountain} from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
+import { GraphQLResult } from '@aws-amplify/api';
+import { ListMountainsQuery } from '@/API';
 
 const client = generateClient();
 
@@ -56,7 +58,7 @@ const itemsPerPage = 10;
       const mountains: any[] = []; // Replace `any` with your Mountain type
 
       do {
-        const response = await client.graphql({
+        const response: GraphQLResult<ListMountainsQuery> = await client.graphql({
           query: listMountains,
           variables: {
             limit: 1000,
