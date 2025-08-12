@@ -11,6 +11,7 @@ import { PatchMountain} from '@/API';
 import { getPatchWithMountains } from '@/graphql/custom-queries';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListMountainsQuery } from '@/API';
+import { deletePatchMountain } from '@/graphql/mutations';
 
 const client = generateClient();
 
@@ -21,8 +22,8 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [patch, setPatch] = useState<Patch | null>(null);
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (typeof patchId === 'string') {
@@ -115,6 +116,23 @@ const itemsPerPage = 10;
         setMessage('Failed to add mountain.');
         console.error('Add error:', err);
       }
+  }
+
+  async function handleDeleteMountain(patchMountainId: string) {
+    try {
+      await client.graphql({
+        query: deletePatchMountain,
+        variables: {
+          input: { id: patchMountainId },
+        },
+        authMode: 'userPool',
+      });
+      setMessage('Mountain removed!');
+      fetchPatch(patchId); // refresh patch data
+    } catch (err) {
+      setMessage('Failed to remove mountain.');
+      console.error('Delete error:', err);
+    }
   }
 
   if (!patch) return <p className="p-6">Patch not found.</p>;
@@ -211,11 +229,19 @@ const itemsPerPage = 10;
               .filter((m): m is PatchMountain & { mountain: Mountain } => !!m?.mountain)
               .sort((a, b) => (b.mountain.elevation ?? 0) - (a.mountain.elevation ?? 0))
               .map((m) => (
-                <li key={m.mountain.id}>
+                <li key={m.mountain.id} className="flex justify-between items-center">
+                  <span>
                   {m.mountain.name}
                   {m.mountain.city && ` — ${m.mountain.city}`}
                   {m.mountain.state && `, ${m.mountain.state}`}
                   {m.mountain.elevation && ` — (${Number(m.mountain.elevation).toLocaleString()} ft)`}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteMountain(m.id)}
+                    className="ml-4 px-2 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Remove
+                  </button>
                 </li>
               ))
             }
