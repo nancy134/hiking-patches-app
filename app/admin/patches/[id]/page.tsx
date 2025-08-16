@@ -11,7 +11,7 @@ import { useAuth } from '@/context/auth-context';
 import { listMountains } from '@/graphql/queries';
 import { listPatchMountains } from '@/graphql/queries';
 import { createPatchMountain } from '@/graphql/mutations';
-import { getPatchWithMountains } from '@/graphql/custom-queries';
+import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import MountainSelector from '@/components/MountainSelector';
 
 const client = generateClient();
@@ -39,7 +39,7 @@ export default function AdminPatchDetailPage() {
   const fetchPatch = async (patchId: string) => {
     try {
       const response = await client.graphql({
-        query: getPatchWithMountains,
+        query: getPatchWithMountainsPaged,
         variables: { id: patchId }
       });
       if ('data' in response) {

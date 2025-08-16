@@ -741,6 +741,8 @@ export type ListUserPatchesWithPatchQuery = {
 
 export type GetPatchWithMountainsQueryVariables = {
   id: string,
+  limit?: number | null,
+  nextToken?: string | null,
 };
 
 export type GetPatchWithMountainsQuery = {
@@ -754,6 +756,7 @@ export type GetPatchWithMountainsQuery = {
     regions?: Array< string | null > | null,
     difficulty?: Difficulty | null,
     popularity?: number | null,
+    hasPeaks?: boolean | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
       items:  Array< {
@@ -770,6 +773,7 @@ export type GetPatchWithMountainsQuery = {
           state?: string | null,
         },
       } | null >,
+      nextToken?: string | null,
     } | null,
   } | null,
 };

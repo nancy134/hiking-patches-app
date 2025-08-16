@@ -8,10 +8,11 @@ import { createPatchMountain } from '@/graphql/mutations';
 import { Mountain } from '@/API';
 import { Patch } from '@/API';
 import { PatchMountain} from '@/API';
-import { getPatchWithMountains } from '@/graphql/custom-queries';
+import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListMountainsQuery } from '@/API';
 import { deletePatchMountain } from '@/graphql/mutations';
+import { GetPatchWithMountainsQuery } from '@/API';
 
 const client = generateClient();
 
@@ -31,17 +32,44 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
     }
   }, [patchId]);
 
-  const fetchPatch = async (patchId: string) => {
+  const fetchPatch = async (patchId: string, pageSize = 100) => {
     try {
-      const response = await client.graphql({
-        query: getPatchWithMountains,
-        variables: { id: patchId }
-      });
-      if ('data' in response) {
-        console.log("patch:");
-        console.log(response.data.getPatch);
-        setPatch(response.data.getPatch);
-      }
+      let nextToken: string | null | undefined = null;
+      let allItems: any[] = [];
+      let patchMeta: any = null;
+
+      do {
+
+        const resp = (await client.graphql<GetPatchWithMountainsQuery>({
+          query: getPatchWithMountainsPaged,
+          variables: { id: patchId, limit: pageSize, nextToken }
+         })) as GraphQLResult<GetPatchWithMountainsQuery>;
+
+        if (!('data' in resp) || !resp.data?.getPatch) {
+          throw new Error('No data returned');
+        }
+
+        const patch = resp.data.getPatch;
+
+        // Capture top-level patch fields once
+        if (!patchMeta) {
+          const { patchMountains, ...rest } = patch;
+          patchMeta = rest;
+        }
+
+        const conn = patch.patchMountains;
+        allItems.push(...(conn?.items ?? []));
+        nextToken = conn?.nextToken ?? null;
+      } while (nextToken);
+
+      // Compose the full object and set state
+      const fullPatch = {
+        ...patchMeta,
+        patchMountains: { items: allItems }
+      };
+
+      console.log('patch:', fullPatch);
+      setPatch(fullPatch);
     } catch (err) {
       console.error('Error fetching patch:', err);
     }
@@ -224,28 +252,47 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
           <p className="text-gray-600">No mountains linked yet.</p>
         ) : (
         <>
-          <ol className="list-decimal list-inside">
+        <table className="w-full table-auto border border-gray-200 rounded-md overflow-hidden">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-3 py-2 text-right font-medium text-gray-700 w-12">#</th>
+              <th className="px-3 py-2 text-left font-medium text-gray-700">Mountain</th>
+              <th className="px-3 py-2 text-left font-medium text-gray-700">Location</th>
+              <th className="px-3 py-2 text-right font-medium text-gray-700">Elevation</th>
+              <th className="px-3 py-2 text-right font-medium text-gray-700">Actions</th>
+            </tr>
+           </thead>
+          <tbody>
             {[...(patch.patchMountains?.items ?? [])]
               .filter((m): m is PatchMountain & { mountain: Mountain } => !!m?.mountain)
               .sort((a, b) => (b.mountain.elevation ?? 0) - (a.mountain.elevation ?? 0))
-              .map((m) => (
-                <li key={m.mountain.id} className="flex justify-between items-center">
-                  <span>
-                  {m.mountain.name}
-                  {m.mountain.city && ` — ${m.mountain.city}`}
-                  {m.mountain.state && `, ${m.mountain.state}`}
-                  {m.mountain.elevation && ` — (${Number(m.mountain.elevation).toLocaleString()} ft)`}
-                  </span>
-                  <button
-                    onClick={() => handleDeleteMountain(m.id)}
-                    className="ml-4 px-2 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))
-            }
-          </ol>
+              .map((m, idx) => {
+                const { mountain } = m;
+                const location = [mountain.city, mountain.state].filter(Boolean).join(", ");
+                const elevation =
+                  mountain.elevation != null
+                    ? `${Number(mountain.elevation).toLocaleString()} ft`
+                     : "—";
+
+                  return (
+                    <tr key={mountain.id} className="border-t">
+                    <td className="px-3 py-2 align-middle text-right">{idx + 1}</td>
+                    <td className="px-3 py-2 align-middle">{mountain.name}</td>
+                    <td className="px-3 py-2 align-middle">{location || "—"}</td>
+                    <td className="px-3 py-2 align-middle text-right">{elevation}</td>
+                    <td className="px-3 py-2 align-middle text-right">
+                      <button
+                        onClick={() => handleDeleteMountain(m.id)}
+                        className="px-2 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+           </tbody>
+        </table>
         </>
         )}
       </div>

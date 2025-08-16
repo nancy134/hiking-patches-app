@@ -25,7 +25,7 @@ import {
   UpdateUserPatchMutation,
   CreateUserPatchMutation,
 } from '@/API';
-import { getPatchWithMountains } from '@/graphql/custom-queries';
+import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
 
@@ -102,7 +102,7 @@ export default function PatchDetailPage() {
     const fetchPatch = async () => {
       try {
         const response = await client.graphql({
-          query: getPatchWithMountains,
+          query: getPatchWithMountainsPaged,
           variables: { id },
         });
         if ('data' in response) {
