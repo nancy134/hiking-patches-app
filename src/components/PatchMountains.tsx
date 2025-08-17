@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { listPatchMountains, listUserMountains } from '@/graphql/queries';
 import { ListPatchMountainsQuery, ListUserMountainsQuery, PatchMountain, UserMountain } from '@/API';
 import { listPatchMountainsWithMountain } from '@/graphql/custom-queries';
@@ -39,6 +39,9 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
   const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
   const [modalMountain, setModalMountain] = useState<ItemWithMountain | null>(null);
+  const [q, setQ] = useState('');
+  const [status, setStatus] = useState<'all' | 'done' | 'todo'>('all');
+  const [stateFilter, setStateFilter] = useState<string>('all');
 
   useEffect(() => {
     const fetchData = async (pageSize = 100) => {
@@ -112,6 +115,41 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
     fetchUserMountains();
   }, [userId]);
+
+
+// helper: completion for a mountain
+const isCompleted = (pm: ItemWithMountain) =>
+  (userMountainMap[pm.mountain.id] ?? []).length > 0;
+
+// distinct states for dropdown
+const uniqueStates = useMemo(
+  () =>
+    Array.from(
+      new Set(patchMountains.map(pm => pm.mountain.state).filter(Boolean) as string[])
+    ).sort(),
+  [patchMountains]
+);
+
+// filtered list to render
+const visibleMountains = useMemo(() => {
+  const qNorm = q.trim().toLowerCase();
+
+  return patchMountains.filter(pm => {
+    const m = pm.mountain;
+    const matchesQ =
+      qNorm === '' ||
+      [m.name, m.city ?? '', m.state ?? ''].some(v => v.toLowerCase().includes(qNorm));
+
+    const matchesState = stateFilter === 'all' || m.state === stateFilter;
+
+    const done = isCompleted(pm);
+    const matchesStatus =
+      status === 'all' ? true : status === 'done' ? done : !done;
+
+    return matchesQ && matchesState && matchesStatus;
+  });
+}, [patchMountains, q, status, stateFilter, userMountainMap]);
+
 
   const handleEdit = (pm: PatchMountain) => {
     setModalMountain(pm);
@@ -190,24 +228,73 @@ const handleSave = async (newDates: string[]) => {
     <div>
       <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
       <p className="mb-4 text-sm text-gray-600">Complete: {percent}%</p>
+
+
+<div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
+  <input
+    type="search"
+    value={q}
+    onChange={(e) => setQ(e.target.value)}
+    placeholder="Search by name, city, or state…"
+    className="w-full sm:w-64 border rounded px-3 py-1.5 text-sm"
+  />
+
+  <select
+    value={status}
+    onChange={(e) => setStatus(e.target.value as any)}
+    className="border rounded px-3 py-1.5 text-sm"
+  >
+    <option value="all">All</option>
+    <option value="todo">Not completed</option>
+    <option value="done">Completed</option>
+  </select>
+
+  <select
+    value={stateFilter}
+    onChange={(e) => setStateFilter(e.target.value)}
+    className="border rounded px-3 py-1.5 text-sm"
+  >
+    <option value="all">All states</option>
+    {uniqueStates.map((s) => (
+      <option key={s} value={s}>{s}</option>
+    ))}
+  </select>
+
+  {(q || status !== 'all' || stateFilter !== 'all') && (
+    <button
+      className="ml-auto sm:ml-0 text-sm underline"
+      onClick={() => { setQ(''); setStatus('all'); setStateFilter('all'); }}
+    >
+      Clear filters
+    </button>
+  )}
+</div>
+
+<p className="mb-2 text-xs text-gray-500">
+  Showing {visibleMountains.length} of {patchMountains.length}
+</p>
+
+
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
             <th className="p-2 w-10 text-right">#</th>
             <th className="text-left p-2">Mountain</th>
+            <th className="text-left p-2">State</th>
             <th className="text-left p-2">Dates Ascended</th>
             {userId && <th className="text-left p-2">Action</th>}
           </tr>
         </thead>
-<tbody>
-  {patchMountains.map((pm, idx) => {
-    const mountain = pm.mountain!;
+        <tbody>
+          {visibleMountains.map((pm, idx) => {
+            const mountain = pm.mountain!;
     const userMountains = userMountainMap[mountain.id] || [];
 
     return (
       <tr key={mountain.id} className="border-t">
         <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
         <td className="p-2">{mountain.name}</td>
+        <td className="p-2">{mountain.state}</td>
         <td className="p-2">
           {userMountains.length > 0 ? (
             <div className="flex gap-2 text-sm text-gray-700 flex-wrap items-center">
