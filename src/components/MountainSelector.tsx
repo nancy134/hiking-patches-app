@@ -24,6 +24,7 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
   const [message, setMessage] = useState<string | null>(null);
   const [patch, setPatch] = useState<Patch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [adding, setAdding] = useState<Record<string, boolean>>({});
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -124,26 +125,45 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
 
   async function handleAddMountain(mountainId: string) {
     if (!mountainId) return;
+    if (adding[mountainId]) return; // in-flight guard
 
-      try {
-        await client.graphql({
-          query: createPatchMountain,
-          variables: {
-            input: {
-              patchPatchMountainsId: patchId,
-              mountainPatchMountainsId: mountainId,
-            },
+    setAdding(p => ({ ...p, [mountainId]: true }));
+    try {
+      await client.graphql({
+        query: createPatchMountain,
+        variables: {
+          input: {
+            patchPatchMountainsId: patchId,
+            mountainPatchMountainsId: mountainId,
           },
-          authMode: 'userPool',
-        });
-        setMessage('Mountain added!');
-        setSelectedMountainId(null); // optional, or remove if not needed
-        fetchPatch(patchId);
-        fetchMountains(); // optional refresh
-      } catch (err) {
+        },
+        authMode: 'userPool',
+      });
+
+      setMessage('Mountain added!');
+      // optionally: optimistic update here instead of refetching
+      await fetchPatch(patchId);
+      await fetchMountains();
+    } catch (err: any) {
+      // AppSync/Dynamo will throw if the id already exists; treat as non-fatal
+      const msg =
+        err?.errors?.[0]?.errorType ||
+        err?.errors?.[0]?.message ||
+        err?.name ||
+        '';
+
+      if (msg.includes('ConditionalCheckFailed') || msg.includes('Conflict')) {
+        setMessage('Mountain already added.');
+      } else {
         setMessage('Failed to add mountain.');
         console.error('Add error:', err);
       }
+    } finally {
+      setAdding(p => {
+        const { [mountainId]: _omit, ...rest } = p;
+        return rest;
+      });
+    }
   }
 
   async function handleDeleteMountain(patchMountainId: string) {
@@ -199,6 +219,7 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
                   return pm?.mountain.id === mountain.id;
                 });
                 console.log("  => isInPatch:", isInPatch);
+                const isPending = !!adding[mountain.id]; 
                 return (
                   <tr key={mountain.id}>
                     <td className="px-4 py-2">{mountain.name}</td>
@@ -208,14 +229,14 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
                     <td className="px-4 py-2">
                       <button
                         onClick={() => handleAddMountain(mountain.id)}
-                        disabled={isInPatch}
+                        disabled={isInPatch || isPending}
                         className={`px-3 py-1 rounded text-sm ${
-                          isInPatch
+                          isInPatch || isPending
                             ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                             : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}
                       >
-                        {isInPatch ? 'Added' : 'Add'}
+                        {isInPatch ? 'Added' : isPending ? 'Adding…' : 'Add'}
                       </button>
                     </td>
                   </tr>
@@ -273,7 +294,6 @@ export default function MountainSelector({ patchId }: { patchId: string }) {
                   mountain.elevation != null
                     ? `${Number(mountain.elevation).toLocaleString()} ft`
                      : "—";
-
                   return (
                     <tr key={mountain.id} className="border-t">
                     <td className="px-3 py-2 align-middle text-right">{idx + 1}</td>
