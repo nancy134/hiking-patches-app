@@ -8,7 +8,11 @@ import MountainAscentModal from '@/components/MountainAscentModal';
 import { generateClient } from 'aws-amplify/api';
 import { deleteUserMountainMinimal } from '@/graphql/custom-mutations';
 import { createUserMountainMinimal } from '@/graphql/custom-mutations';
-
+import { GraphQLResult } from '@aws-amplify/api';
+import { ListPatchMountainsQueryVariables } from '@/API';
+import {
+  ListPatchMountainsWithMountainQuery,
+} from '@/API';
 const client = generateClient();
 
 type UserMountainMap = Record<string, UserMountain[] | undefined>;
@@ -18,26 +22,66 @@ interface PatchMountainProps {
   userId?: string;
 }
 
+
 export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
-  const [patchMountains, setPatchMountains] = useState<PatchMountain[]>([]);
+
+
+  // Derive the item type returned by *your* query (which can include nulls)
+  type Query = ListPatchMountainsWithMountainQuery;
+  type Item = NonNullable<NonNullable<Query['listPatchMountains']>['items']>[number];
+  // Non-null item
+  type ItemNN = NonNullable<Item>;
+  // Non-null item with a non-null mountain
+  type ItemWithMountain = ItemNN & { mountain: NonNullable<ItemNN['mountain']> };
+
+  // State should match what you render (you use `pm.mountain!`), not the model type
+  const [patchMountains, setPatchMountains] = useState<ItemWithMountain[]>([]);
+
   const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
-  const [modalMountain, setModalMountain] = useState<PatchMountain | null>(null);
+  const [modalMountain, setModalMountain] = useState<ItemWithMountain | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const patchResponse = await client.graphql({
-        query: listPatchMountainsWithMountain,
-        variables: { filter: { patchPatchMountainsId: { eq: patchId } } },
-        //authMode: 'API_KEY', // or use 'AMAZON_COGNITO_USER_POOLS' if needed
-      }) as { data: ListPatchMountainsQuery };
+    const fetchData = async (pageSize = 100) => {
+      const all: Item[] = [];
+      let token: string | undefined;
 
-      console.log(patchResponse.data?.listPatchMountains?.items)
-      //const sorted = patchResponse.data?.listPatchMountains?.items
-      //  ?.filter((pm): pm is PatchMountain => !!pm && !!pm.mountain)
-      //  ?.sort((a, b) => a.mountain!.name.localeCompare(b.mountain!.name)) || [];
+      while (true) {
+        const variables: ListPatchMountainsQueryVariables = {
+          filter: { patchPatchMountainsId: { eq: patchId } },
+          limit: pageSize,
+          ...(token ? { nextToken: token } : {}),
+        };
 
-      setPatchMountains((patchResponse.data?.listPatchMountains?.items ?? []).filter((item): item is PatchMountain => item !== null));
+        const r = (await client.graphql<Query>({
+          query: listPatchMountainsWithMountain,
+          variables,
+        })) as GraphQLResult<Query>;
 
+        const conn = r.data?.listPatchMountains;
+        if (conn?.items?.length) {
+          // items can contain `null`, keep the type accurate
+          all.push(...(conn.items as Item[]));
+        }
+
+        token = conn?.nextToken ?? undefined;
+        if (!token) break;
+      }
+
+      // 1) remove null items
+      const nonNull: ItemNN[] = all.filter((pm): pm is ItemNN => pm !== null);
+
+      // 2) keep only rows that have a mountain
+      const withMountain: ItemWithMountain[] = nonNull.filter(
+        (pm): pm is ItemWithMountain => pm.mountain != null
+      );
+
+      // 3) optional dedupe and sort
+      const deduped = Array.from(new Map(withMountain.map((pm) => [pm.id, pm])).values());
+      const sorted = deduped.sort((a, b) =>
+        a.mountain.name.localeCompare(b.mountain.name)
+      );
+
+      setPatchMountains(sorted);
     };
 
     fetchData();
@@ -149,44 +193,47 @@ const handleSave = async (newDates: string[]) => {
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
+            <th className="p-2 w-10 text-right">#</th>
             <th className="text-left p-2">Mountain</th>
             <th className="text-left p-2">Dates Ascended</th>
             {userId && <th className="text-left p-2">Action</th>}
           </tr>
         </thead>
-        <tbody>
-          {patchMountains.map((pm) => {
-            const mountain = pm.mountain!;
-            const userMountains = userMountainMap[mountain.id] || [];
+<tbody>
+  {patchMountains.map((pm, idx) => {
+    const mountain = pm.mountain!;
+    const userMountains = userMountainMap[mountain.id] || [];
 
-            return (
-              <tr key={mountain.id} className="border-t">
-                <td className="p-2">{mountain.name}</td>
-                <td className="p-2">
-                  {userMountains.length > 0 ? (
-                    <div className="flex gap-2 text-sm text-gray-700 flex-wrap items-center">
-                      {userMountains.map((um) => (
-                        <span key={um.id}>{um.dateClimbed}</span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-sm text-gray-400">—</span>
-                  )}
-                </td>
-                {userId && (
-                  <td className="p-2">
-                    <button
-                      onClick={() => setModalMountain(pm)}
-                      className="text-blue-600 hover:underline text-sm"
-                    >
-                      Ascent Log 
-                    </button>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
+    return (
+      <tr key={mountain.id} className="border-t">
+        <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
+        <td className="p-2">{mountain.name}</td>
+        <td className="p-2">
+          {userMountains.length > 0 ? (
+            <div className="flex gap-2 text-sm text-gray-700 flex-wrap items-center">
+              {userMountains.map((um) => (
+                <span key={um.id}>{um.dateClimbed}</span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-sm text-gray-400">—</span>
+          )}
+        </td>
+        {userId && (
+          <td className="p-2">
+            <button
+              onClick={() => setModalMountain(pm)}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              Ascent Log
+            </button>
+          </td>
+        )}
+      </tr>
+    );
+  })}
+</tbody>
+
       </table>
 
       {modalMountain && (
