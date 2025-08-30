@@ -9,11 +9,13 @@ import { useParams } from 'next/navigation';
 import { generateClient } from 'aws-amplify/api';
 import { 
   getPatch,
-  listUserPatches
+  listUserPatches,
+  listUserMountains
 } from '@/graphql/queries';
 import { 
   Patch,
-  UserPatch
+  UserPatch,
+  UserMountain
 } from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
@@ -23,7 +25,13 @@ import {
   UpdateUserPatchMutation,
   CreateUserPatchMutation,
 } from '@/API';
+import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
+import PatchMountains from '@/components/PatchMountains';
+import PatchProgress from '@/components/PatchProgress';
 
+type UserMountainMap = {
+  [mountainID: string]: UserMountain[];
+};
 const client = generateClient();
 
 const customCreateUserPatch = `
@@ -60,6 +68,17 @@ const customUpdateUserPatch = `
   }
 `;
 
+const customCreateUserMountain = `
+mutation CreateUserMountain($input: CreateUserMountainInput!) {
+  createUserMountain(input: $input) {
+    id
+    userID
+    mountainID
+    dateClimbed
+  }
+}
+`;
+
 export default function PatchDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -74,16 +93,21 @@ export default function PatchDetailPage() {
   const [showModal, setShowModal] = useState(false);
   const [userPatch, setUserPatch] = useState<UserPatch | null>(null);
   const [isInProgress, setIsInProgress] = useState<boolean | null>(null);
+  const [dates, setDates] = useState<{ [mountainId: string]: string }>({});
+  const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
+
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchPatch = async () => {
       try {
         const response = await client.graphql({
-          query: getPatch,
+          query: getPatchWithMountainsPaged,
           variables: { id },
         });
-        setPatch(response.data?.getPatch as Patch);
+        if ('data' in response) {
+          setPatch(response.data?.getPatch as Patch);
+        }
       } catch (error) {
         console.error('Error fetching patch:', error);
       }
@@ -94,7 +118,6 @@ export default function PatchDetailPage() {
 
   useEffect(() => {
     const fetchUserPatch = async () => {
-      console.log("fetchUserPatch");
       if (!user?.userId || !id) return;
       try {
         const response = await client.graphql({
@@ -107,7 +130,6 @@ export default function PatchDetailPage() {
           },
         });
         const match = response.data?.listUserPatches?.items?.[0];
-        console.log(match);
         if (match) {
           setUserPatch(match);
           if (match.dateCompleted) setDateCompleted(match.dateCompleted);
@@ -120,9 +142,63 @@ export default function PatchDetailPage() {
         console.error('Error fetching userPatch:', err);
       }
     };
-    console.log("useEffect");
     fetchUserPatch();
   }, [user, id]);
+
+  const handleDateChange = (mountainId: string, value: string) => {
+    setDates((prev) => ({ ...prev, [mountainId]: value }))
+  }
+
+  const handleSave = async (mountainId: string) => {
+    const dateCompleted = dates[mountainId]
+    if (!dateCompleted || !user?.username) return
+
+    try {
+      await client.graphql({
+        query: customCreateUserMountain,
+        variables: {
+          input: {
+            userID: user.username,
+            mountainID: mountainId,
+            dateClimbed: dateCompleted,
+          },
+        },
+        authMode: 'userPool'
+      })
+      alert('Saved!')
+    } catch (err) {
+      console.error('Error saving UserMountain:', err)
+      alert('Failed to save')
+    }
+  }
+
+  useEffect(() => {
+    const fetchUserMountains = async () => {
+      if (!user?.userId) return;
+      try {
+        const response = await client.graphql({
+          query: listUserMountains,
+          variables: { filter: { userID: { eq: user.userId } } },
+          authMode: 'userPool'
+        });
+        const c_userMountainMap: Record<string, UserMountain[]> = {};
+        response.data?.listUserMountains?.items?.forEach((um: UserMountain | null) => {
+          if (um?.mountainID) {
+            if (!c_userMountainMap[um.mountainID]) {
+              c_userMountainMap[um.mountainID] = [];
+            }
+            c_userMountainMap[um.mountainID].push(um);
+          }
+        });
+        console.log(c_userMountainMap);
+        setUserMountainMap(c_userMountainMap);
+      } catch (err) {
+        console.error('Error fetching user mountains:', err);
+      }
+    };
+
+    fetchUserMountains();
+  }, [user]);
 
   // Update dateCompleted whenever "In Progress" is selected
   const handleInProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +249,6 @@ export default function PatchDetailPage() {
      }
  
       //const updatedUserPatch = userPatch ? response.data?.updateUserPatch : response.data?.createUserPatch;
-      console.log(updatedUserPatch);
       if (updatedUserPatch) setUserPatch(updatedUserPatch);
       setMessage('🎉 Patch progress updated!');
       setShowModal(false);
@@ -184,188 +259,109 @@ export default function PatchDetailPage() {
   };
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
-    <div className="p-4">
+    <>
+    <div className="p-4 max-w-4xl mx-auto">
       <Header />
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
-        {patch.imageUrl && (
-        <img
-          src={patch.imageUrl}
-          alt={patch.name}
-          className="w-40 float-right mr-4 mb-2 rounded shadow"
-        />
-        )}
-        <p className="text-lg mb-2">{patch.description}</p>
+      <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
+          <p className="text-lg mb-2">{patch.description}</p>
           {Array.isArray(patch.regions) && patch.regions.length > 0 && (
-          <p className="text-gray-700 mb-4">
-            <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
-          </p>
+            <p className="text-gray-700">
+              <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
+            </p>
           )}
+        </div>
+        {patch.imageUrl && (
+          <img
+            src={patch.imageUrl}
+            alt={patch.name}
+            className="w-40 h-auto rounded shadow"
+          />
+        )}
       </div>
       {patch.howToGet && (
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
-        <div className="prose">
-        <ReactMarkdown
-          components={{
-            a: ({ href, children }) => {
-              const isExternal = href?.startsWith('http');
+        <div className="mt-6 bg-white p-4 rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
+          <div className="prose max-w-none">
+            <ReactMarkdown
+              components={{
+                a: ({ href, children }) => {
+                  const isExternal = href?.startsWith('http');
 
-              return isExternal ? (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline inline-flex items-center gap-1"
-                >
-                  {children}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 inline"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
-              ) : (
-                <a href={href} className="text-blue-600 underline">
-                  {children}
-                </a>
-              );
-            },
-          }}
-        >{patch.howToGet}</ReactMarkdown>
+                  return isExternal ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline inline-flex items-center gap-1"
+                     >
+                       {children}
+                       <svg
+                         xmlns="http://www.w3.org/2000/svg"
+                         className="h-4 w-4 inline"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         strokeWidth={2}
+                         aria-hidden="true"
+                        >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  ) : (
+                    <a href={href} className="text-blue-600 underline">
+                      {children}
+                    </a>
+                  );
+                },
+              }}
+            >{patch.howToGet}</ReactMarkdown>
+          </div>
         </div>
-      </div>
       )}
 
 
       {user ? (
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Your Progress</h2>
-        <div className="bg-gray-100 p-4 rounded shadow-md max-w-md">
-          <div className="mb-3">
-            <label className="block font-medium mb-1">Progress Status:</label>
-            <div className="flex gap-4">
-              <label>
-                <input
-                  type="radio"
-                  name="progressStatus"
-                  checked={isInProgress === true}
-                  onChange={() => {
-                    setIsInProgress(true);
-                  }}
-                  className="mr-2"
-                />
-                  I'm working on this patch
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="progressStatus"
-                  checked={isInProgress === false}
-                  onChange={() => setIsInProgress(false)}
-                  className="mr-2"
-                />
-                  I've completed this patch
-              </label>
-            </div>
-          </div>
-
-
-          <label className="block mb-3">
-            Date Completed:
-            <input
-              type="date"
-              value={dateCompleted ?? ''}
-              onChange={(e) => setDateCompleted(e.target.value)}
-              disabled={isInProgress !== false}
-              className={`block w-full border p-2 rounded ${isInProgress !== false ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
-            />
-          </label>
-          {/*
-          <label className="block mb-3">
-            Difficulty (1–5):
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="block w-full border p-2 rounded"
-            >
-            <option value="">Select</option>
-            {[1, 2, 3, 4, 5].map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
-      </label>
-
-      <label className="block mb-3">
-        Notes (optional):
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className="block w-full border p-2 rounded"
-        />
-      </label>
-      */}
-      <div className="flex justify-between gap-2 mt-4">
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className={`px-4 py-2 rounded text-white ${canSubmit ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
-        >
-          Save
-        </button>
-
-        {userPatch && (
-          <button
-            onClick={async () => {
-              try {
-                await client.graphql({
-                  query: `
-                    mutation DeleteUserPatch($input: DeleteUserPatchInput!) {
-                      deleteUserPatch(input: $input) {
-                        id
-                      }
-                    }
-                  `,
-                  variables: { input: { id: userPatch.id } },
-                  authMode: 'userPool',
-                });
-                setUserPatch(null);
-                setDateCompleted(null);
-                setNotes('');
-                setDifficulty('');
-                setIsInProgress(false);
-                setMessage('🗑️ Progress cleared.');
-              } catch (err) {
-                console.error('Error clearing user patch:', err);
-                setMessage('❌ Failed to clear progress.');
+        <>
+        <div className="bg-white p-4 rounded shadow mt-6">
+          <PatchProgress
+            patchId={patch.id}
+            userId={user.userId}
+            initialUserPatch={userPatch}
+            onUpdate={(newPatch) => {
+              setUserPatch(newPatch);
+              if (newPatch?.dateCompleted) {
+                setDateCompleted(newPatch.dateCompleted);
               }
             }}
-            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-          >
-            Clear
-          </button>
-        )}
+          />
         </div>
-
-        {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-      </div>
+        { patch.hasPeaks &&
+        <div className="bg-white p-4 rounded shadow mt-6">
+          <PatchMountains patchId={patch.id} userId={user.userId} />
+        </div>
+        }
+        </>
+      ) : (
+        <>
+          { patch.hasPeaks &&
+          <div className="bg-white p-4 mt-6 rounded shadow">
+            <PatchMountains patchId={patch.id} />
+          </div>
+          }
+          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded text-blue-800">
+            <p className="text-lg font-medium mb-2">Want to keep track of your progress?</p>
+            <p>Sign in to mark your patch progress and log your climbs.</p>
+          </div>
+        </>
+      )}
     </div>
-    ) : (
-    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800">
-      Want to keep track of your progress? Sign in to mark your patches a complete or in progress.
-    </div>
-  )}
-  </div>
+    </>
   );
 }
 

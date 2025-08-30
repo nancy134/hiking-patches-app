@@ -164,6 +164,7 @@ export default function AdminPage() {
             <th className="border px-4 py-2">Regions</th>
             <th className="border px-4 py-2">Difficulty</th>
             <th className="border px-4 py-2">Popularity</th>
+            <th className="border px-4 py-2">Peaks</th>
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -185,6 +186,7 @@ export default function AdminPage() {
               <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
               <td className="border px-4 py-2">{patch.difficulty}</td>
               <td className="border px-4 py-2">{patch.popularity}</td>
+              <td className="border px-4 py-2">{patch.hasPeaks ? "Yes" : "No"}</td>
               <td className="border px-4 py-2 space-x-2">
                 <button onClick={() => handleEdit(patch)} className="text-blue-600 underline">
                   Edit

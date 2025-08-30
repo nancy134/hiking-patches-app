@@ -20,6 +20,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -49,6 +50,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -78,6 +80,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     latitude
     longitude
     popularity
+    hasPeaks
     userPatches {
       nextToken
       __typename
@@ -113,6 +116,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -151,6 +155,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -189,6 +194,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -270,6 +276,10 @@ export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($fi
       nextToken
       __typename
     }
+    userMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
     __typename
@@ -292,6 +302,10 @@ export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($fi
       nextToken
       __typename
     }
+    userMountains {
+      nextToken
+      __typename
+    }
     createdAt
     updatedAt
     __typename
@@ -311,6 +325,10 @@ export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($fi
     city
     state
     patchMountains {
+      nextToken
+      __typename
+    }
+    userMountains {
       nextToken
       __typename
     }
@@ -339,6 +357,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -382,6 +401,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -425,6 +445,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       latitude
       longitude
       popularity
+      hasPeaks
       createdAt
       updatedAt
       __typename
@@ -451,4 +472,100 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
 ` as GeneratedSubscription<
   APITypes.OnDeletePatchMountainSubscriptionVariables,
   APITypes.OnDeletePatchMountainSubscription
+>;
+export const onCreateUserMountain = /* GraphQL */ `subscription OnCreateUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
+) {
+  onCreateUserMountain(filter: $filter, owner: $owner) {
+    id
+    userID
+    mountainID
+    dateClimbed
+    notes
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserMountainSubscriptionVariables,
+  APITypes.OnCreateUserMountainSubscription
+>;
+export const onUpdateUserMountain = /* GraphQL */ `subscription OnUpdateUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
+) {
+  onUpdateUserMountain(filter: $filter, owner: $owner) {
+    id
+    userID
+    mountainID
+    dateClimbed
+    notes
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserMountainSubscriptionVariables,
+  APITypes.OnUpdateUserMountainSubscription
+>;
+export const onDeleteUserMountain = /* GraphQL */ `subscription OnDeleteUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
+) {
+  onDeleteUserMountain(filter: $filter, owner: $owner) {
+    id
+    userID
+    mountainID
+    dateClimbed
+    notes
+    mountain {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteUserMountainSubscriptionVariables,
+  APITypes.OnDeleteUserMountainSubscription
 >;

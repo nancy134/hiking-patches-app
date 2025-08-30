@@ -25,6 +25,7 @@ type Patch @model
   latitude: Float
   longitude: Float
   popularity: Int
+  hasPeaks: Boolean
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
   patchMountains: [PatchMountain] @hasMany
 }
@@ -69,6 +70,7 @@ type Mountain @model
   city: String
   state: String
   patchMountains: [PatchMountain] @hasMany
+  userMountains: [UserMountain] @hasMany(indexName: "byMountain", fields: ["id"])
 }
 
 type PatchMountain @model
@@ -81,4 +83,17 @@ type PatchMountain @model
   mountain: Mountain! @belongsTo
 }
 
+type UserMountain @model
+  @auth(rules: [
+    { allow: owner, operations: [create, update, delete, read] },
+    { allow: groups, groups: ["Admin"], operations: [read, delete, update] }
+  ]){
+  id: ID!
+  userID: ID! @index(name: "byUser", queryField: "userMountainsByUser") 
+  mountainID: ID! @index(name: "byMountain", queryField: "userMountainsByMountain")
+  dateClimbed: AWSDate!
+  notes: String
+
+  mountain: Mountain @belongsTo(fields: ["mountainID"])
+}
 

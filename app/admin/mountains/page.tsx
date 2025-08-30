@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import Header from '@/components/Header';
 import { listMountains } from '@/graphql/queries';
+import { GraphQLResult } from '@aws-amplify/api';
+import { ListMountainsQuery } from '@/API';
 import { createMountain, updateMountain, deleteMountain } from '@/graphql/mutations';
 import { Mountain } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import MountainFormModal from '@/components/MountainFormModal';
+import Papa from 'papaparse';
+import Link from 'next/link';
 
 const client = generateClient();
 
@@ -16,14 +20,83 @@ export default function AdminMountainsPage() {
   const [editingMountain, setEditingMountain] = useState<Partial<Mountain> | null>(null);
   const [showModal, setShowModal] = useState(false);
   const { user, isAdmin } = useAuth();
+  const [importing, setImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const itemsPerPage = 15;
 
   useEffect(() => {
     fetchMountains();
   }, []);
 
   const fetchMountains = async () => {
-    const response = await client.graphql({ query: listMountains });
-    setMountains(response.data.listMountains.items);
+    let allMountains: any[] = [];
+    let nextToken: string | null = null;
+
+    do {
+      const response: GraphQLResult<ListMountainsQuery> = await client.graphql({
+        query: listMountains,
+        variables: { limit: 1000, nextToken }
+      });
+
+      const data = response.data?.listMountains;
+      allMountains = allMountains.concat(data?.items ?? []);
+      nextToken = data?.nextToken ?? null;
+    } while (nextToken);
+
+    setMountains(allMountains);
+  };
+
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const mountainsToCreate = results.data as Partial<Mountain>[];
+        setImporting(true);
+        setImportProgress({ current: 0, total: mountainsToCreate.length });
+
+        for (let i = 0; i < mountainsToCreate.length; i++) {
+          const mtn = mountainsToCreate[i];
+          if (!mtn.name) continue;
+
+          const input = {
+            name: mtn.name!,
+            elevation: mtn.elevation ? Number(mtn.elevation) : undefined,
+            latitude: mtn.latitude ?? undefined,
+            longitude: mtn.longitude ?? undefined,
+            city: mtn.city ?? '',
+            state: mtn.state ?? '',
+          };
+
+          try {
+            await client.graphql({
+              query: createMountain,
+              variables: { input },
+              authMode: 'userPool',
+            });
+          } catch (err) {
+            console.error('Failed to create mountain:', input.name, err);
+          }
+
+          setImportProgress({ current: i + 1, total: mountainsToCreate.length });
+        }
+
+        setImporting(false);
+        fetchMountains();
+      },
+      error: (err) => {
+        console.error('CSV parsing error:', err);
+        setImporting(false);
+      },
+    });
+
+    event.target.value = '';
   };
 
   const handleDelete = async (id: string) => {
@@ -63,6 +136,18 @@ export default function AdminMountainsPage() {
     );
   }
 
+  const filteredMountains = mountains.filter((mtn) =>
+    mtn.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
+  const paginatedMountains = filteredMountains.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
+
   return (
     <div className="p-4">
       <Header />
@@ -74,6 +159,22 @@ export default function AdminMountainsPage() {
         >
           + Add Mountain
         </button>
+
+        <label className="ml-2 cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Import CSV
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleImportCSV}
+            className="hidden"
+            disabled={importing}
+          />
+        </label>
+        {importing && (
+          <div className="text-blue-600 mt-2">
+            Importing {importProgress.current} of {importProgress.total} mountains...
+          </div>
+        )}
       </div>
 
       {showModal && (
@@ -86,6 +187,39 @@ export default function AdminMountainsPage() {
           }}
         />
       )}
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by mountain name..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset to first page on new search
+          }}
+          className="border border-gray-300 px-3 py-2 rounded w-full max-w-sm"
+        />
+      </div>
+
+      <div className="flex justify-center items-center space-x-2 mt-4 mb-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
 
       <table className="w-full table-auto border border-collapse mb-4">
         <thead>
@@ -100,9 +234,16 @@ export default function AdminMountainsPage() {
           </tr>
         </thead>
         <tbody>
-          {mountains.map((mtn) => (
+          {paginatedMountains.map((mtn) => (
             <tr key={mtn.id}>
-              <td className="border px-4 py-2">{mtn.name}</td>
+              <td className="border px-4 py-2">
+                <Link 
+                  href={`/admin/mountains/${mtn.id}`} 
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  {mtn.name}
+                </Link>
+              </td>
               <td className="border px-4 py-2">{mtn.elevation}</td>
               <td className="border px-4 py-2">{mtn.latitude}</td>
               <td className="border px-4 py-2">{mtn.longitude}</td>
@@ -120,6 +261,7 @@ export default function AdminMountainsPage() {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 }

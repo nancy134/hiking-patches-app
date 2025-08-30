@@ -11,7 +11,7 @@ import { useAuth } from '@/context/auth-context';
 import { listMountains } from '@/graphql/queries';
 import { listPatchMountains } from '@/graphql/queries';
 import { createPatchMountain } from '@/graphql/mutations';
-import { getPatchWithMountains } from '@/graphql/custom-queries';
+import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import MountainSelector from '@/components/MountainSelector';
 
 const client = generateClient();
@@ -27,7 +27,6 @@ export default function AdminPatchDetailPage() {
   const [patch, setPatch] = useState<Patch | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [allMountains, setAllMountains] = useState<Mountain[]>([]);
   const [selectedMountainId, setSelectedMountainId] = useState<string>('');
 
   useEffect(() => {
@@ -37,24 +36,10 @@ export default function AdminPatchDetailPage() {
 
   }, [id]);
 
-useEffect(() => {
-  if (!id) return;
-
-  const fetchData = async () => {
-    // Fetch all available mountains
-    const allMountainData = await client.graphql({
-      query: listMountains,
-    });
-    setAllMountains(allMountainData.data.listMountains.items);
-  };
-
-  fetchData();
-}, [id]);
-
   const fetchPatch = async (patchId: string) => {
     try {
       const response = await client.graphql({
-        query: getPatchWithMountains,
+        query: getPatchWithMountainsPaged,
         variables: { id: patchId }
       });
       if ('data' in response) {
@@ -85,11 +70,7 @@ useEffect(() => {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <Header />
-      <h1 className="text-2xl font-bold mb-4">🧭 Patch Details</h1>
-      <div className="bg-white shadow rounded p-4 space-y-2">
-        <p><strong>ID:</strong> {patch.id}</p>
-        <p><strong>Name:</strong> {patch.name}</p>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Patch Details for {patch.name}</h1>
       <MountainSelector patchId={id}/>
     </div>
 

@@ -29,12 +29,19 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
   }
 `;
 
-export const getPatchWithMountains = /* GraphQL */ `
-  query GetPatchWithMountains($id: ID!) {
+export const getPatchWithMountainsPaged = /* GraphQL */ `
+  query GetPatchWithMountains($id: ID!, $limit: Int, $nextToken: String) {
     getPatch(id: $id) {
       id
       name
-      patchMountains {
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      popularity
+      hasPeaks
+      patchMountains(limit: $limit, nextToken: $nextToken) {
         items {
           id
           mountain {
@@ -43,11 +50,64 @@ export const getPatchWithMountains = /* GraphQL */ `
             elevation
             latitude
             longitude
-	    city
-	    state
+            city
+            state
           }
         }
+        nextToken
       }
     }
   }
 `;
+
+export const listPatchMountainsWithMountain = /* GraphQL */ `
+  query ListPatchMountainsWithMountain(
+    $filter: ModelPatchMountainFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        patchPatchMountainsId
+        mountainPatchMountainsId
+        mountain {
+          id
+          name
+          elevation
+	  city
+	  state
+	  latitude
+	  longitude
+        }
+      }
+      nextToken
+    }
+  }
+`;
+
+export const listPatchMountainsWithPatch = /* GraphQL */ `
+  query ListPatchMountainsWithPatch(
+    $filter: ModelPatchMountainFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        patchPatchMountainsId
+        mountainPatchMountainsId
+        patch {
+          id
+          name
+        }
+      }
+      nextToken
+    }
+  }
+`;
+

@@ -99,6 +99,12 @@ export default function HomePage() {
 
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRegion(e.target.value);
+    e.target.blur();
+  };
+
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+     setSelectedDifficulty(e.target.value);
+     e.target.blur();
   };
 
   useEffect(() => {
@@ -220,7 +226,7 @@ export default function HomePage() {
         <label className="mr-2 font-semibold">Difficulty:</label>
         <select
           value={selectedDifficulty}
-          onChange={(e) => setSelectedDifficulty(e.target.value)}
+          onChange={handleDifficultyChange}
           className="p-2 border rounded min-w-[160px]"
         >
           <option value="">All Difficulties</option>

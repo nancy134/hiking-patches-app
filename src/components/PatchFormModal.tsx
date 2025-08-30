@@ -31,6 +31,7 @@ export default function PatchFormModal({
   const [latitude, setLatitude] = useState<number | null>(null); 
   const [longitude, setLongitude] = useState<number | null>(null); 
   const [popularity, setPopularity] = useState<number | null>(null);
+  const [hasPeaks, setHasPeaks] = useState<boolean>(false);
 
   useEffect(() => {
     if (patch) {
@@ -42,6 +43,7 @@ export default function PatchFormModal({
       setLatitude(isNaN(Number(patch.latitude)) ? null : patch.latitude ?? null);
       setLongitude(isNaN(Number(patch.longitude)) ? null : patch.longitude ?? null);
       setPopularity(isNaN(Number(patch.popularity)) ? null : Number(patch.popularity));
+      setHasPeaks(patch.hasPeaks ?? false);
     }
   }, [patch]);
 
@@ -70,7 +72,8 @@ export default function PatchFormModal({
               difficulty: difficulty as Difficulty,
               latitude,
               longitude,
-              popularity
+              popularity,
+              hasPeaks
             }
           },
           authMode: 'userPool'
@@ -88,7 +91,8 @@ export default function PatchFormModal({
               difficulty: difficulty as Difficulty,
               latitude,
               longitude,
-              popularity
+              popularity,
+              hasPeaks
             }
           },
           authMode: 'userPool'
@@ -184,6 +188,16 @@ export default function PatchFormModal({
               }}
             />
           </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={hasPeaks}
+              onChange={(e) => setHasPeaks(e.target.checked)}
+              className="accent-blue-600"
+            />
+            This patch includes specific peaks
+          </label>
+
           <FileUploader
             onFileSelected={(file) => setImageFile(file)}
             label="Upload Patch Image"
