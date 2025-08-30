@@ -809,6 +809,32 @@ export type ListPatchMountainsWithMountainQuery = {
   } | null,
 };
 
+export type ListPatchMountainsWithPatchQueryVariables = {
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchMountainsWithPatchQuery = {
+  listPatchMountains?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      patchPatchMountainsId?: string | null,
+      mountainPatchMountainsId?: string | null,
+      patch:  {
+        __typename: "Patch",
+        id: string,
+        name: string,
+      },
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type CreatePatchRequestMutationVariables = {
   input: CreatePatchRequestInput,
   condition?: ModelPatchRequestConditionInput | null,

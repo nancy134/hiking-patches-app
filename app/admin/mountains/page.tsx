@@ -11,6 +11,7 @@ import { Mountain } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import MountainFormModal from '@/components/MountainFormModal';
 import Papa from 'papaparse';
+import Link from 'next/link';
 
 const client = generateClient();
 
@@ -235,7 +236,14 @@ export default function AdminMountainsPage() {
         <tbody>
           {paginatedMountains.map((mtn) => (
             <tr key={mtn.id}>
-              <td className="border px-4 py-2">{mtn.name}</td>
+              <td className="border px-4 py-2">
+                <Link 
+                  href={`/admin/mountains/${mtn.id}`} 
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  {mtn.name}
+                </Link>
+              </td>
               <td className="border px-4 py-2">{mtn.elevation}</td>
               <td className="border px-4 py-2">{mtn.latitude}</td>
               <td className="border px-4 py-2">{mtn.longitude}</td>

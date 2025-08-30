@@ -88,3 +88,26 @@ export const listPatchMountainsWithMountain = /* GraphQL */ `
   }
 `;
 
+export const listPatchMountainsWithPatch = /* GraphQL */ `
+  query ListPatchMountainsWithPatch(
+    $filter: ModelPatchMountainFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        patchPatchMountainsId
+        mountainPatchMountainsId
+        patch {
+          id
+          name
+        }
+      }
+      nextToken
+    }
+  }
+`;
+
