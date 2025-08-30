@@ -77,22 +77,26 @@ useEffect(() => {
 
 
           <div className="space-y-2">
+
             {ascentDates.map((date, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <input
-                type="date"
-                value={date}
-                 onChange={(e) => handleDateChange(index, e.target.value)}
-                 className="flex-1"
-              />
-              <button
-                onClick={() => handleRemoveDate(index)}
-                className="text-red-600 text-sm"
-              >
-                Remove
-              </button>
-            </div>
+              <div key={index} className="flex items-center gap-2">
+                <div className="flex items-center border rounded-md px-2 flex-1 hover:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500">
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => handleDateChange(index, e.target.value)}
+                    className="flex-1 py-1 outline-none"
+                  />
+                </div>
+                <button
+                  onClick={() => handleRemoveDate(index)}
+                  className="text-red-600 text-sm hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
             ))}
+
             <button
               onClick={handleAddDate}
               className="text-blue-600 text-sm mt-2"
