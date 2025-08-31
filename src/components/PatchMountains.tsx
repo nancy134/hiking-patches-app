@@ -25,7 +25,6 @@ interface PatchMountainProps {
 
 export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
 
-
   // Derive the item type returned by *your* query (which can include nulls)
   type Query = ListPatchMountainsWithMountainQuery;
   type Item = NonNullable<NonNullable<Query['listPatchMountains']>['items']>[number];
@@ -42,6 +41,8 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<'all' | 'done' | 'todo'>('all');
   const [stateFilter, setStateFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'elev'>('elev');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     const fetchData = async (pageSize = 100) => {
@@ -117,105 +118,121 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   }, [userId]);
 
 
-// helper: completion for a mountain
-const isCompleted = (pm: ItemWithMountain) =>
-  (userMountainMap[pm.mountain.id] ?? []).length > 0;
+  // helper: completion for a mountain
+  const isCompleted = (pm: ItemWithMountain) =>
+    (userMountainMap[pm.mountain.id] ?? []).length > 0;
 
-// distinct states for dropdown
-const uniqueStates = useMemo(
-  () =>
-    Array.from(
-      new Set(patchMountains.map(pm => pm.mountain.state).filter(Boolean) as string[])
-    ).sort(),
-  [patchMountains]
-);
+  // distinct states for dropdown
+  const uniqueStates = useMemo(
+    () =>
+      Array.from(
+        new Set(patchMountains.map(pm => pm.mountain.state).filter(Boolean) as string[])
+      ).sort(),
+    [patchMountains]
+  );
 
-// filtered list to render
-const visibleMountains = useMemo(() => {
-  const qNorm = q.trim().toLowerCase();
 
-  return patchMountains.filter(pm => {
-    const m = pm.mountain;
-    const matchesQ =
-      qNorm === '' ||
-      [m.name, m.city ?? '', m.state ?? ''].some(v => v.toLowerCase().includes(qNorm));
+  const visibleMountains = useMemo(() => {
+    const qNorm = q.trim().toLowerCase();
 
-    const matchesState = stateFilter === 'all' || m.state === stateFilter;
+    // filter first
+    const filtered = patchMountains.filter(pm => {
+      const m = pm.mountain;
+      const matchesQ =
+        qNorm === '' ||
+        [m.name, m.city ?? '', m.state ?? ''].some(v => v.toLowerCase().includes(qNorm));
 
-    const done = isCompleted(pm);
-    const matchesStatus =
-      status === 'all' ? true : status === 'done' ? done : !done;
+      const matchesState = stateFilter === 'all' || m.state === stateFilter;
 
-    return matchesQ && matchesState && matchesStatus;
-  });
-}, [patchMountains, q, status, stateFilter, userMountainMap]);
+      const done = isCompleted(pm);
+      const matchesStatus =
+        status === 'all' ? true : status === 'done' ? done : !done;
 
+      return matchesQ && matchesState && matchesStatus;
+    });
+
+    // then sort
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'elev') {
+        // Treat missing elevations as very low, so they sort last in 'desc'
+        const ea = a.mountain.elevation ?? Number.NEGATIVE_INFINITY;
+        const eb = b.mountain.elevation ?? Number.NEGATIVE_INFINITY;
+        const cmp = ea - eb; // asc baseline
+        return sortDir === 'asc' ? cmp : -cmp;
+      } else {
+        const cmp = a.mountain.name.localeCompare(b.mountain.name);
+        return sortDir === 'asc' ? cmp : -cmp;
+      }
+    });
+
+    return sorted;
+  }, [patchMountains, q, status, stateFilter, userMountainMap, sortBy, sortDir]);
 
   const handleEdit = (pm: PatchMountain) => {
     setModalMountain(pm);
   };
 
-const handleSave = async (newDates: string[]) => {
-  setModalMountain(null);
-  const mountainId = modalMountain?.mountain?.id;
-  if (!mountainId || !userId) return;
+  const handleSave = async (newDates: string[]) => {
+    setModalMountain(null);
+    const mountainId = modalMountain?.mountain?.id;
+    if (!mountainId || !userId) return;
 
-  const existingUMs = userMountainMap[mountainId] || [];
+    const existingUMs = userMountainMap[mountainId] || [];
 
-  const existingDates = new Set(
-    existingUMs.map((um) => um.dateClimbed.split('T')[0])
-  );
+    const existingDates = new Set(
+      existingUMs.map((um) => um.dateClimbed.split('T')[0])
+    );
 
-  const newDatesSet = new Set(newDates);
+    const newDatesSet = new Set(newDates);
 
-  const datesToDelete = existingUMs.filter(
-    (um) => !newDatesSet.has(um.dateClimbed.split('T')[0])
-  );
+    const datesToDelete = existingUMs.filter(
+      (um) => !newDatesSet.has(um.dateClimbed.split('T')[0])
+    );
 
-  const datesToAdd = newDates.filter(
-    (date) => !existingDates.has(date)
-  );
+    const datesToAdd = newDates.filter(
+      (date) => !existingDates.has(date)
+    );
 
-  // Delete removed ascents
-  for (const um of datesToDelete) {
-    await client.graphql({
-      query: deleteUserMountainMinimal,
-      variables: { input: { id: um.id } },
-      authMode: 'userPool',
-    });
-  }
-
-  // Add new ascents
-  for (const date of datesToAdd) {
-    await client.graphql({
-      query: createUserMountainMinimal,
-      variables: {
-        input: {
-          userID: userId,
-          mountainID: mountainId,
-          dateClimbed: date,
-        },
-      },
-      authMode: 'userPool',
-    });
-  }
-
-  // Refresh
-  const userResponse = await client.graphql({
-    query: listUserMountains,
-    variables: { filter: { userID: { eq: userId } } },
-    authMode: 'userPool',
-  }) as { data: ListUserMountainsQuery };
-
-  const map: UserMountainMap = {};
-  userResponse.data?.listUserMountains?.items?.forEach((um) => {
-    if (um?.mountainID) {
-      if (!map[um.mountainID]) map[um.mountainID] = [];
-      map[um.mountainID]!.push(um);
+    // Delete removed ascents
+    for (const um of datesToDelete) {
+      await client.graphql({
+        query: deleteUserMountainMinimal,
+        variables: { input: { id: um.id } },
+        authMode: 'userPool',
+      });
     }
-  });
-  setUserMountainMap(map);
-};
+
+    // Add new ascents
+    for (const date of datesToAdd) {
+      await client.graphql({
+        query: createUserMountainMinimal,
+        variables: {
+          input: {
+            userID: userId,
+            mountainID: mountainId,
+            dateClimbed: date,
+          },
+        },
+        authMode: 'userPool',
+      });
+    }
+
+    // Refresh
+    const userResponse = await client.graphql({
+      query: listUserMountains,
+      variables: { filter: { userID: { eq: userId } } },
+      authMode: 'userPool',
+    }) as { data: ListUserMountainsQuery };
+
+    const map: UserMountainMap = {};
+    userResponse.data?.listUserMountains?.items?.forEach((um) => {
+      if (um?.mountainID) {
+        if (!map[um.mountainID]) map[um.mountainID] = [];
+        map[um.mountainID]!.push(um);
+      }
+    });
+    setUserMountainMap(map);
+  };
 
   const completed = patchMountains.filter((pm) => {
     const userMountains = userMountainMap[pm.mountain?.id || ''];
@@ -230,56 +247,56 @@ const handleSave = async (newDates: string[]) => {
       <p className="mb-4 text-sm text-gray-600">Complete: {percent}%</p>
 
 
-<div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
-  <input
-    type="search"
-    value={q}
-    onChange={(e) => setQ(e.target.value)}
-    placeholder="Search by name, city, or state…"
-    className="w-full sm:w-64 border rounded px-3 py-1.5 text-sm"
-  />
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search by name, city, or state…"
+          className="w-full sm:w-64 border rounded px-3 py-1.5 text-sm"
+        />
 
-  <select
-    value={status}
-    onChange={(e) => setStatus(e.target.value as any)}
-    className="border rounded px-3 py-1.5 text-sm"
-  >
-    <option value="all">All</option>
-    <option value="todo">Not completed</option>
-    <option value="done">Completed</option>
-  </select>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as any)}
+          className="border rounded px-3 py-1.5 text-sm"
+        >
+          <option value="all">All</option>
+          <option value="todo">Not completed</option>
+          <option value="done">Completed</option>
+        </select>
 
-  <select
-    value={stateFilter}
-    onChange={(e) => setStateFilter(e.target.value)}
-    className="border rounded px-3 py-1.5 text-sm"
-  >
-    <option value="all">All states</option>
-    {uniqueStates.map((s) => (
-      <option key={s} value={s}>{s}</option>
-    ))}
-  </select>
+        <select
+          value={stateFilter}
+          onChange={(e) => setStateFilter(e.target.value)}
+          className="border rounded px-3 py-1.5 text-sm"
+        >
+          <option value="all">All states</option>
+          {uniqueStates.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
 
-  {(q || status !== 'all' || stateFilter !== 'all') && (
-    <button
-      className="ml-auto sm:ml-0 text-sm underline"
-      onClick={() => { setQ(''); setStatus('all'); setStateFilter('all'); }}
-    >
-      Clear filters
-    </button>
-  )}
-</div>
+        {(q || status !== 'all' || stateFilter !== 'all') && (
+          <button
+            className="ml-auto sm:ml-0 text-sm underline"
+            onClick={() => { setQ(''); setStatus('all'); setStateFilter('all'); }}
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
 
-<p className="mb-2 text-xs text-gray-500">
-  Showing {visibleMountains.length} of {patchMountains.length}
-</p>
-
+      <p className="mb-2 text-xs text-gray-500">
+         Showing {visibleMountains.length} of {patchMountains.length}
+      </p>
 
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
             <th className="p-2 w-10 text-right">#</th>
             <th className="text-left p-2">Mountain</th>
+            <th className="text-left p-2">Elevation</th>
             <th className="text-left p-2">State</th>
             <th className="text-left p-2">Dates Ascended</th>
             {userId && <th className="text-left p-2">Action</th>}
@@ -294,6 +311,7 @@ const handleSave = async (newDates: string[]) => {
       <tr key={mountain.id} className="border-t">
         <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
         <td className="p-2">{mountain.name}</td>
+        <td className="p-2">{mountain.elevation}</td>
         <td className="p-2">{mountain.state}</td>
         <td className="p-2">
           {userMountains.length > 0 ? (
