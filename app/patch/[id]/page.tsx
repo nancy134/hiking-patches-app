@@ -349,15 +349,16 @@ export default function PatchDetailPage() {
         </>
       ) : (
         <>
+          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded text-blue-800">
+            <p className="text-lg font-medium mb-2">Want to keep track of your progress?</p>
+            <p>Sign in to mark your patch progress and log your climbs.</p>
+          </div>
+
           { patch.hasPeaks &&
           <div className="bg-white p-4 mt-6 rounded shadow">
             <PatchMountains patchId={patch.id} />
           </div>
           }
-          <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded text-blue-800">
-            <p className="text-lg font-medium mb-2">Want to keep track of your progress?</p>
-            <p>Sign in to mark your patch progress and log your climbs.</p>
-          </div>
         </>
       )}
     </div>
