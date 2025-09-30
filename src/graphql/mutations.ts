@@ -396,6 +396,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId
@@ -441,6 +442,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId
@@ -486,6 +488,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId

@@ -284,6 +284,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId
@@ -303,6 +304,7 @@ export const listPatchMountains = /* GraphQL */ `query ListPatchMountains(
   listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      delisted
       createdAt
       updatedAt
       patchPatchMountainsId

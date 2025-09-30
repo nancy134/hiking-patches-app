@@ -374,6 +374,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId
@@ -418,6 +419,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId
@@ -462,6 +464,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       updatedAt
       __typename
     }
+    delisted
     createdAt
     updatedAt
     patchPatchMountainsId

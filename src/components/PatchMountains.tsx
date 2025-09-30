@@ -59,6 +59,14 @@ function TableSkeleton({ rows = 8 }: { rows?: number }) {
   );
 }
 
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="ml-2 inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+      {children}
+    </span>
+  );
+}
+
 export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
   // Derive the item type returned by *your* query (which can include nulls)
   type Query = LPWQuery;
@@ -395,7 +403,12 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
               return (
                 <tr key={mountain.id} className="border-t">
                   <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
-                  <td className="p-2">{mountain.name}</td>
+                  <td className="p-2">
+                    <span className="inline-flex items-center">
+                      {mountain.name}
+                      {!!(pm as any).delisted && <Badge>Delisted</Badge>}
+                    </span>
+                  </td>
                   <td className="p-2">{mountain.elevation}</td>
                   <td className="p-2">{mountain.state}</td>
                   <td className="p-2">

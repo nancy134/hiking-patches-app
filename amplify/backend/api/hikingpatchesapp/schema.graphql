@@ -81,6 +81,7 @@ type PatchMountain @model
   id: ID!
   patch: Patch! @belongsTo
   mountain: Mountain! @belongsTo
+  delisted: Boolean
 }
 
 type UserMountain @model
