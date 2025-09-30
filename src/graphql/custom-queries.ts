@@ -113,3 +113,12 @@ export const listPatchMountainsWithPatch = /* GraphQL */ `
   }
 `;
 
+export const getPatchCompletionRule = /* GraphQL */ `
+  query GetPatchCompletionRule($id: ID!) {
+    getPatch(id: $id) {
+      id
+      name
+      completionRule
+    }
+  }
+`;

@@ -75,6 +75,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     longitude
     popularity
     hasPeaks
+    completionRule
     userPatches {
       nextToken
       __typename
@@ -108,6 +109,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     longitude
     popularity
     hasPeaks
+    completionRule
     userPatches {
       nextToken
       __typename
@@ -141,6 +143,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     longitude
     popularity
     hasPeaks
+    completionRule
     userPatches {
       nextToken
       __typename
@@ -177,6 +180,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename
@@ -216,6 +220,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename
@@ -255,6 +260,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename
@@ -380,6 +386,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename
@@ -426,6 +433,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename
@@ -472,6 +480,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       longitude
       popularity
       hasPeaks
+      completionRule
       createdAt
       updatedAt
       __typename

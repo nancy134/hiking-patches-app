@@ -26,6 +26,7 @@ type Patch @model
   longitude: Float
   popularity: Int
   hasPeaks: Boolean
+  completionRule: AWSJSON
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
   patchMountains: [PatchMountain] @hasMany
 }
