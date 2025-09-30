@@ -44,6 +44,7 @@ export const getPatchWithMountainsPaged = /* GraphQL */ `
       patchMountains(limit: $limit, nextToken: $nextToken) {
         items {
           id
+	  delisted
           mountain {
             id
             name
@@ -71,6 +72,7 @@ export const listPatchMountainsWithMountain = /* GraphQL */ `
         id
         createdAt
         updatedAt
+	delisted
         patchPatchMountainsId
         mountainPatchMountainsId
         mountain {
@@ -111,3 +113,12 @@ export const listPatchMountainsWithPatch = /* GraphQL */ `
   }
 `;
 
+export const getPatchCompletionRule = /* GraphQL */ `
+  query GetPatchCompletionRule($id: ID!) {
+    getPatch(id: $id) {
+      id
+      name
+      completionRule
+    }
+  }
+`;

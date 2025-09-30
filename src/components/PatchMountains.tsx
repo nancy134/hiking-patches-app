@@ -10,6 +10,8 @@ import { deleteUserMountainMinimal, createUserMountainMinimal } from '@/graphql/
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
+import { getPatchCompletionRule } from '@/graphql/custom-queries';
+import { GetPatchCompletionRuleQuery } from "@/graphql/custom-types";
 
 const client = generateClient();
 
@@ -19,6 +21,11 @@ interface PatchMountainProps {
   patchId: string;
   userId?: string;
 }
+
+type CompletionRule =
+  | { type: 'default' }                                                // same as today
+  | { type: 'excludeDelisted' }                                        // remove delisted from denominator
+  | { type: 'anyN'; n: number };                                       // e.g., “any 10 count as 100%”
 
 /** --- Little UI helpers --- */
 function Spinner({ label }: { label?: string }) {
@@ -59,6 +66,73 @@ function TableSkeleton({ rows = 8 }: { rows?: number }) {
   );
 }
 
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="ml-2 inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+      {children}
+    </span>
+  );
+}
+
+function computePercentFromRule<ItemWithMountain extends { id: string; mountain: { id: string } }>(
+  rule: CompletionRule,
+  items: ItemWithMountain[],
+  isCompleted: (pm: ItemWithMountain) => boolean
+) {
+  // Default = your existing behavior
+  const defaultCalc = () => {
+    const completed = items.filter(isCompleted).length;
+    const denom = items.length;
+    const percent = denom === 0 ? 0 : Math.round((completed / denom) * 100);
+    return { completed, denom, percent, note: undefined as string | undefined };
+  };
+
+  switch (rule.type) {
+    case 'excludeDelisted': {
+      const eligible = items.filter(pm => !(pm as any).delisted);
+      const completed = items.filter(isCompleted).length;
+      const denom = eligible.length || 1;
+      const percent = Math.round((completed / denom) * 100);
+      return { completed, denom, percent, note: 'Delisted included' };
+    }
+    case 'anyN': {
+      const completedAll = items.filter(isCompleted).length;
+      const denom = rule.n;
+      const percent = Math.max(0, Math.min(100, Math.round((completedAll / denom) * 100)));
+      return { completed: Math.min(completedAll, denom), denom, percent, note: `Any ${denom}` };
+    }
+    case 'default':
+    default:
+      return defaultCalc();
+  }
+}
+
+function normalizeRule(raw: unknown): CompletionRule {
+  if (!raw) return { type: 'default' };
+
+  // raw may already be an object (AppSync returns parsed JSON) or a string
+  let obj: any = raw;
+  if (typeof raw === 'string') {
+    try { obj = JSON.parse(raw); } catch { return { type: 'default' }; }
+  }
+  if (!obj || typeof obj !== 'object') return { type: 'default' };
+
+  const t = obj.type;
+  switch (t) {
+    case 'default':
+      return { type: 'default' };
+    case 'excludeDelisted':
+      return { type: 'excludeDelisted' };
+    case 'anyN': {
+      const n = Number(obj.n);
+      if (Number.isFinite(n) && n > 0) return { type: 'anyN', n: Math.floor(n) };
+      return { type: 'default' };
+    }
+    default:
+      return { type: 'default' };
+  }
+}
+
 export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
   // Derive the item type returned by *your* query (which can include nulls)
   type Query = LPWQuery;
@@ -84,6 +158,8 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
   // Optional (but nice): error state (shown inline if it happens)
   const [error, setError] = useState<string | null>(null);
+
+  const [completionRule, setCompletionRule] = useState<CompletionRule | null>(null);
 
   useEffect(() => {
     const fetchData = async (pageSize = 100) => {
@@ -137,6 +213,29 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
     };
 
     fetchData();
+  }, [patchId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = (await client.graphql<GetPatchCompletionRuleQuery>({
+          query: getPatchCompletionRule,
+          variables: { id: patchId },
+        })) as GraphQLResult<GetPatchCompletionRuleQuery>;
+
+        const raw = r.data?.getPatch?.completionRule as unknown;
+
+        // Parse defensively; if anything is off, fall back to default
+        const parsed = normalizeRule(raw);
+        if (!cancelled) setCompletionRule(parsed);
+      } catch {
+        if (!cancelled) setCompletionRule({ type: 'default' });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [patchId]);
 
   useEffect(() => {
@@ -281,12 +380,11 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
     }
   };
 
-  const completed = patchMountains.filter((pm) => {
-    const userMountains = userMountainMap[pm.mountain?.id || ''];
-    return userMountains && userMountains.length > 0;
-  }).length;
-
-  const percent = patchMountains.length === 0 ? 0 : Math.round((completed / patchMountains.length) * 100);
+  const { completed, denom, percent, note } = computePercentFromRule(
+    completionRule ?? { type: 'default' },
+    patchMountains,
+    isCompleted
+  );
 
   const controlsDisabled = loadingPatch;
 
@@ -298,9 +396,11 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
       <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
 
       <div className="flex items-center justify-between mb-1">
-        <p className="text-sm text-gray-600">
-          Complete: {percent}%
-        </p>
+<p className="text-sm text-gray-600">
+  Complete: {percent}% <span className="text-gray-400">({completed}/{denom})</span>
+  {note && <span className="ml-2 text-xs text-gray-500">— {note}</span>}
+</p>
+
         {/* show secondary spinner while user ascents load/refresh */}
         {loadingUser && !loadingPatch && <Spinner label="Updating ascents…" />}
       </div>
@@ -395,7 +495,12 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
               return (
                 <tr key={mountain.id} className="border-t">
                   <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
-                  <td className="p-2">{mountain.name}</td>
+                  <td className="p-2">
+                    <span className="inline-flex items-center">
+                      {mountain.name}
+                      {!!(pm as any).delisted && <Badge>Delisted</Badge>}
+                    </span>
+                  </td>
                   <td className="p-2">{mountain.elevation}</td>
                   <td className="p-2">{mountain.state}</td>
                   <td className="p-2">
