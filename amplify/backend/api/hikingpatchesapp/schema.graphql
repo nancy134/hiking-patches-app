@@ -28,7 +28,7 @@ type Patch @model
   hasPeaks: Boolean
   completionRule: AWSJSON
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
-  patchMountains: [PatchMountain] @hasMany
+  patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
 }
 
 type UserPatch @model 
@@ -70,7 +70,7 @@ type Mountain @model
   longitude: Float
   city: String
   state: String
-  patchMountains: [PatchMountain] @hasMany
+  patchMountains: [PatchMountain] @hasMany(indexName: "byMountain", fields: ["id"])
   userMountains: [UserMountain] @hasMany(indexName: "byMountain", fields: ["id"])
 }
 
@@ -79,14 +79,16 @@ type PatchMountain @model
     { allow: public, operations: [read] },
     { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
   ]) 
-  # fast query: "all PatchMountains for a Patch"
-  @index(name: "byPatch", fields: ["patchPatchMountainsId"], queryField: "patchMountainsByPatch")
-  # (optional) fast query: "all PatchMountains for a Mountain"
-  @index(name: "byMountain", fields: ["mountainID"], queryField: "patchMountainsByMountain")
 {
   id: ID!
-  patch: Patch! @belongsTo
-  mountain: Mountain! @belongsTo
+  # Explicit FKs so we can index them
+  patchPatchMountainsId: ID @index(name: "byPatch", queryField: "patchMountainsByPatch")
+  mountainID: ID @index(name: "byMountain", queryField: "patchMountainsByMountain")
+
+  # BelongsTo uses the explicit fields above
+  patch: Patch! @belongsTo(fields: ["patchPatchMountainsId"])
+  mountain: Mountain! @belongsTo(fields: ["mountainID"])
+
   delisted: Boolean
 }
 
@@ -95,15 +97,16 @@ type UserMountain @model
     { allow: owner, operations: [create, update, delete, read] },
     { allow: groups, groups: ["Admin"], operations: [read, delete, update] }
   ])
-  # OPTIONAL: composite GSI for exact user+mountain lookups
-  @index(name: "byUserByMountain", fields: ["userID", "mountainID"], queryField: "userMountainsByUserByMountain")
-
-  # OPTIONAL: composite GSI for chronological views / ranges
-  @index(name: "byUserByDate", fields: ["userID", "dateClimbed"], queryField: "userMountainsByUserByDate")
 {
   id: ID!
-  userID: ID! @index(name: "byUser", queryField: "userMountainsByUser") 
+
+  userID: ID! 
+    @index(name: "byUser", queryField: "userMountainsByUser")
+    @index(name: "byUserByMountain", sortKeyFields: ["mountainID"], queryField: "userMountainsByUserByMountain")
+    @index(name: "byUserByDate", sortKeyFields: ["dateClimbed"], queryField: "userMountainsByUserByDate")
+
   mountainID: ID! @index(name: "byMountain", queryField: "userMountainsByMountain")
+
   dateClimbed: AWSDate!
   notes: String
 

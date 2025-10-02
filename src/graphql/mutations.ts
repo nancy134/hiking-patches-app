@@ -374,6 +374,8 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
 ) {
   createPatchMountain(input: $input, condition: $condition) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -406,8 +408,6 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
@@ -421,6 +421,8 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
 ) {
   updatePatchMountain(input: $input, condition: $condition) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -453,8 +455,6 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
@@ -468,6 +468,8 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
 ) {
   deletePatchMountain(input: $input, condition: $condition) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -500,8 +502,6 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }

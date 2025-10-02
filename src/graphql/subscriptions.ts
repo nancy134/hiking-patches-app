@@ -352,6 +352,8 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
 ) {
   onCreatePatchMountain(filter: $filter) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -384,8 +386,6 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
@@ -398,6 +398,8 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
 ) {
   onUpdatePatchMountain(filter: $filter) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -430,8 +432,6 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
@@ -444,6 +444,8 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
 ) {
   onDeletePatchMountain(filter: $filter) {
     id
+    patchPatchMountainsId
+    mountainID
     patch {
       id
       name
@@ -476,8 +478,6 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
