@@ -1,15 +1,24 @@
-// components/PatchDisplay.tsx
+// src/components/PatchDisplay.tsx
 import { Difficulty } from '@/API';
 
 type PatchDisplayProps = {
-  imageUrl: string | null | undefined;
+  imageUrl?: string | null;
   name: string;
   description?: string | null;
   regions?: (string | null)[] | null;
   difficulty?: Difficulty | null;
-  status?: string | null;
-  dateCompleted?: string | null;
+  status?: '' | 'In Progress' | 'Completed';
+  showStatusSkeleton?: boolean;
+  progressPct?: number | null; // optional slot if you want to thread it later
 };
+
+function StatusSkeleton() {
+  return (
+    <span className="absolute top-2 right-2 rounded-full px-2 py-1 text-xs shadow bg-gray-200 animate-pulse">
+      &nbsp;&nbsp;&nbsp;&nbsp;
+    </span>
+  );
+}
 
 type DiamondProps = {
   num: number;
@@ -58,8 +67,9 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
   description,
   regions,
   difficulty,
-  status,
-  dateCompleted
+  status = '',
+  showStatusSkeleton = false,
+  progressPct = null,
 }) => {
   let badgeColor = '';
   if (status === 'Completed') badgeColor = 'bg-green-600';
@@ -92,13 +102,6 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
 
       {/* Name */}
       <h2 className="text-xl font-semibold text-center">{name}</h2>
-
-      {/* Optional fields */}
-      {dateCompleted && (
-        <p className="text-sm text-gray-700 mt-2">
-          <span className="font-medium text-gray-800">Completed on:</span> {dateCompleted}
-        </p>
-      )}
 
       {description && (
         <p className="text-sm text-gray-600 line-clamp-2 text-center">{description}</p>

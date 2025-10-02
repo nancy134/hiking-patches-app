@@ -78,7 +78,12 @@ type PatchMountain @model
   @auth(rules: [
     { allow: public, operations: [read] },
     { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
-  ]) {
+  ]) 
+  # fast query: "all PatchMountains for a Patch"
+  @index(name: "byPatch", fields: ["patchPatchMountainsId"], queryField: "patchMountainsByPatch")
+  # (optional) fast query: "all PatchMountains for a Mountain"
+  @index(name: "byMountain", fields: ["mountainID"], queryField: "patchMountainsByMountain")
+{
   id: ID!
   patch: Patch! @belongsTo
   mountain: Mountain! @belongsTo
@@ -89,7 +94,13 @@ type UserMountain @model
   @auth(rules: [
     { allow: owner, operations: [create, update, delete, read] },
     { allow: groups, groups: ["Admin"], operations: [read, delete, update] }
-  ]){
+  ])
+  # OPTIONAL: composite GSI for exact user+mountain lookups
+  @index(name: "byUserByMountain", fields: ["userID", "mountainID"], queryField: "userMountainsByUserByMountain")
+
+  # OPTIONAL: composite GSI for chronological views / ranges
+  @index(name: "byUserByDate", fields: ["userID", "dateClimbed"], queryField: "userMountainsByUserByDate")
+{
   id: ID!
   userID: ID! @index(name: "byUser", queryField: "userMountainsByUser") 
   mountainID: ID! @index(name: "byMountain", queryField: "userMountainsByMountain")
@@ -97,5 +108,22 @@ type UserMountain @model
   notes: String
 
   mountain: Mountain @belongsTo(fields: ["mountainID"])
+}
+
+type PatchProgress {
+  patchId: ID!
+  userId: ID!
+  completed: Int!  # how many patch mountains the user has at least 1 ascent for
+  denom: Int!      # denominator after applying rule (e.g., exclude delisted, or any N)
+  percent: Int!    # 0..100, rounded
+  note: String
+}
+
+type Query {
+  getPatchProgressSummary(patchId: ID!, userId: ID!): PatchProgress
+    @function(name: "getPatchProgress-${env}")
+
+  listPatchProgress(patchIds: [ID!]!, userId: ID!): [PatchProgress!]!
+    @function(name: "getPatchProgress-${env}")
 }
 

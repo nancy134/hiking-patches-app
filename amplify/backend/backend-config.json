@@ -92,24 +92,6 @@
       "service": "Lambda"
     }
   },
-  "parameters": {
-    "AMPLIFY_function_listUsersFunction_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "listUsersFunction"
-        }
-      ]
-    },
-    "AMPLIFY_function_listUsersFunction_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "listUsersFunction"
-        }
-      ]
-    }
-  },
   "storage": {
     "patchImages": {
       "dependsOn": [],
