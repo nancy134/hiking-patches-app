@@ -9,7 +9,9 @@ type PatchDisplayProps = {
   difficulty?: Difficulty | null;
   status?: '' | 'In Progress' | 'Completed';
   showStatusSkeleton?: boolean;
-  progressPct?: number | null; // optional slot if you want to thread it later
+  progressPct?: number | null;
+  // NEW:
+  extraFooter?: React.ReactNode;
 };
 
 function StatusSkeleton() {
@@ -70,6 +72,7 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
   status = '',
   showStatusSkeleton = false,
   progressPct = null,
+  extraFooter, // NEW
 }) => {
   let badgeColor = '';
   if (status === 'Completed') badgeColor = 'bg-green-600';
@@ -112,6 +115,9 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
           {regions.join(', ')}
         </p>
       )}
+
+      {/* NEW: reserved footer area for progress, sits below text */}
+      {extraFooter ? <div className="mt-3 w-full">{extraFooter}</div> : null}
     </div>
   );
 };
