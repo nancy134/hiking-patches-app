@@ -23,9 +23,11 @@ export function PatchCard({ patch, status, showStatusSkeleton }: Props) {
           status={status}
           showStatusSkeleton={showStatusSkeleton}
         />
-
-        {/* Optional: per-card lazy % overlay (only when visible) 
-        <UserProgressOverlay patchId={patch.id} /> */}
+      <UserProgressOverlay
+        patchId={patch.id}
+        showLabel
+        className="absolute left-3 right-3 bottom-3"
+      />
       </div>
     </Link>
   );

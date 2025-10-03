@@ -114,7 +114,10 @@ type UserMountain @model
   mountain: Mountain @belongsTo(fields: ["mountainID"])
 }
 
-type PatchProgress {
+type PatchProgress 
+  @aws_cognito_user_pools   # allow signed-in users to read this type
+  @aws_iam                  # optional: let your Lambda (IAM) read it too
+{
   patchId: ID!
   userId: ID!
   completed: Int!  # how many patch mountains the user has at least 1 ascent for
@@ -126,8 +129,10 @@ type PatchProgress {
 type Query {
   getPatchProgressSummary(patchId: ID!, userId: ID!): PatchProgress
     @function(name: "getPatchProgress-${env}")
+    @aws_cognito_user_pools   # allow signed-in users
 
   listPatchProgress(patchIds: [ID!]!, userId: ID!): [PatchProgress!]!
     @function(name: "getPatchProgress-${env}")
+    @aws_cognito_user_pools
 }
 
