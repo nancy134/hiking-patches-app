@@ -83,11 +83,11 @@ type PatchMountain @model
   id: ID!
   # Explicit FKs so we can index them
   patchPatchMountainsId: ID @index(name: "byPatch", queryField: "patchMountainsByPatch")
-  mountainID: ID @index(name: "byMountain", queryField: "patchMountainsByMountain")
+  mountainPatchMountainsId: ID @index(name: "byMountain", queryField: "patchMountainsByMountain")
 
   # BelongsTo uses the explicit fields above
   patch: Patch! @belongsTo(fields: ["patchPatchMountainsId"])
-  mountain: Mountain! @belongsTo(fields: ["mountainID"])
+  mountain: Mountain! @belongsTo(fields: ["mountainPatchMountainsId"])
 
   delisted: Boolean
 }
@@ -96,6 +96,7 @@ type UserMountain @model
   @auth(rules: [
     { allow: owner, operations: [create, update, delete, read] },
     { allow: groups, groups: ["Admin"], operations: [read, delete, update] }
+    { allow: private, provider: iam, operations: [read] }
   ])
 {
   id: ID!

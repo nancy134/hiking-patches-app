@@ -353,7 +353,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
   onCreatePatchMountain(filter: $filter) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -399,7 +399,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
   onUpdatePatchMountain(filter: $filter) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -445,7 +445,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
   onDeletePatchMountain(filter: $filter) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name

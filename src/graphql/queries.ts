@@ -290,7 +290,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
   getPatchMountain(id: $id) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -339,7 +339,7 @@ export const listPatchMountains = /* GraphQL */ `query ListPatchMountains(
     items {
       id
       patchPatchMountainsId
-      mountainID
+      mountainPatchMountainsId
       delisted
       createdAt
       updatedAt
@@ -370,7 +370,7 @@ export const patchMountainsByPatch = /* GraphQL */ `query PatchMountainsByPatch(
     items {
       id
       patchPatchMountainsId
-      mountainID
+      mountainPatchMountainsId
       delisted
       createdAt
       updatedAt
@@ -385,14 +385,14 @@ export const patchMountainsByPatch = /* GraphQL */ `query PatchMountainsByPatch(
   APITypes.PatchMountainsByPatchQuery
 >;
 export const patchMountainsByMountain = /* GraphQL */ `query PatchMountainsByMountain(
-  $mountainID: ID!
+  $mountainPatchMountainsId: ID!
   $sortDirection: ModelSortDirection
   $filter: ModelPatchMountainFilterInput
   $limit: Int
   $nextToken: String
 ) {
   patchMountainsByMountain(
-    mountainID: $mountainID
+    mountainPatchMountainsId: $mountainPatchMountainsId
     sortDirection: $sortDirection
     filter: $filter
     limit: $limit
@@ -401,7 +401,7 @@ export const patchMountainsByMountain = /* GraphQL */ `query PatchMountainsByMou
     items {
       id
       patchPatchMountainsId
-      mountainID
+      mountainPatchMountainsId
       delisted
       createdAt
       updatedAt

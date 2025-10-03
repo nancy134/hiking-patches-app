@@ -8,57 +8,6 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
-export const createPatchRequest = /* GraphQL */ `mutation CreatePatchRequest(
-  $input: CreatePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  createPatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreatePatchRequestMutationVariables,
-  APITypes.CreatePatchRequestMutation
->;
-export const updatePatchRequest = /* GraphQL */ `mutation UpdatePatchRequest(
-  $input: UpdatePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  updatePatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdatePatchRequestMutationVariables,
-  APITypes.UpdatePatchRequestMutation
->;
-export const deletePatchRequest = /* GraphQL */ `mutation DeletePatchRequest(
-  $input: DeletePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  deletePatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeletePatchRequestMutationVariables,
-  APITypes.DeletePatchRequestMutation
->;
 export const createPatch = /* GraphQL */ `mutation CreatePatch(
   $input: CreatePatchInput!
   $condition: ModelPatchConditionInput
@@ -281,6 +230,57 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
   APITypes.DeleteUserPatchMutationVariables,
   APITypes.DeleteUserPatchMutation
 >;
+export const createPatchRequest = /* GraphQL */ `mutation CreatePatchRequest(
+  $input: CreatePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  createPatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreatePatchRequestMutationVariables,
+  APITypes.CreatePatchRequestMutation
+>;
+export const updatePatchRequest = /* GraphQL */ `mutation UpdatePatchRequest(
+  $input: UpdatePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  updatePatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchRequestMutationVariables,
+  APITypes.UpdatePatchRequestMutation
+>;
+export const deletePatchRequest = /* GraphQL */ `mutation DeletePatchRequest(
+  $input: DeletePatchRequestInput!
+  $condition: ModelPatchRequestConditionInput
+) {
+  deletePatchRequest(input: $input, condition: $condition) {
+    id
+    email
+    description
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchRequestMutationVariables,
+  APITypes.DeletePatchRequestMutation
+>;
 export const createMountain = /* GraphQL */ `mutation CreateMountain(
   $input: CreateMountainInput!
   $condition: ModelMountainConditionInput
@@ -375,7 +375,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
   createPatchMountain(input: $input, condition: $condition) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -422,7 +422,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
   updatePatchMountain(input: $input, condition: $condition) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -469,7 +469,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
   deletePatchMountain(input: $input, condition: $condition) {
     id
     patchPatchMountainsId
-    mountainID
+    mountainPatchMountainsId
     patch {
       id
       name
