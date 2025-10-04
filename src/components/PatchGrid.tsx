@@ -31,8 +31,6 @@ export default function PatchGrid({
             key={patch.id}
             patch={patch}
             status={status}
-            // subtle shimmer only before user data is ready
-            showStatusSkeleton={!userDataReady}
           />
         );
       })}

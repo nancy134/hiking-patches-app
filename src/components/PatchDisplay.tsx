@@ -8,7 +8,6 @@ type PatchDisplayProps = {
   regions?: (string | null)[] | null;
   difficulty?: Difficulty | null;
   status?: '' | 'In Progress' | 'Completed';
-  showStatusSkeleton?: boolean;
   progressPct?: number | null;
   // NEW:
   extraFooter?: React.ReactNode;
@@ -70,7 +69,6 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
   regions,
   difficulty,
   status = '',
-  showStatusSkeleton = false,
   progressPct = null,
   extraFooter, // NEW
 }) => {

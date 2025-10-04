@@ -19,7 +19,6 @@ export const UserPatchCard: React.FC<Props> = ({ patch }) => {
       name={name}
       difficulty={difficulty}
       status={patch.dateCompleted ? 'Completed' : 'In Progress'}
-      dateCompleted={patch.dateCompleted ?? undefined}
     />
     </Link>
   );
