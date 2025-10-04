@@ -1,0 +1,11 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "api": {
+      "hikingpatchesapp": [
+        "Query"
+      ]
+    }
+  },
+  "environmentVariableList": []
+}

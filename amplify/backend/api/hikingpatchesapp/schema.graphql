@@ -28,7 +28,7 @@ type Patch @model
   hasPeaks: Boolean
   completionRule: AWSJSON
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
-  patchMountains: [PatchMountain] @hasMany
+  patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
 }
 
 type UserPatch @model 
@@ -70,7 +70,7 @@ type Mountain @model
   longitude: Float
   city: String
   state: String
-  patchMountains: [PatchMountain] @hasMany
+  patchMountains: [PatchMountain] @hasMany(indexName: "byMountain", fields: ["id"])
   userMountains: [UserMountain] @hasMany(indexName: "byMountain", fields: ["id"])
 }
 
@@ -78,10 +78,17 @@ type PatchMountain @model
   @auth(rules: [
     { allow: public, operations: [read] },
     { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
-  ]) {
+  ]) 
+{
   id: ID!
-  patch: Patch! @belongsTo
-  mountain: Mountain! @belongsTo
+  # Explicit FKs so we can index them
+  patchPatchMountainsId: ID @index(name: "byPatch", queryField: "patchMountainsByPatch")
+  mountainPatchMountainsId: ID @index(name: "byMountain", queryField: "patchMountainsByMountain")
+
+  # BelongsTo uses the explicit fields above
+  patch: Patch! @belongsTo(fields: ["patchPatchMountainsId"])
+  mountain: Mountain! @belongsTo(fields: ["mountainPatchMountainsId"])
+
   delisted: Boolean
 }
 
@@ -89,13 +96,43 @@ type UserMountain @model
   @auth(rules: [
     { allow: owner, operations: [create, update, delete, read] },
     { allow: groups, groups: ["Admin"], operations: [read, delete, update] }
-  ]){
+    { allow: private, provider: iam, operations: [read] }
+  ])
+{
   id: ID!
-  userID: ID! @index(name: "byUser", queryField: "userMountainsByUser") 
+
+  userID: ID! 
+    @index(name: "byUser", queryField: "userMountainsByUser")
+    @index(name: "byUserByMountain", sortKeyFields: ["mountainID"], queryField: "userMountainsByUserByMountain")
+    @index(name: "byUserByDate", sortKeyFields: ["dateClimbed"], queryField: "userMountainsByUserByDate")
+
   mountainID: ID! @index(name: "byMountain", queryField: "userMountainsByMountain")
+
   dateClimbed: AWSDate!
   notes: String
 
   mountain: Mountain @belongsTo(fields: ["mountainID"])
+}
+
+type PatchProgress 
+  @aws_cognito_user_pools   # allow signed-in users to read this type
+  @aws_iam                  # optional: let your Lambda (IAM) read it too
+{
+  patchId: ID!
+  userId: ID!
+  completed: Int!  # how many patch mountains the user has at least 1 ascent for
+  denom: Int!      # denominator after applying rule (e.g., exclude delisted, or any N)
+  percent: Int!    # 0..100, rounded
+  note: String
+}
+
+type Query {
+  getPatchProgressSummary(patchId: ID!, userId: ID!): PatchProgress
+    @function(name: "getPatchProgress-${env}")
+    @aws_cognito_user_pools   # allow signed-in users
+
+  listPatchProgress(patchIds: [ID!]!, userId: ID!): [PatchProgress!]!
+    @function(name: "getPatchProgress-${env}")
+    @aws_cognito_user_pools
 }
 

@@ -43,13 +43,13 @@ export type ModelPatchMountainConnection = {
 export type PatchMountain = {
   __typename: "PatchMountain",
   id: string,
+  patchPatchMountainsId?: string | null,
+  mountainPatchMountainsId?: string | null,
   patch: Patch,
   mountain: Mountain,
   delisted?: boolean | null,
   createdAt: string,
   updatedAt: string,
-  patchPatchMountainsId?: string | null,
-  mountainPatchMountainsId?: string | null,
 };
 
 export type Patch = {
@@ -211,51 +211,14 @@ export type ModelBooleanInput = {
 
 export type ModelPatchMountainFilterInput = {
   id?: ModelIDInput | null,
+  patchPatchMountainsId?: ModelIDInput | null,
+  mountainPatchMountainsId?: ModelIDInput | null,
   delisted?: ModelBooleanInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchMountainFilterInput | null > | null,
   or?: Array< ModelPatchMountainFilterInput | null > | null,
   not?: ModelPatchMountainFilterInput | null,
-  patchPatchMountainsId?: ModelIDInput | null,
-  mountainPatchMountainsId?: ModelIDInput | null,
-};
-
-export type CreatePatchRequestInput = {
-  id?: string | null,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-};
-
-export type ModelPatchRequestConditionInput = {
-  email?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  and?: Array< ModelPatchRequestConditionInput | null > | null,
-  or?: Array< ModelPatchRequestConditionInput | null > | null,
-  not?: ModelPatchRequestConditionInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type PatchRequest = {
-  __typename: "PatchRequest",
-  id: string,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-  updatedAt: string,
-};
-
-export type UpdatePatchRequestInput = {
-  id: string,
-  email?: string | null,
-  description?: string | null,
-  createdAt?: string | null,
-};
-
-export type DeletePatchRequestInput = {
-  id: string,
 };
 
 export type CreatePatchInput = {
@@ -370,6 +333,43 @@ export type DeleteUserPatchInput = {
   id: string,
 };
 
+export type CreatePatchRequestInput = {
+  id?: string | null,
+  email: string,
+  description: string,
+  createdAt?: string | null,
+};
+
+export type ModelPatchRequestConditionInput = {
+  email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  and?: Array< ModelPatchRequestConditionInput | null > | null,
+  or?: Array< ModelPatchRequestConditionInput | null > | null,
+  not?: ModelPatchRequestConditionInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type PatchRequest = {
+  __typename: "PatchRequest",
+  id: string,
+  email: string,
+  description: string,
+  createdAt?: string | null,
+  updatedAt: string,
+};
+
+export type UpdatePatchRequestInput = {
+  id: string,
+  email?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+};
+
+export type DeletePatchRequestInput = {
+  id: string,
+};
+
 export type CreateMountainInput = {
   id?: string | null,
   name: string,
@@ -410,27 +410,27 @@ export type DeleteMountainInput = {
 
 export type CreatePatchMountainInput = {
   id?: string | null,
-  delisted?: boolean | null,
   patchPatchMountainsId?: string | null,
   mountainPatchMountainsId?: string | null,
+  delisted?: boolean | null,
 };
 
 export type ModelPatchMountainConditionInput = {
+  patchPatchMountainsId?: ModelIDInput | null,
+  mountainPatchMountainsId?: ModelIDInput | null,
   delisted?: ModelBooleanInput | null,
   and?: Array< ModelPatchMountainConditionInput | null > | null,
   or?: Array< ModelPatchMountainConditionInput | null > | null,
   not?: ModelPatchMountainConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  patchPatchMountainsId?: ModelIDInput | null,
-  mountainPatchMountainsId?: ModelIDInput | null,
 };
 
 export type UpdatePatchMountainInput = {
   id: string,
-  delisted?: boolean | null,
   patchPatchMountainsId?: string | null,
   mountainPatchMountainsId?: string | null,
+  delisted?: boolean | null,
 };
 
 export type DeletePatchMountainInput = {
@@ -456,6 +456,16 @@ export type UpdateUserMountainInput = {
   mountainID?: string | null,
   dateClimbed?: string | null,
   notes?: string | null,
+};
+
+export type PatchProgress = {
+  __typename: "PatchProgress",
+  patchId: string,
+  userId: string,
+  completed: number,
+  denom: number,
+  percent: number,
+  note?: string | null,
 };
 
 export type ModelPatchFilterInput = {
@@ -542,6 +552,26 @@ export type ModelUserMountainFilterInput = {
   owner?: ModelStringInput | null,
 };
 
+export type ModelIDKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
 export type ModelSubscriptionPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   name?: ModelSubscriptionStringInput | null,
@@ -559,7 +589,6 @@ export type ModelSubscriptionPatchFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
   or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  patchPatchMountainsId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -659,11 +688,12 @@ export type ModelSubscriptionMountainFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionMountainFilterInput | null > | null,
   or?: Array< ModelSubscriptionMountainFilterInput | null > | null,
-  mountainPatchMountainsId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionPatchMountainFilterInput = {
   id?: ModelSubscriptionIDInput | null,
+  patchPatchMountainsId?: ModelSubscriptionIDInput | null,
+  mountainPatchMountainsId?: ModelSubscriptionIDInput | null,
   delisted?: ModelSubscriptionBooleanInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
@@ -849,51 +879,16 @@ export type ListPatchMountainsWithPatchQuery = {
   } | null,
 };
 
-export type CreatePatchRequestMutationVariables = {
-  input: CreatePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
+export type GetPatchCompletionRuleQueryVariables = {
+  id: string,
 };
 
-export type CreatePatchRequestMutation = {
-  createPatchRequest?:  {
-    __typename: "PatchRequest",
+export type GetPatchCompletionRuleQuery = {
+  getPatch?:  {
+    __typename: "Patch",
     id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchRequestMutationVariables = {
-  input: UpdatePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
-};
-
-export type UpdatePatchRequestMutation = {
-  updatePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchRequestMutationVariables = {
-  input: DeletePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
-};
-
-export type DeletePatchRequestMutation = {
-  deletePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
+    name: string,
+    completionRule?: string | null,
   } | null,
 };
 
@@ -1113,6 +1108,54 @@ export type DeleteUserPatchMutation = {
   } | null,
 };
 
+export type CreatePatchRequestMutationVariables = {
+  input: CreatePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type CreatePatchRequestMutation = {
+  createPatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchRequestMutationVariables = {
+  input: UpdatePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type UpdatePatchRequestMutation = {
+  updatePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchRequestMutationVariables = {
+  input: DeletePatchRequestInput,
+  condition?: ModelPatchRequestConditionInput | null,
+};
+
+export type DeletePatchRequestMutation = {
+  deletePatchRequest?:  {
+    __typename: "PatchRequest",
+    id: string,
+    email: string,
+    description: string,
+    createdAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
 export type CreateMountainMutationVariables = {
   input: CreateMountainInput,
   condition?: ModelMountainConditionInput | null,
@@ -1206,6 +1249,8 @@ export type CreatePatchMountainMutation = {
   createPatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -1238,8 +1283,6 @@ export type CreatePatchMountainMutation = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -1252,6 +1295,8 @@ export type UpdatePatchMountainMutation = {
   updatePatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -1284,8 +1329,6 @@ export type UpdatePatchMountainMutation = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -1298,6 +1341,8 @@ export type DeletePatchMountainMutation = {
   deletePatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -1330,8 +1375,6 @@ export type DeletePatchMountainMutation = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -1426,6 +1469,40 @@ export type DeleteUserMountainMutation = {
     updatedAt: string,
     owner?: string | null,
   } | null,
+};
+
+export type GetPatchProgressSummaryQueryVariables = {
+  patchId: string,
+  userId: string,
+};
+
+export type GetPatchProgressSummaryQuery = {
+  getPatchProgressSummary?:  {
+    __typename: "PatchProgress",
+    patchId: string,
+    userId: string,
+    completed: number,
+    denom: number,
+    percent: number,
+    note?: string | null,
+  } | null,
+};
+
+export type ListPatchProgressQueryVariables = {
+  patchIds: Array< string >,
+  userId: string,
+};
+
+export type ListPatchProgressQuery = {
+  listPatchProgress:  Array< {
+    __typename: "PatchProgress",
+    patchId: string,
+    userId: string,
+    completed: number,
+    denom: number,
+    percent: number,
+    note?: string | null,
+  } >,
 };
 
 export type GetPatchQueryVariables = {
@@ -1680,6 +1757,8 @@ export type GetPatchMountainQuery = {
   getPatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -1712,8 +1791,6 @@ export type GetPatchMountainQuery = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -1729,11 +1806,59 @@ export type ListPatchMountainsQuery = {
     items:  Array< {
       __typename: "PatchMountain",
       id: string,
+      patchPatchMountainsId?: string | null,
+      mountainPatchMountainsId?: string | null,
       delisted?: boolean | null,
       createdAt: string,
       updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchMountainsByPatchQueryVariables = {
+  patchPatchMountainsId: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type PatchMountainsByPatchQuery = {
+  patchMountainsByPatch?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      id: string,
       patchPatchMountainsId?: string | null,
       mountainPatchMountainsId?: string | null,
+      delisted?: boolean | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchMountainsByMountainQueryVariables = {
+  mountainPatchMountainsId: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type PatchMountainsByMountainQuery = {
+  patchMountainsByMountain?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      id: string,
+      patchPatchMountainsId?: string | null,
+      mountainPatchMountainsId?: string | null,
+      delisted?: boolean | null,
+      createdAt: string,
+      updatedAt: string,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -1803,6 +1928,60 @@ export type UserMountainsByUserQueryVariables = {
 
 export type UserMountainsByUserQuery = {
   userMountainsByUser?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      id: string,
+      userID: string,
+      mountainID: string,
+      dateClimbed: string,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByUserByMountainQueryVariables = {
+  userID: string,
+  mountainID?: ModelIDKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserMountainsByUserByMountainQuery = {
+  userMountainsByUserByMountain?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      id: string,
+      userID: string,
+      mountainID: string,
+      dateClimbed: string,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByUserByDateQueryVariables = {
+  userID: string,
+  dateClimbed?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserMountainsByUserByDateQuery = {
+  userMountainsByUserByDate?:  {
     __typename: "ModelUserMountainConnection",
     items:  Array< {
       __typename: "UserMountain",
@@ -2192,6 +2371,8 @@ export type OnCreatePatchMountainSubscription = {
   onCreatePatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -2224,8 +2405,6 @@ export type OnCreatePatchMountainSubscription = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -2237,6 +2416,8 @@ export type OnUpdatePatchMountainSubscription = {
   onUpdatePatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -2269,8 +2450,6 @@ export type OnUpdatePatchMountainSubscription = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 
@@ -2282,6 +2461,8 @@ export type OnDeletePatchMountainSubscription = {
   onDeletePatchMountain?:  {
     __typename: "PatchMountain",
     id: string,
+    patchPatchMountainsId?: string | null,
+    mountainPatchMountainsId?: string | null,
     patch:  {
       __typename: "Patch",
       id: string,
@@ -2314,8 +2495,6 @@ export type OnDeletePatchMountainSubscription = {
     delisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
   } | null,
 };
 

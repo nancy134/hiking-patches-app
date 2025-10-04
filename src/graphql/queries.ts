@@ -8,6 +8,36 @@ type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryOutput: OutputType;
 };
 
+export const getPatchProgressSummary = /* GraphQL */ `query GetPatchProgressSummary($patchId: ID!, $userId: ID!) {
+  getPatchProgressSummary(patchId: $patchId, userId: $userId) {
+    patchId
+    userId
+    completed
+    denom
+    percent
+    note
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetPatchProgressSummaryQueryVariables,
+  APITypes.GetPatchProgressSummaryQuery
+>;
+export const listPatchProgress = /* GraphQL */ `query ListPatchProgress($patchIds: [ID!]!, $userId: ID!) {
+  listPatchProgress(patchIds: $patchIds, userId: $userId) {
+    patchId
+    userId
+    completed
+    denom
+    percent
+    note
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListPatchProgressQueryVariables,
+  APITypes.ListPatchProgressQuery
+>;
 export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
   getPatch(id: $id) {
     id
@@ -259,6 +289,8 @@ export const listMountains = /* GraphQL */ `query ListMountains(
 export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) {
   getPatchMountain(id: $id) {
     id
+    patchPatchMountainsId
+    mountainPatchMountainsId
     patch {
       id
       name
@@ -291,8 +323,6 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
     delisted
     createdAt
     updatedAt
-    patchPatchMountainsId
-    mountainPatchMountainsId
     __typename
   }
 }
@@ -308,11 +338,11 @@ export const listPatchMountains = /* GraphQL */ `query ListPatchMountains(
   listPatchMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      patchPatchMountainsId
+      mountainPatchMountainsId
       delisted
       createdAt
       updatedAt
-      patchPatchMountainsId
-      mountainPatchMountainsId
       __typename
     }
     nextToken
@@ -322,6 +352,68 @@ export const listPatchMountains = /* GraphQL */ `query ListPatchMountains(
 ` as GeneratedQuery<
   APITypes.ListPatchMountainsQueryVariables,
   APITypes.ListPatchMountainsQuery
+>;
+export const patchMountainsByPatch = /* GraphQL */ `query PatchMountainsByPatch(
+  $patchPatchMountainsId: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelPatchMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  patchMountainsByPatch(
+    patchPatchMountainsId: $patchPatchMountainsId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      patchPatchMountainsId
+      mountainPatchMountainsId
+      delisted
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.PatchMountainsByPatchQueryVariables,
+  APITypes.PatchMountainsByPatchQuery
+>;
+export const patchMountainsByMountain = /* GraphQL */ `query PatchMountainsByMountain(
+  $mountainPatchMountainsId: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelPatchMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  patchMountainsByMountain(
+    mountainPatchMountainsId: $mountainPatchMountainsId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      patchPatchMountainsId
+      mountainPatchMountainsId
+      delisted
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.PatchMountainsByMountainQueryVariables,
+  APITypes.PatchMountainsByMountainQuery
 >;
 export const getUserMountain = /* GraphQL */ `query GetUserMountain($id: ID!) {
   getUserMountain(id: $id) {
@@ -409,6 +501,76 @@ export const userMountainsByUser = /* GraphQL */ `query UserMountainsByUser(
 ` as GeneratedQuery<
   APITypes.UserMountainsByUserQueryVariables,
   APITypes.UserMountainsByUserQuery
+>;
+export const userMountainsByUserByMountain = /* GraphQL */ `query UserMountainsByUserByMountain(
+  $userID: ID!
+  $mountainID: ModelIDKeyConditionInput
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  userMountainsByUserByMountain(
+    userID: $userID
+    mountainID: $mountainID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      userID
+      mountainID
+      dateClimbed
+      notes
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.UserMountainsByUserByMountainQueryVariables,
+  APITypes.UserMountainsByUserByMountainQuery
+>;
+export const userMountainsByUserByDate = /* GraphQL */ `query UserMountainsByUserByDate(
+  $userID: ID!
+  $dateClimbed: ModelStringKeyConditionInput
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserMountainFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  userMountainsByUserByDate(
+    userID: $userID
+    dateClimbed: $dateClimbed
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      userID
+      mountainID
+      dateClimbed
+      notes
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.UserMountainsByUserByDateQueryVariables,
+  APITypes.UserMountainsByUserByDateQuery
 >;
 export const userMountainsByMountain = /* GraphQL */ `query UserMountainsByMountain(
   $mountainID: ID!
