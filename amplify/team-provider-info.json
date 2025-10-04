@@ -30,7 +30,7 @@
         },
         "getPatchProgress": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/getPatchProgress-325636474d56384f5a43-build.zip"
+          "s3Key": "amplify-builds/getPatchProgress-47426c69683433437455-build.zip"
         }
       }
     }
