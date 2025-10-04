@@ -134,18 +134,10 @@ function normalizeRule(raw) {
 
 function computePercent(rule, rows, hasAscent) {
   const items = rows.filter(r => r.mountainPatchMountainsId);
-  console.log("items: ");
-  console.log(items);
   const completedAll = items.reduce((acc, r) => acc + (r.mountainPatchMountainsId && hasAscent(r.mountainPatchMountainsId) ? 1 : 0), 0);
-  console.log("completedAll:");
-  console.log(completedAll);
   if (rule.type === 'excludeDelisted') {
     const eligible = items.filter(r => !r.delisted);
-    console.log("eligible: ");
-    console.log(eligible);
     const denom = eligible.length || 1;
-    console.log("denom: ");
-    console.log(denom);
     const percent = Math.round((completedAll / denom) * 100);
     return { completed: completedAll, denom, percent, note: 'Delisted excluded from denominator' };
   }
@@ -204,19 +196,9 @@ async function progressForPatch(patchId, userId) {
     fetchAllPatchMountains(patchId),
     fetchAllUserMountains(userId),
   ]);
-  console.log("userMountains:");
-  console.log(userMountains);
   const rule = normalizeRule(patch?.completionRule);
-  console.log("rule:");
-  console.log(rule);
   const userSet = new Set(userMountains.map(u => u.mountainID).filter(Boolean));
-  console.log("userSet:");
-  console.log(userSet);
   const hasAscent = (mid) => userSet.has(mid);
-  console.log("hasAscent:");
-  console.log(hasAscent);
-  console.log("patchMountains");
-  console.log(patchMountains);
   const { completed, denom, percent, note } = computePercent(rule, patchMountains, hasAscent);
   return { patchId, userId, completed, denom, percent, note };
 }
