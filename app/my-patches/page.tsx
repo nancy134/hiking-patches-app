@@ -8,8 +8,17 @@ import { generateClient } from 'aws-amplify/api';
 import { listUserPatchesWithPatch } from '@/graphql/custom-queries';
 import { Patch, UserPatch } from '@/API';
 import { useAuth } from '@/context/auth-context';
+import type { GraphQLResult } from '@aws-amplify/api';
+import { GraphQLQuery } from '@aws-amplify/api';
 
 const client = generateClient();
+
+type ListUserPatchesWithPatchResult = {
+  listUserPatches?: {
+    items?: (UserPatch | null)[] | null;
+    nextToken?: string | null;
+  } | null;
+};
 
 export default function MyPatchesPage() {
   const { user } = useAuth();
@@ -22,12 +31,13 @@ export default function MyPatchesPage() {
       if (!user?.userId) { setRows([]); setLoading(false); return; }
       setLoading(true);
       try {
-        const r = await client.graphql({
+        const r = await client.graphql<GraphQLQuery<ListUserPatchesWithPatchResult>>({
           query: listUserPatchesWithPatch,
           variables: { filter: { userID: { eq: user.userId } } },
           authMode: 'userPool',
         });
-        const items: UserPatch[] = r.data?.listUserPatches?.items?.filter(Boolean) ?? [];
+const raw = r.data?.listUserPatches?.items ?? [];
+const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
         // keep only started/completed
         const meaningful = items.filter(up => up.dateCompleted || up.inProgress);
         if (!cancelled) setRows(meaningful);
