@@ -154,6 +154,15 @@ export default function HomePage() {
      e.target.blur();
   };
 
+  function DotSpinner() {
+    return (
+      <span
+        className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-transparent align-[-2px]"
+        aria-hidden="true"
+      />
+    );
+  }
+
   return (
     <div className="p-4">
       <Header />
@@ -214,35 +223,58 @@ export default function HomePage() {
         </div>
         {/* Status filters: disabled until user data is ready */}
         {user && (
-          <>
-            <label className="flex items-center space-x-1 opacity-100">
+          <fieldset
+            className="flex flex-wrap items-center gap-3 rounded border border-gray-200 px-3 py-2"
+            aria-busy={!userDataReady}
+          >
+            <legend className="px-1 text-sm font-semibold text-gray-700">
+              <span className="inline-flex items-center gap-2">
+                My progress
+                {!userDataReady && <DotSpinner />}
+              </span>
+            </legend>
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showCompleted}
                 onChange={(e) => setShowCompleted(e.target.checked)}
                 disabled={!userDataReady}
               />
-              <span>Completed{!userDataReady ? ' (loading…)': ''}</span>
+              <span>Completed</span>
             </label>
-            <label className="flex items-center space-x-1">
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showInProgress}
                 onChange={(e) => setShowInProgress(e.target.checked)}
                 disabled={!userDataReady}
               />
-              <span>In Progress{!userDataReady ? ' (loading…)': ''}</span>
+              <span>In Progress</span>
             </label>
-            <label className="flex items-center space-x-1">
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showNotStarted}
                 onChange={(e) => setShowNotStarted(e.target.checked)}
                 disabled={!userDataReady}
               />
-              <span>Not Started{!userDataReady ? ' (loading…)': ''}</span>
+              <span>Not Started</span>
             </label>
-          </>
+
+            {(showCompleted !== true || showInProgress !== true || showNotStarted !== true) && (
+              <button
+                type="button"
+                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); }}
+                disabled={!userDataReady}
+                className="ml-1 text-xs text-blue-600 underline disabled:opacity-50"
+              >
+                Reset
+              </button>
+            )}
+          </fieldset>
         )}
       </div>
 
