@@ -20,6 +20,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
           imageUrl
           regions
           difficulty
+	  hasPeaks
           createdAt
           updatedAt
         }
