@@ -27,11 +27,13 @@ export default function HomePage() {
   const [userPatches, setUserPatches] = useState<UserPatch[]>([]);
   const [userDataReady, setUserDataReady] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [wishlistSet, setWishlistSet] = useState<Set<string>>(new Set());
 
   // status filters (only meaningful when userDataReady === true)
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
+  const [showWishlisted, setShowWishlisted] = useState(true);
 
   // ------------- fetch public patches immediately -------------
   useEffect(() => {
@@ -64,8 +66,9 @@ export default function HomePage() {
         if (!cancelled) {
           const items: UserPatch[] = (r.data?.listUserPatches?.items || []).filter(Boolean);
           // Only keep meaningful entries
-          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress);
+          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress || p.wishlisted);
           setUserPatches(meaningful);
+          setWishlistSet(new Set(meaningful.filter(p => p.wishlisted).map(p => p.patchID))); // ✅ seed
           setUserDataReady(true);
         }
       } catch (e) {
@@ -83,6 +86,7 @@ export default function HomePage() {
       m.set(up.patchID, {
         dateCompleted: up.dateCompleted ?? null,
         inProgress: !!up.inProgress && !up.dateCompleted,
+        wishlisted: !!up.wishlisted,
       });
     }
     return m;
@@ -110,11 +114,15 @@ export default function HomePage() {
           const e = userPatchMap.get(patch.id);
           const isCompleted = !!e?.dateCompleted;
           const isInProgress = !!e?.inProgress && !e?.dateCompleted;
+          const isWishlisted = wishlistSet.has(patch.id); 
 
-          if (isCompleted && showCompleted) return true;
-          if (isInProgress && showInProgress) return true;
-          if (!e && showNotStarted) return true;
-          return false;
+          let pass = false;
+          if (isCompleted && showCompleted) pass = true;
+          if (isInProgress && showInProgress) pass = true;
+          if (!e && showNotStarted) pass = true;
+          if (isWishlisted && showWishlisted) pass = true;
+
+          return pass;
         });
       }
 
@@ -152,6 +160,14 @@ export default function HomePage() {
   const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
      setSelectedDifficulty(e.target.value);
      e.target.blur();
+  };
+
+  const handleWishlistChange = (patchId: string, next: boolean) => {
+    setWishlistSet(prev => {
+      const n = new Set(prev);
+      if (next) n.add(patchId); else n.delete(patchId);
+      return n;
+    });
   };
 
   function DotSpinner() {
@@ -264,6 +280,16 @@ export default function HomePage() {
               <span>Not Started</span>
             </label>
 
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={showWishlisted}
+                onChange={(e) => setShowWishlisted(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>Wishlisted</span>
+            </label>
+
             {(showCompleted !== true || showInProgress !== true || showNotStarted !== true) && (
               <button
                 type="button"
@@ -302,6 +328,7 @@ export default function HomePage() {
         patches={paginated}
         userPatchMap={userPatchMap}
         userDataReady={userDataReady}
+        onWishlistChange={handleWishlistChange}
       />
     </div>
   );

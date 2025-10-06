@@ -9,8 +9,8 @@ type PatchDisplayProps = {
   difficulty?: Difficulty | null;
   status?: '' | 'In Progress' | 'Completed';
   progressPct?: number | null;
-  // NEW:
   extraFooter?: React.ReactNode;
+  topRight?: React.ReactNode; 
 };
 
 function StatusSkeleton() {
@@ -70,7 +70,8 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
   difficulty,
   status = '',
   progressPct = null,
-  extraFooter, // NEW
+  extraFooter,
+  topRight,
 }) => {
   let badgeColor = '';
   if (status === 'Completed') badgeColor = 'bg-green-600';
@@ -84,11 +85,13 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
       </div>
 
       {/* Status badge – top right */}
-      {status && (
-        <span className={`absolute top-2 right-2 ${badgeColor} text-xs px-2 py-1 rounded-full shadow`}>
-          {status}
-        </span>
-      )}
+      <div className="absolute top-2 right-2 flex items-center gap-2">
+        {topRight ? (
+          topRight
+        ) : status ? (
+          <span className={`${badgeColor} text-xs px-2 py-1 rounded-full shadow`}>{status}</span>
+        ) : null}
+      </div>
 
       {/* Image */}
       {imageUrl && (

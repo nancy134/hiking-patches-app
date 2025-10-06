@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { GraphQLResult } from '@aws-amplify/api';
 import { CreateUserPatchMutation, UpdateUserPatchMutation, UserPatch } from '@/API';
 import { generateClient } from 'aws-amplify/api';
+import { customCreateUserPatch, customUpdateUserPatch } from '@/graphql/custom-queries';
 
 const client = generateClient();
 
@@ -13,39 +14,6 @@ interface PatchProgressProps {
   onUpdate: (patch: UserPatch | null) => void;
 }
 
-const customCreateUserPatch = `
-  mutation CreateUserPatch($input: CreateUserPatchInput!) {
-    createUserPatch(input: $input) {
-      id
-      patchID
-      userID
-      dateCompleted
-      inProgress
-      notes
-      difficulty
-      imageUrl
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const customUpdateUserPatch = `
-  mutation UpdateUserPatch($input: UpdateUserPatchInput!) {
-    updateUserPatch(input: $input) {
-      id
-      patchID
-      userID
-      dateCompleted
-      inProgress
-      notes
-      difficulty
-      imageUrl
-      createdAt
-      updatedAt
-    }
-  }
-`;
 export default function PatchProgress({
   patchId,
   userId,
