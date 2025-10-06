@@ -1,101 +1,148 @@
 // app/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
-import SearchBar from '@/components/SearchBar';
+import { useEffect, useMemo, useState, useTransition } from 'react';
+import Header from '@/components/Header';
 import PatchGrid from '@/components/PatchGrid';
 import { generateClient } from 'aws-amplify/api';
-import { listPatches } from '@/graphql/queries';
-import { listUserPatches } from '@/graphql/queries'; 
-import { Patch } from '@/API';
-import Header from '@/components/Header';
+import { listPatches, listUserPatches } from '@/graphql/queries';
+import { Patch, UserPatch } from '@/API';
 import { useAuth } from '@/context/auth-context';
-import { useMemo } from 'react';
-import { UserPatch } from '@/API';
 
 const client = generateClient();
-
 const ITEMS_PER_PAGE = 16;
 
 export default function HomePage() {
+  const { user } = useAuth();
+
+  // public data
   const [allPatches, setAllPatches] = useState<Patch[]>([]);
   const [filteredPatches, setFilteredPatches] = useState<Patch[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [completedPatches, setCompletedPatches] = useState<UserPatch[]>([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  // user data
+  const [userPatches, setUserPatches] = useState<UserPatch[]>([]);
+  const [userDataReady, setUserDataReady] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  // status filters (only meaningful when userDataReady === true)
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
-  const [location, setLocation] = useState<null | {
-    city: string;
-    region: string;
-    country: string;
-    latitude: number;
-    longitude: number;
-  }>(null);
 
-  const { user } = useAuth();
-
-  const userPatchMap = useMemo(() => {
-    const map = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
-    for (const entry of completedPatches) {
-      map.set(entry.patchID, {
-        dateCompleted: entry.dateCompleted ?? null,
-        inProgress: entry.inProgress ?? false,
-      });
-    }
-    return map;
-  }, [completedPatches]);
-
+  // ------------- fetch public patches immediately -------------
   useEffect(() => {
-    const fetchLocation = async () => {
+    (async () => {
       try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        setLocation({
-          city: data.city,
-          region: data.region,
-          country: data.country_name,
-          latitude: data.latitude,
-          longitude: data.longitude,
-        });
-      } catch (err) {
-        console.error('Failed to fetch user location', err);
+        const response = await client.graphql({ query: listPatches });
+        const patches = response?.data?.listPatches?.items || [];
+        setAllPatches(patches);
+      } catch (e) {
+        console.error('Error fetching patches', e);
       }
-    };
-
-    fetchLocation();
+    })();
   }, []);
 
+  // ------------- fetch user patches AFTER mount, no blocking -------------
   useEffect(() => {
-    const fetchCompletedPatches = async () => {
-      if (!user) {
-        setCompletedPatches([]);
+    let cancelled = false;
+    (async () => {
+      if (!user?.userId) {
+        setUserPatches([]);
+        setUserDataReady(false);
         return;
       }
-
       try {
-        const result = await client.graphql({
+        const r = await client.graphql({
           query: listUserPatches,
           variables: { filter: { userID: { eq: user.userId } } },
           authMode: 'userPool',
         });
-
-        const items = result.data?.listUserPatches?.items ?? [];
-        // Map to list of objects with patchID and dateCompleted 
-        const completed = items
-          .filter((p: any) => p.dateCompleted || p.inProgress) as UserPatch[];
-        setCompletedPatches(completed);
-      } catch (err) {
-        console.error('Failed to fetch completed patches:', err);
+        if (!cancelled) {
+          const items: UserPatch[] = (r.data?.listUserPatches?.items || []).filter(Boolean);
+          // Only keep meaningful entries
+          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress);
+          setUserPatches(meaningful);
+          setUserDataReady(true);
+        }
+      } catch (e) {
+        console.error('Failed to fetch user patches:', e);
+        if (!cancelled) setUserDataReady(true); // avoid “stuck” state
       }
-    };
-
-    fetchCompletedPatches();
+    })();
+    return () => { cancelled = true; };
   }, [user]);
+
+  // Fast lookup by patchID
+  const userPatchMap = useMemo(() => {
+    const m = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    for (const up of userPatches) {
+      m.set(up.patchID, {
+        dateCompleted: up.dateCompleted ?? null,
+        inProgress: !!up.inProgress && !up.dateCompleted,
+      });
+    }
+    return m;
+  }, [userPatches]);
+
+  // ------------- public-first filtering/sorting -------------
+  useEffect(() => {
+    startTransition(() => {
+      let next = allPatches;
+
+      if (searchTerm) {
+        const q = searchTerm.toLowerCase();
+        next = next.filter((p) => p.name?.toLowerCase().includes(q));
+      }
+      if (selectedRegion) {
+        next = next.filter((p) => p.regions?.includes(selectedRegion));
+      }
+      if (selectedDifficulty) {
+        next = next.filter((p) => p.difficulty === selectedDifficulty);
+      }
+
+      // Only apply status filters once user data is available.
+      if (userDataReady && user) {
+        next = next.filter((patch) => {
+          const e = userPatchMap.get(patch.id);
+          const isCompleted = !!e?.dateCompleted;
+          const isInProgress = !!e?.inProgress && !e?.dateCompleted;
+
+          if (isCompleted && showCompleted) return true;
+          if (isInProgress && showInProgress) return true;
+          if (!e && showNotStarted) return true;
+          return false;
+        });
+      }
+
+      // Stable sort by popularity (public field)
+      next = [...next].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+
+      setFilteredPatches(next);
+      setCurrentPage(1);
+    });
+  }, [
+    allPatches,
+    searchTerm,
+    selectedRegion,
+    selectedDifficulty,
+    userDataReady,
+    user, // only matters for status filters
+    userPatchMap,
+    showCompleted,
+    showInProgress,
+    showNotStarted,
+  ]);
+
+  const paginated = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredPatches.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredPatches, currentPage]);
+
+  const totalPages = Math.ceil(filteredPatches.length / ITEMS_PER_PAGE);
 
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRegion(e.target.value);
@@ -107,186 +154,156 @@ export default function HomePage() {
      e.target.blur();
   };
 
-  useEffect(() => {
-    const fetchPatches = async () => {
-      try {
-        const response = await client.graphql({ query: listPatches });
-        const patches = response?.data?.listPatches?.items || [];
-        setAllPatches(patches);
-      } catch (error) {
-        console.error('Error fetching patches:', error);
-      }
-    };
-
-    fetchPatches();
-  }, []);
-
-
-  useEffect(() => {
-    let filtered = allPatches;
-
-    if (searchTerm) {
-      filtered = filtered.filter(patch =>
-        patch.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (selectedRegion) {
-      filtered = filtered.filter(patch =>
-        patch.regions?.includes(selectedRegion)
-      );
-    }
-
-    if (selectedDifficulty) {
-      filtered = filtered.filter(patch =>
-        patch.difficulty === selectedDifficulty
-      );
-    }
-    // Filter by patch status
-    filtered = filtered.filter(patch => {
-      const userEntry = userPatchMap.get(patch.id);
-      const isCompleted = userEntry?.dateCompleted;
-      const isInProgress = userEntry?.inProgress && !userEntry?.dateCompleted;
-
-      if (isCompleted && showCompleted) return true;
-      if (isInProgress && showInProgress) return true;
-      if (!userEntry && showNotStarted) return true;
-
-      return false;
-    });
-
-    const sorted = filtered.slice().sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
-    setFilteredPatches(sorted);
-    setCurrentPage(1);
-  }, [
-    searchTerm, 
-    selectedRegion,
-    selectedDifficulty,
-    allPatches,
-    userPatchMap,
-    showCompleted,
-    showInProgress,
-    showNotStarted
-  ]);
-
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
-
-  const paginatedPatches = filteredPatches.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  const totalPages = Math.ceil(filteredPatches.length / ITEMS_PER_PAGE);
+  function DotSpinner() {
+    return (
+      <span
+        className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-transparent align-[-2px]"
+        aria-hidden="true"
+      />
+    );
+  }
 
   return (
-  <div className="p-4">
-    <Header />
-    <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
-      <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
-      <p className="text-gray-700">
-      This site is a place for hiking enthusiasts to discover new patches to pursue and 
-      celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
-      there’s always a new patch waiting.
-      </p>
-    </div>
-    {/*<div className="font-semibold">Search for patches</div>
-    <SearchBar value={searchTerm} onChange={handleSearch} /> */}
-    <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
-      Don’t see a patch ?{' '}
-      <a
-        href="/request-patch"
-        className="text-blue-600 underline hover:text-blue-800"
-      >
-        Contact us
-      </a>{' '}
-      and we’ll add it!
-    </div>
-
-    <div className="flex flex-wrap gap-4 items-center my-4">
-      <div>
-        <label className="mr-2 font-semibold">State:</label>
-        <select
-          value={selectedRegion}
-          onChange={handleRegionChange}
-          className="p-2 border rounded min-w-[160px]"
+    <div className="p-4">
+      <Header />
+      <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
+        <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
+        <p className="text-gray-700">
+        This site is a place for hiking enthusiasts to discover new patches to pursue and 
+        celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
+        there’s always a new patch waiting.
+        </p>
+      </div>
+      {/*<div className="font-semibold">Search for patches</div>
+      <SearchBar value={searchTerm} onChange={handleSearch} /> */}
+      <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
+        Don’t see a patch ?{' '}
+        <a
+          href="/request-patch"
+          className="text-blue-600 underline hover:text-blue-800"
         >
-          <option value="">All Regions</option>
-          <option value="Connecticut">Connecticut</option>
-          <option value="Maine">Maine</option>
-          <option value="Massachusetts">Massachusetts</option>
-          <option value="New Hampshire">New Hampshire</option>
-          <option value="Vermont">Vermont</option>
-          <option value="New York">New York</option>
-        </select>
+          Contact us
+        </a>{' '}
+        and we’ll add it!
       </div>
 
-      <div>
-        <label className="mr-2 font-semibold">Difficulty:</label>
-        <select
-          value={selectedDifficulty}
-          onChange={handleDifficultyChange}
-          className="p-2 border rounded min-w-[160px]"
-        >
-          <option value="">All Difficulties</option>
-          <option value="EASY">Easy</option>
-          <option value="MODERATE">Moderate</option>
-          <option value="HARD">Hard</option>
-          <option value="EXTRA_HARD">Extra Hard</option>
-          <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
-        </select>
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center my-4">
+        <div>
+          <label className="mr-2 font-semibold">State:</label>
+          <select
+            value={selectedRegion}
+            onChange={handleRegionChange}
+            className="p-2 border rounded min-w-[160px]"
+          >
+            <option value="">All Regions</option>
+            <option value="Connecticut">Connecticut</option>
+            <option value="Maine">Maine</option>
+            <option value="Massachusetts">Massachusetts</option>
+            <option value="New Hampshire">New Hampshire</option>
+            <option value="Vermont">Vermont</option>
+            <option value="New York">New York</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="mr-2 font-semibold">Difficulty:</label>
+          <select
+            value={selectedDifficulty}
+            onChange={handleDifficultyChange}
+            className="p-2 border rounded min-w-[160px]"
+          >
+            <option value="">All Difficulties</option>
+            <option value="EASY">Easy</option>
+            <option value="MODERATE">Moderate</option>
+            <option value="HARD">Hard</option>
+            <option value="EXTRA_HARD">Extra Hard</option>
+            <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
+          </select>
+        </div>
+        {/* Status filters: disabled until user data is ready */}
+        {user && (
+          <fieldset
+            className="flex flex-wrap items-center gap-3 rounded border border-gray-200 px-3 py-2"
+            aria-busy={!userDataReady}
+          >
+            <legend className="px-1 text-sm font-semibold text-gray-700">
+              <span className="inline-flex items-center gap-2">
+                My progress
+                {!userDataReady && <DotSpinner />}
+              </span>
+            </legend>
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={showCompleted}
+                onChange={(e) => setShowCompleted(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>Completed</span>
+            </label>
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={showInProgress}
+                onChange={(e) => setShowInProgress(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>In Progress</span>
+            </label>
+
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={showNotStarted}
+                onChange={(e) => setShowNotStarted(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>Not Started</span>
+            </label>
+
+            {(showCompleted !== true || showInProgress !== true || showNotStarted !== true) && (
+              <button
+                type="button"
+                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); }}
+                disabled={!userDataReady}
+                className="ml-1 text-xs text-blue-600 underline disabled:opacity-50"
+              >
+                Reset
+              </button>
+            )}
+          </fieldset>
+        )}
       </div>
-      { user && (
-      <>
-      <label className="flex items-center space-x-1">
-        <input
-          type="checkbox"
-          checked={showCompleted}
-          onChange={(e) => setShowCompleted(e.target.checked)}
-        />
-        <span>Completed</span>
-      </label>
-      <label className="flex items-center space-x-1">
-        <input
-          type="checkbox"
-          checked={showInProgress}
-          onChange={(e) => setShowInProgress(e.target.checked)}
-        />
-        <span>In Progress</span>
-      </label>
-      <label className="flex items-center space-x-1">
-        <input
-          type="checkbox"
-          checked={showNotStarted}
-          onChange={(e) => setShowNotStarted(e.target.checked)}
-        />
-        <span>Not Started</span>
-      </label>
-      </>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-2 mb-2">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-3 py-1">Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       )}
+      {/* PatchGrid: pass map + a loading flag so it can show subtle placeholders */}
+      <PatchGrid
+        patches={paginated}
+        userPatchMap={userPatchMap}
+        userDataReady={userDataReady}
+      />
     </div>
-    {totalPages > 1 && (
-      <div className="flex justify-center mt-2 mb-2">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="px-3 py-1">Page {currentPage} of {totalPages}</span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-    )}
-    <PatchGrid patches={paginatedPatches} userPatches={completedPatches} />
-  </div>
   );
 }
 

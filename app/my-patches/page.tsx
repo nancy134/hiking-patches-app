@@ -1,155 +1,114 @@
+// app/my-patches/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import FileUploader from '@/components/FileUploader';
-import UploadedFileList from '@/components/UploadedFileList';
+import { useEffect, useMemo, useState } from 'react';
 import Header from '@/components/Header';
+import PatchGrid from '@/components/PatchGrid';
 import { generateClient } from 'aws-amplify/api';
-import { listPatches, listUserPatches } from '@/graphql/queries';
-import { createUserPatch } from '@/graphql/mutations';
-import { uploadData } from 'aws-amplify/storage';
-import UserPatchGrid from '@/components/UserPatchGrid';
-import { UserPatch } from '@/API';
-import { Patch } from '@/API';
 import { listUserPatchesWithPatch } from '@/graphql/custom-queries';
+import { Patch, UserPatch } from '@/API';
 import { useAuth } from '@/context/auth-context';
+import type { GraphQLResult } from '@aws-amplify/api';
+import { GraphQLQuery } from '@aws-amplify/api';
 
 const client = generateClient();
 
+type ListUserPatchesWithPatchResult = {
+  listUserPatches?: {
+    items?: (UserPatch | null)[] | null;
+    nextToken?: string | null;
+  } | null;
+};
+
 export default function MyPatchesPage() {
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [allUserPatches, setAllUserPatches] = useState<UserPatch[]>([]);
-  const [allPatches, setAllPatches] = useState<Patch[]>([]);
-  const [selectedPatchId, setSelectedPatchId] = useState('');
-  const [dateCompleted, setDateCompleted] = useState('');
-  const [notes, setNotes] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [userID, setUserID] = useState('');
-  const [hideForm, setHideForm] = useState(null);
   const { user } = useAuth();
+  const [rows, setRows] = useState<UserPatch[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadPatches = async () => {
-      if (!user) return;
-      setUserID(user.userId);
-      console.log("user.userID:"+user.userId);
+    let cancelled = false;
+    (async () => {
+      if (!user?.userId) { setRows([]); setLoading(false); return; }
+      setLoading(true);
+      try {
+        const r = await client.graphql<GraphQLQuery<ListUserPatchesWithPatchResult>>({
+          query: listUserPatchesWithPatch,
+          variables: { filter: { userID: { eq: user.userId } } },
+          authMode: 'userPool',
+        });
+const raw = r.data?.listUserPatches?.items ?? [];
+const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
+        // keep only started/completed
+        const meaningful = items.filter(up => up.dateCompleted || up.inProgress);
+        if (!cancelled) setRows(meaningful);
+      } catch (e) {
+        console.error('my-patches load failed', e);
+        if (!cancelled) setRows([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.userId]);
 
-      const response = await client.graphql({
-        query: listUserPatchesWithPatch,
-        variables: { filter: { userID: { eq: user.userId } } },
-      });
-      if ('data' in response) {
-        console.log(response.data.listUserPatches.items);
-        setAllUserPatches(response.data.listUserPatches.items);
+  // Build the same inputs PatchGrid expects: Patch[] + userPatchMap
+  const { patches, userPatchMap } = useMemo(() => {
+    const map = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    const seen = new Set<string>();
+    const out: Patch[] = [];
+
+    for (const up of rows) {
+      const pid = up.patchID;
+      if (!pid) continue;
+
+      // prefer Completed over In Progress if both exist
+      const prev = map.get(pid);
+      const thisCompleted = !!up.dateCompleted;
+      const thisInProgress = !!up.inProgress && !up.dateCompleted;
+
+      if (!prev) {
+        map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: thisInProgress });
       } else {
-        console.error('Unexpected GraphQL response format:', response);
+        const prevCompleted = !!prev.dateCompleted;
+        if (!prevCompleted && thisCompleted) {
+          map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: false });
+        } else if (!prevCompleted && thisInProgress) {
+          map.set(pid, { dateCompleted: null, inProgress: true });
+        }
       }
 
-      const response1 = await client.graphql({ query: listPatches });
-      setAllPatches(response1.data.listPatches.items);
+      // collect the Patch object once
+      const p = up.patch as Patch | null | undefined;
+      if (p?.id && !seen.has(p.id)) {
+        seen.add(p.id);
+        out.push(p);
+      }
+    }
 
-    };
-    loadPatches();
-  }, [user]);
+    // Sort like Home (by popularity desc)
+    out.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
 
-  const handleUpload = async () => {
-    if (!selectedPatchId || !dateCompleted || !difficulty || !imageFile) return;
-
-    const filename = `${Date.now()}-${imageFile.name}`;
-    const uploadPath = `public/${userID}/${filename}`;
-
-    await uploadData({ path: uploadPath, data: imageFile });
-
-    await client.graphql({
-      query: createUserPatch,
-      variables: {
-        input: {
-          patchID: selectedPatchId,
-          userID,
-          dateCompleted,
-          notes,
-          difficulty: parseInt(difficulty),
-          imageUrl: `https://your-s3-bucket.s3.amazonaws.com/${uploadPath}`,
-        },
-      },
-      authMode: 'userPool'
-    });
-
-    setSelectedPatchId('');
-    setDateCompleted('');
-    setNotes('');
-    setDifficulty('');
-    setImageFile(null);
-    setRefreshKey((prev) => prev + 1);
-  };
+    return { patches: out, userPatchMap: map };
+  }, [rows]);
 
   return (
     <div className="p-4">
       <Header />
-      <h1 className="text-2xl font-bold mb-4">My Earned Patches</h1>
-      <p className="mb-2">Here you can view and manage your earned hiking patches.</p>
+      <h1 className="text-2xl font-bold mb-2">My Patches</h1>
+      <p className="text-gray-700 mb-4">Patches you’ve started or completed.</p>
 
-      {/* Upload Form */}
-      {hideForm && (
-      <div className="space-y-2 p-4 bg-gray-50 rounded shadow mb-6">
-        <select
-          value={selectedPatchId}
-          onChange={(e) => setSelectedPatchId(e.target.value)}
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select a patch</option>
-          {allPatches.map((patch) => (
-            <option key={patch.id} value={patch.id}>{patch.name}</option>
-          ))}
-        </select>
-
-        <input
-          type="date"
-          value={dateCompleted}
-          onChange={(e) => setDateCompleted(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-
-        <textarea
-          placeholder="Notes about this hike"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-
-        <select
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select difficulty</option>
-          <option value="1">1 - Easy</option>
-          <option value="2">2</option>
-          <option value="3">3 - Moderate</option>
-          <option value="4">4</option>
-          <option value="5">5 - Difficult</option>
-        </select>
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-          className="w-full"
-        />
-
-        <button
-          onClick={handleUpload}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Upload Patch Completion
-        </button>
-      </div>
-      )} 
-      { user ? (
-      <UserPatchGrid patches={allUserPatches}/>
+      {!user ? (
+        <div>Log in to see your patches</div>
+      ) : loading ? (
+        <div className="text-sm text-gray-500">Loading…</div>
+      ) : patches.length === 0 ? (
+        <div className="text-sm text-gray-500">No patches yet. Start one from the home page!</div>
       ) : (
-      <div>Log in to see your patches</div>
+        <PatchGrid
+          patches={patches}
+          userPatchMap={userPatchMap}
+          userDataReady={true}   // we already fetched the user's data
+        />
       )}
     </div>
   );

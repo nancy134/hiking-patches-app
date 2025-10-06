@@ -20,6 +20,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
           imageUrl
           regions
           difficulty
+	  hasPeaks
           createdAt
           updatedAt
         }
@@ -122,3 +123,4 @@ export const getPatchCompletionRule = /* GraphQL */ `
     }
   }
 `;
+

@@ -18,13 +18,16 @@
               "userPoolConfig": {
                 "userPoolId": "authhikingpatchesapp368a1661"
               }
+            },
+            {
+              "authenticationType": "AWS_IAM"
             }
           ],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDate": "2025-08-02T11:51:43.587Z",
+              "apiKeyExpirationDate": "2025-12-02T14:31:00.550Z",
               "apiKeyExpirationDays": 60,
-              "description": ""
+              "description": "default auth dev"
             },
             "authenticationType": "API_KEY"
           }
@@ -77,6 +80,22 @@
     }
   },
   "function": {
+    "getPatchProgress": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "hikingpatchesapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "listUsersFunction": {
       "build": true,
       "dependsOn": [
@@ -93,6 +112,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_getPatchProgress_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getPatchProgress"
+        }
+      ]
+    },
+    "AMPLIFY_function_getPatchProgress_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getPatchProgress"
+        }
+      ]
+    },
     "AMPLIFY_function_listUsersFunction_deploymentBucketName": {
       "usedBy": [
         {

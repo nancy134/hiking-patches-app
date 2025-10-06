@@ -1,0 +1,8 @@
+[
+  {
+    "Effect": "Allow",
+    "Action": ["appsync:GraphQL"],
+    "Resource": ["arn:aws:appsync:*:*:apis/*/types/*/fields/*"]
+  }
+]
+
