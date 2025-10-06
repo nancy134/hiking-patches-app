@@ -10,6 +10,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
         difficulty
         imageUrl
         inProgress
+	wishlisted
         createdAt
         updatedAt
         patch {
