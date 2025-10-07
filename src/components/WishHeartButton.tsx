@@ -1,7 +1,7 @@
 // src/components/WishHeartButton.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
@@ -28,6 +28,10 @@ export default function WishHeartButton({ patchId, initial = false, onChange, cl
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [wish, setWish] = useState<boolean>(initial);
+
+  useEffect(() => {
+    setWish(initial);
+  }, [initial]);
 
   const toggle = async () => {
     if (!user?.userId) {
@@ -94,13 +98,20 @@ export default function WishHeartButton({ patchId, initial = false, onChange, cl
       className={`rounded-full p-1 hover:bg-gray-100 disabled:opacity-50 ${className ?? ''}`}
       title={wish ? 'Wishlisted' : 'Add to wishlist'}
     >
-      {/* Heart icon (filled if wishlisted) */}
-      <svg viewBox="0 0 24 24" width="18" height="18" className="inline-block">
+      {/* Heart icon (outline when false, filled when true) */}
+      <svg
+        viewBox="0 0 24 24"
+        className={`h-5 w-5 ${wish ? 'text-red-500' : 'text-red-500'}`}
+        aria-hidden="true"
+        shapeRendering="geometricPrecision"
+      >
         <path
-          d="M12 21s-6.7-4.35-9.33-7C-0.33 11 1.4 6.5 5.33 6.5c2 0 3.26 1.23 3.97 2.33.7-1.1 1.97-2.33 3.97-2.33 3.93 0 5.66 4.5 2.66 7.5C18.7 16.65 12 21 12 21z"
-          fill={wish ? '#ef4444' : 'none'}
-          stroke="#ef4444"
-          strokeWidth="1.5"
+          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"
+          fill={wish ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </button>

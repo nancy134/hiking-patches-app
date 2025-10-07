@@ -328,6 +328,7 @@ export default function HomePage() {
         patches={paginated}
         userPatchMap={userPatchMap}
         userDataReady={userDataReady}
+        wishlistSet={wishlistSet}
         onWishlistChange={handleWishlistChange}
       />
     </div>

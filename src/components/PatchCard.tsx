@@ -8,16 +8,16 @@ import WishHeartButton from '@/components/WishHeartButton';
 type Props = {
   patch: Patch;
   status?: '' | 'In Progress' | 'Completed';
-  wishlisted?: boolean;
+  wishInit?: boolean;
   onWishlistChange?: (patchId: string, next: boolean) => void;
 };
 
-export function PatchCard({ patch, status = '', wishlisted = false, onWishlistChange }: Props) {
-  const topRight = (
+export function PatchCard({ patch, status = '', wishInit = false, onWishlistChange }: Props) {
+  const topRight = !status ? (
     <div className="inline-flex items-center gap-2">
       <WishHeartButton
         patchId={patch.id}
-        initial={wishlisted}
+        initial={wishInit}
         onChange={(next) => onWishlistChange?.(patch.id, next)}
       />
       {status ? (
@@ -26,7 +26,7 @@ export function PatchCard({ patch, status = '', wishlisted = false, onWishlistCh
         </span>
       ) : null}
     </div>
-  );
+  ) : undefined;
   return (
     <Link href={`/patch/${patch.id}`} className="block">
       <PatchDisplay

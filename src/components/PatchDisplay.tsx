@@ -86,11 +86,9 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
 
       {/* Status badge – top right */}
       <div className="absolute top-2 right-2 flex items-center gap-2">
-        {topRight ? (
-          topRight
-        ) : status ? (
-          <span className={`${badgeColor} text-xs px-2 py-1 rounded-full shadow`}>{status}</span>
-        ) : null}
+        {status
+          ? <span className={`${badgeColor} text-xs px-2 py-1 rounded-full shadow`}>{status}</span>
+          : (topRight ?? null)}
       </div>
 
       {/* Image */}

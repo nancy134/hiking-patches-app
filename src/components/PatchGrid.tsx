@@ -8,6 +8,7 @@ type PatchGridProps = {
   patches: Patch[];
   userPatchMap?: Map<string, UserPatchLite>;
   userDataReady?: boolean;
+  wishlistSet?: Set<string>; 
   onWishlistChange?: (patchId: string, wishlisted: boolean) => void;
 };
 
@@ -15,6 +16,7 @@ export default function PatchGrid({
   patches,
   userPatchMap = new Map(),
   userDataReady = false,
+  wishlistSet,
   onWishlistChange,
 }: PatchGridProps) {
   return (
@@ -27,13 +29,13 @@ export default function PatchGrid({
           if (entry.dateCompleted) status = 'Completed';
           else if (entry.inProgress) status = 'In Progress';
         }
-        const wishlisted = !!entry?.wishlisted;
+        const wishInit = (entry?.wishlisted ?? false) || (wishlistSet?.has(patch.id) ?? false);
         return (
           <PatchCard
             key={patch.id}
             patch={patch}
             status={status}
-            wishlisted={wishlisted}
+            wishInit={wishInit} 
             onWishlistChange={onWishlistChange}
           />
         );
