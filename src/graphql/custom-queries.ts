@@ -142,7 +142,7 @@ export const updateUserPatchLite = /* GraphQL */ `
 `;
 
 export const customCreateUserPatch = `
-  mutation CreateUserPatch($input: CreateUserPatchInput!) {
+  mutation customCreateUserPatch($input: CreateUserPatchInput!) {
     createUserPatch(input: $input) {
       id
       patchID
@@ -152,6 +152,7 @@ export const customCreateUserPatch = `
       notes
       difficulty
       imageUrl
+      wishlisted
       createdAt
       updatedAt
     }
@@ -159,7 +160,7 @@ export const customCreateUserPatch = `
 `;
 
 export const customUpdateUserPatch = `
-  mutation UpdateUserPatch($input: UpdateUserPatchInput!) {
+  mutation customUpdateUserPatch($input: UpdateUserPatchInput!) {
     updateUserPatch(input: $input) {
       id
       patchID
@@ -169,6 +170,7 @@ export const customUpdateUserPatch = `
       notes
       difficulty
       imageUrl
+      wishlisted
       createdAt
       updatedAt
     }

@@ -223,6 +223,30 @@ export type ModelPatchMountainFilterInput = {
   not?: ModelPatchMountainFilterInput | null,
 };
 
+export type CreateUserPatchInput = {
+  id?: string | null,
+  patchID: string,
+  userID: string,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  wishlisted?: boolean | null,
+};
+
+export type UpdateUserPatchInput = {
+  id: string,
+  patchID?: string | null,
+  userID?: string | null,
+  dateCompleted?: string | null,
+  notes?: string | null,
+  difficulty?: number | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  wishlisted?: boolean | null,
+};
+
 export type CreatePatchInput = {
   id?: string | null,
   name: string,
@@ -293,18 +317,6 @@ export type DeletePatchInput = {
   id: string,
 };
 
-export type CreateUserPatchInput = {
-  id?: string | null,
-  patchID: string,
-  userID: string,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  wishlisted?: boolean | null,
-};
-
 export type ModelUserPatchConditionInput = {
   patchID?: ModelIDInput | null,
   userID?: ModelStringInput | null,
@@ -320,18 +332,6 @@ export type ModelUserPatchConditionInput = {
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   owner?: ModelStringInput | null,
-};
-
-export type UpdateUserPatchInput = {
-  id: string,
-  patchID?: string | null,
-  userID?: string | null,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  wishlisted?: boolean | null,
 };
 
 export type DeleteUserPatchInput = {
@@ -505,6 +505,16 @@ export enum ModelSortDirection {
 }
 
 
+export type ModelIDKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
 export type ModelPatchRequestFilterInput = {
   id?: ModelIDInput | null,
   email?: ModelStringInput | null,
@@ -555,16 +565,6 @@ export type ModelUserMountainFilterInput = {
   or?: Array< ModelUserMountainFilterInput | null > | null,
   not?: ModelUserMountainFilterInput | null,
   owner?: ModelStringInput | null,
-};
-
-export type ModelIDKeyConditionInput = {
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
 };
 
 export type ModelStringKeyConditionInput = {
@@ -768,6 +768,7 @@ export type ListUserPatchesWithPatchQuery = {
       difficulty?: number | null,
       imageUrl?: string | null,
       inProgress?: boolean | null,
+      wishlisted?: boolean | null,
       createdAt: string,
       updatedAt: string,
       patch?:  {
@@ -896,6 +897,102 @@ export type GetPatchCompletionRuleQuery = {
     id: string,
     name: string,
     completionRule?: string | null,
+  } | null,
+};
+
+export type CreateUserPatchLiteMutationVariables = {
+  input: CreateUserPatchInput,
+};
+
+export type CreateUserPatchLiteMutation = {
+  createUserPatch?:  {
+    __typename: "UserPatch",
+    id: string,
+    patchID: string,
+    userID: string,
+    wishlisted?: boolean | null,
+    inProgress?: boolean | null,
+    dateCompleted?: string | null,
+  } | null,
+};
+
+export type UpdateUserPatchLiteMutationVariables = {
+  input: UpdateUserPatchInput,
+};
+
+export type UpdateUserPatchLiteMutation = {
+  updateUserPatch?:  {
+    __typename: "UserPatch",
+    id: string,
+    patchID: string,
+    userID: string,
+    wishlisted?: boolean | null,
+    inProgress?: boolean | null,
+    dateCompleted?: string | null,
+  } | null,
+};
+
+export type customCreateUserPatchMutationVariables = {
+  input: CreateUserPatchInput,
+};
+
+export type customCreateUserPatchMutation = {
+  createUserPatch?:  {
+    __typename: "UserPatch",
+    id: string,
+    patchID: string,
+    userID: string,
+    dateCompleted?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    difficulty?: number | null,
+    imageUrl?: string | null,
+    wishlisted?: boolean | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type customUpdateUserPatchMutationVariables = {
+  input: UpdateUserPatchInput,
+};
+
+export type customUpdateUserPatchMutation = {
+  updateUserPatch?:  {
+    __typename: "UserPatch",
+    id: string,
+    patchID: string,
+    userID: string,
+    dateCompleted?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    difficulty?: number | null,
+    imageUrl?: string | null,
+    wishlisted?: boolean | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UserPatchesByUserByPatchLiteQueryVariables = {
+  userID: string,
+  patchID: string,
+  limit?: number | null,
+};
+
+export type UserPatchesByUserByPatchLiteQuery = {
+  userPatchesByUserByPatch?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      id: string,
+      patchID: string,
+      userID: string,
+      wishlisted?: boolean | null,
+      inProgress?: boolean | null,
+      dateCompleted?: string | null,
+    } | null >,
+    nextToken?: string | null,
   } | null,
 };
 
@@ -1644,7 +1741,7 @@ export type ListUserPatchesQuery = {
   } | null,
 };
 
-export type UserPatchesByPatchIDQueryVariables = {
+export type UserPatchesByPatchQueryVariables = {
   patchID: string,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelUserPatchFilterInput | null,
@@ -1652,8 +1749,39 @@ export type UserPatchesByPatchIDQueryVariables = {
   nextToken?: string | null,
 };
 
-export type UserPatchesByPatchIDQuery = {
-  userPatchesByPatchID?:  {
+export type UserPatchesByPatchQuery = {
+  userPatchesByPatch?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      id: string,
+      patchID: string,
+      userID: string,
+      dateCompleted?: string | null,
+      notes?: string | null,
+      difficulty?: number | null,
+      imageUrl?: string | null,
+      inProgress?: boolean | null,
+      wishlisted?: boolean | null,
+      createdAt: string,
+      updatedAt: string,
+      owner?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserPatchesByUserByPatchQueryVariables = {
+  userID: string,
+  patchID?: ModelIDKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserPatchesByUserByPatchQuery = {
+  userPatchesByUserByPatch?:  {
     __typename: "ModelUserPatchConnection",
     items:  Array< {
       __typename: "UserPatch",
