@@ -13,6 +13,13 @@ import {
   createUserPatchLite,
   updateUserPatchLite,
 } from '@/graphql/custom-queries';
+import { GraphQLResult } from '@aws-amplify/api';
+
+type UserPatchesByUserByPatchLiteResult = {
+  userPatchesByUserByPatch?: {
+    items?: ({ id: string } | null)[] | null;
+  } | null;
+};
 
 const client = generateClient();
 
@@ -52,9 +59,9 @@ export default function WishHeartButton({ patchId, initial = false, onChange, cl
         query: userPatchesByUserByPatchLite,
         variables: { userID: user.userId, patchID: patchId, limit: 1 },
         authMode: 'userPool',
-      });
+      })as GraphQLResult<UserPatchesByUserByPatchLiteResult>;
 
-      const existing = q?.data?.userPatchesByUserByPatch?.items?.[0];
+      const existing = q.data?.userPatchesByUserByPatch?.items?.[0];
 
       if (existing?.id) {
         await client.graphql({

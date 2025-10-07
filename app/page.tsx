@@ -82,7 +82,7 @@ export default function HomePage() {
 
   // Fast lookup by patchID
   const userPatchMap = useMemo(() => {
-    const m = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    const m = new Map<string, { dateCompleted: string | null; inProgress: boolean; wishlisted: boolean;  }>();
     for (const up of userPatches) {
       m.set(up.patchID, {
         dateCompleted: up.dateCompleted ?? null,
