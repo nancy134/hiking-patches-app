@@ -31,7 +31,6 @@ export default function UserProgressOverlay({ patchId, className, showLabel = tr
           variables: { patchId, userId: user.userId },
           authMode: 'userPool',
         });
-        console.log(r.data);
         const p = r.data?.getPatchProgressSummary?.percent ?? 0;
         if (!cancelled) setPercent(p);
       } catch (e) {

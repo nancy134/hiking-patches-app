@@ -27,11 +27,14 @@ export default function HomePage() {
   const [userPatches, setUserPatches] = useState<UserPatch[]>([]);
   const [userDataReady, setUserDataReady] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [wishlistSet, setWishlistSet] = useState<Set<string>>(new Set());
 
   // status filters (only meaningful when userDataReady === true)
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
+  const [showWishlisted, setShowWishlisted] = useState(true);
+  const [onlyMyPatches, setOnlyMyPatches] = useState(false);
 
   // ------------- fetch public patches immediately -------------
   useEffect(() => {
@@ -64,8 +67,9 @@ export default function HomePage() {
         if (!cancelled) {
           const items: UserPatch[] = (r.data?.listUserPatches?.items || []).filter(Boolean);
           // Only keep meaningful entries
-          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress);
+          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress || p.wishlisted);
           setUserPatches(meaningful);
+          setWishlistSet(new Set(meaningful.filter(p => p.wishlisted).map(p => p.patchID))); // ✅ seed
           setUserDataReady(true);
         }
       } catch (e) {
@@ -83,6 +87,7 @@ export default function HomePage() {
       m.set(up.patchID, {
         dateCompleted: up.dateCompleted ?? null,
         inProgress: !!up.inProgress && !up.dateCompleted,
+        wishlisted: !!up.wishlisted,
       });
     }
     return m;
@@ -108,13 +113,24 @@ export default function HomePage() {
       if (userDataReady && user) {
         next = next.filter((patch) => {
           const e = userPatchMap.get(patch.id);
-          const isCompleted = !!e?.dateCompleted;
-          const isInProgress = !!e?.inProgress && !e?.dateCompleted;
+          const completed = !!e?.dateCompleted;
+          const inProgress = !!e?.inProgress && !e?.dateCompleted;
+          const wishlisted = wishlistSet.has(patch.id);
 
-          if (isCompleted && showCompleted) return true;
-          if (isInProgress && showInProgress) return true;
-          if (!e && showNotStarted) return true;
-          return false;
+          if (onlyMyPatches) {
+            // Show only my items, filtered by the three personal boxes
+            if (completed && showCompleted) return true;
+            if (inProgress && showInProgress) return true;
+            if (wishlisted && showWishlisted) return true;
+            return false;
+          } else {
+            // Browsing all: the three boxes act as *includes* for my statuses,
+            // but we don’t hide “everything else” unless onlyMyPatches is on.
+            if (!showCompleted && completed) return false;
+            if (!showInProgress && inProgress) return false;
+            if (!showWishlisted && wishlisted) return false;
+            return true; // keep non-started rows visible in “All”
+          }
         });
       }
 
@@ -134,7 +150,8 @@ export default function HomePage() {
     userPatchMap,
     showCompleted,
     showInProgress,
-    showNotStarted,
+    showWishlisted,
+    onlyMyPatches,
   ]);
 
   const paginated = useMemo(() => {
@@ -152,6 +169,14 @@ export default function HomePage() {
   const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
      setSelectedDifficulty(e.target.value);
      e.target.blur();
+  };
+
+  const handleWishlistChange = (patchId: string, next: boolean) => {
+    setWishlistSet(prev => {
+      const n = new Set(prev);
+      if (next) n.add(patchId); else n.delete(patchId);
+      return n;
+    });
   };
 
   function DotSpinner() {
@@ -229,11 +254,19 @@ export default function HomePage() {
           >
             <legend className="px-1 text-sm font-semibold text-gray-700">
               <span className="inline-flex items-center gap-2">
-                My progress
+                Filter by my status 
                 {!userDataReady && <DotSpinner />}
               </span>
             </legend>
-
+            <label className={`ml-auto flex items-center gap-2 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={onlyMyPatches}
+                onChange={(e) => setOnlyMyPatches(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>Only show my patches</span>
+            </label>
             <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
@@ -257,17 +290,17 @@ export default function HomePage() {
             <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
-                checked={showNotStarted}
-                onChange={(e) => setShowNotStarted(e.target.checked)}
+                checked={showWishlisted}
+                onChange={(e) => setShowWishlisted(e.target.checked)}
                 disabled={!userDataReady}
               />
-              <span>Not Started</span>
+              <span>Wishlisted</span>
             </label>
 
             {(showCompleted !== true || showInProgress !== true || showNotStarted !== true) && (
               <button
                 type="button"
-                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); }}
+                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); setOnlyMyPatches(false)}}
                 disabled={!userDataReady}
                 className="ml-1 text-xs text-blue-600 underline disabled:opacity-50"
               >
@@ -302,6 +335,8 @@ export default function HomePage() {
         patches={paginated}
         userPatchMap={userPatchMap}
         userDataReady={userDataReady}
+        wishlistSet={wishlistSet}
+        onWishlistChange={handleWishlistChange}
       />
     </div>
   );
