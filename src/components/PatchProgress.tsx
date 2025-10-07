@@ -59,13 +59,17 @@ export default function PatchProgress({
     }
   }, [dateCompleted, isInProgress]);
 
+  useEffect(() => {
+    setWishlisted(!!initialUserPatch?.wishlisted);
+  }, [initialUserPatch?.wishlisted]);
+
   const handleSubmit = async () => {
 
     const goingCompleted = Boolean(dateCompleted);
     const goingInProgress = isInProgress === true && !dateCompleted;
     console.log("goingCompleted: "+goingCompleted+" goingInProgress: "+goingInProgress);
     const nextWishlisted =
-      (goingCompleted || goingInProgress) ? false : (initialUserPatch?.wishlisted ?? false);
+      (goingCompleted || goingInProgress) ? false : wishlisted;
     console.log(initialUserPatch);
     console.log("nextWishlisted: "+nextWishlisted);
     const input: any = {
@@ -96,6 +100,7 @@ export default function PatchProgress({
         : (response.data as CreateUserPatchMutation)?.createUserPatch;
 
       if (updated) {
+        setWishlisted(!!updated.wishlisted);
         onUpdate(updated);
         setMessage('🎉 Saved!');
       }
