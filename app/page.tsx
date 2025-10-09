@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import Header from '@/components/Header';
 import PatchGrid from '@/components/PatchGrid';
+import SearchBar from '@/components/SearchBar'; // ✅ add this import
 import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
 import { Patch, UserPatch } from '@/API';
@@ -11,6 +12,13 @@ import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
 const ITEMS_PER_PAGE = 16;
+
+// Small helper to normalize text for searching
+const norm = (s: string) =>
+  (s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -98,10 +106,17 @@ export default function HomePage() {
     startTransition(() => {
       let next = allPatches;
 
-      if (searchTerm) {
-        const q = searchTerm.toLowerCase();
-        next = next.filter((p) => p.name?.toLowerCase().includes(q));
+      // ✅ Search by name OR description
+      if (searchTerm.trim()) {
+        const q = norm(searchTerm.trim());
+        next = next.filter((p) => {
+          const name = norm(p.name as unknown as string);
+          // If Patch has no description in the TS type, this stays safe via optional chaining
+          const desc = norm((p as any).description ?? '');
+          return name.includes(q) || desc.includes(q);
+        });
       }
+
       if (selectedRegion) {
         next = next.filter((p) => p.regions?.includes(selectedRegion));
       }
@@ -171,6 +186,12 @@ export default function HomePage() {
      e.target.blur();
   };
 
+  // ✅ Search handler (also resets to page 1)
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
   const handleWishlistChange = (patchId: string, next: boolean) => {
     setWishlistSet(prev => {
       const n = new Set(prev);
@@ -194,13 +215,12 @@ export default function HomePage() {
       <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
         <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
         <p className="text-gray-700">
-        This site is a place for hiking enthusiasts to discover new patches to pursue and 
-        celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
-        there’s always a new patch waiting.
+          This site is a place for hiking enthusiasts to discover new patches to pursue and 
+          celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
+          there’s always a new patch waiting.
         </p>
       </div>
-      {/*<div className="font-semibold">Search for patches</div>
-      <SearchBar value={searchTerm} onChange={handleSearch} /> */}
+
       <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
         Don’t see a patch ?{' '}
         <a
@@ -214,6 +234,14 @@ export default function HomePage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-center my-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="patch-search" className="text-sm font-semibold">Search:</label>
+          <SearchBar
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-48 sm:w-64 md:w-72" // ✅ smaller; grows a bit on larger screens
+          />
+        </div>
         <div>
           <label className="mr-2 font-semibold">State:</label>
           <select
@@ -330,7 +358,6 @@ export default function HomePage() {
           </button>
         </div>
       )}
-      {/* PatchGrid: pass map + a loading flag so it can show subtle placeholders */}
       <PatchGrid
         patches={paginated}
         userPatchMap={userPatchMap}
