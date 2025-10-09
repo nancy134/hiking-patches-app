@@ -124,6 +124,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
     difficulty
     imageUrl
     inProgress
+    wishlisted
     createdAt
     updatedAt
     owner
@@ -149,6 +150,7 @@ export const listUserPatches = /* GraphQL */ `query ListUserPatches(
       difficulty
       imageUrl
       inProgress
+      wishlisted
       createdAt
       updatedAt
       owner
@@ -162,14 +164,14 @@ export const listUserPatches = /* GraphQL */ `query ListUserPatches(
   APITypes.ListUserPatchesQueryVariables,
   APITypes.ListUserPatchesQuery
 >;
-export const userPatchesByPatchID = /* GraphQL */ `query UserPatchesByPatchID(
+export const userPatchesByPatch = /* GraphQL */ `query UserPatchesByPatch(
   $patchID: ID!
   $sortDirection: ModelSortDirection
   $filter: ModelUserPatchFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  userPatchesByPatchID(
+  userPatchesByPatch(
     patchID: $patchID
     sortDirection: $sortDirection
     filter: $filter
@@ -185,6 +187,7 @@ export const userPatchesByPatchID = /* GraphQL */ `query UserPatchesByPatchID(
       difficulty
       imageUrl
       inProgress
+      wishlisted
       createdAt
       updatedAt
       owner
@@ -195,8 +198,47 @@ export const userPatchesByPatchID = /* GraphQL */ `query UserPatchesByPatchID(
   }
 }
 ` as GeneratedQuery<
-  APITypes.UserPatchesByPatchIDQueryVariables,
-  APITypes.UserPatchesByPatchIDQuery
+  APITypes.UserPatchesByPatchQueryVariables,
+  APITypes.UserPatchesByPatchQuery
+>;
+export const userPatchesByUserByPatch = /* GraphQL */ `query UserPatchesByUserByPatch(
+  $userID: String!
+  $patchID: ModelIDKeyConditionInput
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserPatchFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  userPatchesByUserByPatch(
+    userID: $userID
+    patchID: $patchID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      patchID
+      userID
+      dateCompleted
+      notes
+      difficulty
+      imageUrl
+      inProgress
+      wishlisted
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.UserPatchesByUserByPatchQueryVariables,
+  APITypes.UserPatchesByUserByPatchQuery
 >;
 export const getPatchRequest = /* GraphQL */ `query GetPatchRequest($id: ID!) {
   getPatchRequest(id: $id) {

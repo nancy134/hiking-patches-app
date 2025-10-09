@@ -131,6 +131,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
     difficulty
     imageUrl
     inProgress
+    wishlisted
     createdAt
     updatedAt
     owner
@@ -171,6 +172,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
     difficulty
     imageUrl
     inProgress
+    wishlisted
     createdAt
     updatedAt
     owner
@@ -211,6 +213,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
     difficulty
     imageUrl
     inProgress
+    wishlisted
     createdAt
     updatedAt
     owner

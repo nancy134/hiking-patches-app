@@ -36,10 +36,15 @@ export default function MyPatchesPage() {
           variables: { filter: { userID: { eq: user.userId } } },
           authMode: 'userPool',
         });
-const raw = r.data?.listUserPatches?.items ?? [];
-const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
-        // keep only started/completed
-        const meaningful = items.filter(up => up.dateCompleted || up.inProgress);
+
+        // NOTE: ensure your listUserPatchesWithPatch selection set includes:
+        // id, userID, patchID, dateCompleted, inProgress, wishlisted, patch { id name imageUrl difficulty popularity regions description hasPeaks }
+        const raw = r.data?.listUserPatches?.items ?? [];
+        const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
+
+        // Keep started / completed / wishlisted
+        const meaningful = items.filter(up => up.dateCompleted || up.inProgress || up.wishlisted);
+
         if (!cancelled) setRows(meaningful);
       } catch (e) {
         console.error('my-patches load failed', e);
@@ -51,9 +56,11 @@ const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
     return () => { cancelled = true; };
   }, [user?.userId]);
 
-  // Build the same inputs PatchGrid expects: Patch[] + userPatchMap
+  // Build inputs for PatchGrid: distinct Patch[] and a map with progress + wishlisted
   const { patches, userPatchMap } = useMemo(() => {
-    const map = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    type Lite = { dateCompleted: string | null; inProgress: boolean; wishlisted?: boolean };
+
+    const map = new Map<string, Lite>();
     const seen = new Set<string>();
     const out: Patch[] = [];
 
@@ -61,23 +68,28 @@ const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
       const pid = up.patchID;
       if (!pid) continue;
 
-      // prefer Completed over In Progress if both exist
-      const prev = map.get(pid);
       const thisCompleted = !!up.dateCompleted;
       const thisInProgress = !!up.inProgress && !up.dateCompleted;
+      const thisWish = !!up.wishlisted;
 
+      const prev = map.get(pid);
       if (!prev) {
-        map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: thisInProgress });
+        map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: thisInProgress, wishlisted: thisWish });
       } else {
+        // Prefer completed > in-progress, and keep wishlisted if any row has it
         const prevCompleted = !!prev.dateCompleted;
+        const mergedWish = prev.wishlisted || thisWish;
         if (!prevCompleted && thisCompleted) {
-          map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: false });
+          map.set(pid, { dateCompleted: up.dateCompleted ?? null, inProgress: false, wishlisted: mergedWish });
         } else if (!prevCompleted && thisInProgress) {
-          map.set(pid, { dateCompleted: null, inProgress: true });
+          map.set(pid, { dateCompleted: null, inProgress: true, wishlisted: mergedWish });
+        } else {
+          // neither improves status; still merge wishlist flag
+          map.set(pid, { ...prev, wishlisted: mergedWish });
         }
       }
 
-      // collect the Patch object once
+      // Collect the Patch object once
       const p = up.patch as Patch | null | undefined;
       if (p?.id && !seen.has(p.id)) {
         seen.add(p.id);
@@ -85,29 +97,46 @@ const items: UserPatch[] = raw.filter((x): x is UserPatch => x != null);
       }
     }
 
-    // Sort like Home (by popularity desc)
+    // Sort like Home (popularity desc)
     out.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
 
     return { patches: out, userPatchMap: map };
   }, [rows]);
 
+  // Heart toggle: update local rows instantly. If a patch was ONLY wishlisted and user un-hearts it, hide it.
+  const handleWishlistChange = (patchId: string, next: boolean) => {
+    setRows(prev => {
+      // Update wishlisted flag on all rows for this patch
+      const updated = prev.map(up => up.patchID === patchId ? { ...up, wishlisted: next } : up);
+
+      // If no row has progress for this patch and wishlist is now false → remove those rows
+      const stillHasAny = updated.some(up =>
+        up.patchID === patchId && (up.inProgress || up.dateCompleted || up.wishlisted)
+      );
+      return stillHasAny ? updated : updated.filter(up => up.patchID !== patchId);
+    });
+  };
+
   return (
     <div className="p-4">
       <Header />
       <h1 className="text-2xl font-bold mb-2">My Patches</h1>
-      <p className="text-gray-700 mb-4">Patches you’ve started or completed.</p>
+      <p className="text-gray-700 mb-4">Patches you’ve started, completed, or wishlisted.</p>
 
       {!user ? (
         <div>Log in to see your patches</div>
       ) : loading ? (
         <div className="text-sm text-gray-500">Loading…</div>
       ) : patches.length === 0 ? (
-        <div className="text-sm text-gray-500">No patches yet. Start one from the home page!</div>
+        <div className="text-sm text-gray-500">
+          No patches yet. Start, complete, or add some to your wishlist from the home page!
+        </div>
       ) : (
         <PatchGrid
           patches={patches}
           userPatchMap={userPatchMap}
-          userDataReady={true}   // we already fetched the user's data
+          userDataReady={true}               // user data is already loaded
+          onWishlistChange={handleWishlistChange} // bubble heart changes
         />
       )}
     </div>

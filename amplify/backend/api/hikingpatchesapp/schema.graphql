@@ -35,16 +35,30 @@ type UserPatch @model
   @auth(rules: [
   { allow: public, operations: [read] },
   { allow: owner, operations: [read, create, update, delete] },
-  ]) {
+  ]) 
+{
   id: ID!
-  patchID: ID! @index(name: "byPatch")
+
+  # Single-field index to list by patch
+  patchID: ID!
+    @index(name: "byPatch", queryField: "userPatchesByPatch")
+
   patch: Patch @belongsTo(fields: ["patchID"])
+
+  # Composite index: (userID, patchID) -> userPatchesByUserByPatch
   userID: String!
+    @index(
+      name: "byUserByPatch",
+      sortKeyFields: ["patchID"],
+      queryField: "userPatchesByUserByPatch"
+    )
+
   dateCompleted: AWSDate
   notes: String
   difficulty: Int
   imageUrl: String
   inProgress: Boolean
+  wishlisted: Boolean
 }
 
 type PatchRequest @model

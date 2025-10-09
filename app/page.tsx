@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import Header from '@/components/Header';
 import PatchGrid from '@/components/PatchGrid';
+import SearchBar from '@/components/SearchBar'; // ✅ add this import
 import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
 import { Patch, UserPatch } from '@/API';
@@ -11,6 +12,13 @@ import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
 const ITEMS_PER_PAGE = 16;
+
+// Small helper to normalize text for searching
+const norm = (s: string) =>
+  (s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -27,11 +35,14 @@ export default function HomePage() {
   const [userPatches, setUserPatches] = useState<UserPatch[]>([]);
   const [userDataReady, setUserDataReady] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [wishlistSet, setWishlistSet] = useState<Set<string>>(new Set());
 
   // status filters (only meaningful when userDataReady === true)
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
+  const [showWishlisted, setShowWishlisted] = useState(true);
+  const [onlyMyPatches, setOnlyMyPatches] = useState(false);
 
   // ------------- fetch public patches immediately -------------
   useEffect(() => {
@@ -64,8 +75,9 @@ export default function HomePage() {
         if (!cancelled) {
           const items: UserPatch[] = (r.data?.listUserPatches?.items || []).filter(Boolean);
           // Only keep meaningful entries
-          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress);
+          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress || p.wishlisted);
           setUserPatches(meaningful);
+          setWishlistSet(new Set(meaningful.filter(p => p.wishlisted).map(p => p.patchID))); // ✅ seed
           setUserDataReady(true);
         }
       } catch (e) {
@@ -78,11 +90,12 @@ export default function HomePage() {
 
   // Fast lookup by patchID
   const userPatchMap = useMemo(() => {
-    const m = new Map<string, { dateCompleted: string | null; inProgress: boolean }>();
+    const m = new Map<string, { dateCompleted: string | null; inProgress: boolean; wishlisted: boolean;  }>();
     for (const up of userPatches) {
       m.set(up.patchID, {
         dateCompleted: up.dateCompleted ?? null,
         inProgress: !!up.inProgress && !up.dateCompleted,
+        wishlisted: !!up.wishlisted,
       });
     }
     return m;
@@ -93,10 +106,17 @@ export default function HomePage() {
     startTransition(() => {
       let next = allPatches;
 
-      if (searchTerm) {
-        const q = searchTerm.toLowerCase();
-        next = next.filter((p) => p.name?.toLowerCase().includes(q));
+      // ✅ Search by name OR description
+      if (searchTerm.trim()) {
+        const q = norm(searchTerm.trim());
+        next = next.filter((p) => {
+          const name = norm(p.name as unknown as string);
+          // If Patch has no description in the TS type, this stays safe via optional chaining
+          const desc = norm((p as any).description ?? '');
+          return name.includes(q) || desc.includes(q);
+        });
       }
+
       if (selectedRegion) {
         next = next.filter((p) => p.regions?.includes(selectedRegion));
       }
@@ -108,13 +128,24 @@ export default function HomePage() {
       if (userDataReady && user) {
         next = next.filter((patch) => {
           const e = userPatchMap.get(patch.id);
-          const isCompleted = !!e?.dateCompleted;
-          const isInProgress = !!e?.inProgress && !e?.dateCompleted;
+          const completed = !!e?.dateCompleted;
+          const inProgress = !!e?.inProgress && !e?.dateCompleted;
+          const wishlisted = wishlistSet.has(patch.id);
 
-          if (isCompleted && showCompleted) return true;
-          if (isInProgress && showInProgress) return true;
-          if (!e && showNotStarted) return true;
-          return false;
+          if (onlyMyPatches) {
+            // Show only my items, filtered by the three personal boxes
+            if (completed && showCompleted) return true;
+            if (inProgress && showInProgress) return true;
+            if (wishlisted && showWishlisted) return true;
+            return false;
+          } else {
+            // Browsing all: the three boxes act as *includes* for my statuses,
+            // but we don’t hide “everything else” unless onlyMyPatches is on.
+            if (!showCompleted && completed) return false;
+            if (!showInProgress && inProgress) return false;
+            if (!showWishlisted && wishlisted) return false;
+            return true; // keep non-started rows visible in “All”
+          }
         });
       }
 
@@ -134,7 +165,8 @@ export default function HomePage() {
     userPatchMap,
     showCompleted,
     showInProgress,
-    showNotStarted,
+    showWishlisted,
+    onlyMyPatches,
   ]);
 
   const paginated = useMemo(() => {
@@ -154,6 +186,20 @@ export default function HomePage() {
      e.target.blur();
   };
 
+  // ✅ Search handler (also resets to page 1)
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleWishlistChange = (patchId: string, next: boolean) => {
+    setWishlistSet(prev => {
+      const n = new Set(prev);
+      if (next) n.add(patchId); else n.delete(patchId);
+      return n;
+    });
+  };
+
   function DotSpinner() {
     return (
       <span
@@ -169,13 +215,12 @@ export default function HomePage() {
       <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
         <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
         <p className="text-gray-700">
-        This site is a place for hiking enthusiasts to discover new patches to pursue and 
-        celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
-        there’s always a new patch waiting.
+          This site is a place for hiking enthusiasts to discover new patches to pursue and 
+          celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic trails, 
+          there’s always a new patch waiting.
         </p>
       </div>
-      {/*<div className="font-semibold">Search for patches</div>
-      <SearchBar value={searchTerm} onChange={handleSearch} /> */}
+
       <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
         Don’t see a patch ?{' '}
         <a
@@ -189,6 +234,14 @@ export default function HomePage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-center my-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="patch-search" className="text-sm font-semibold">Search:</label>
+          <SearchBar
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-48 sm:w-64 md:w-72" // ✅ smaller; grows a bit on larger screens
+          />
+        </div>
         <div>
           <label className="mr-2 font-semibold">State:</label>
           <select
@@ -229,11 +282,19 @@ export default function HomePage() {
           >
             <legend className="px-1 text-sm font-semibold text-gray-700">
               <span className="inline-flex items-center gap-2">
-                My progress
+                Filter by my status 
                 {!userDataReady && <DotSpinner />}
               </span>
             </legend>
-
+            <label className={`ml-auto flex items-center gap-2 ${!userDataReady ? 'opacity-60' : ''}`}>
+              <input
+                type="checkbox"
+                checked={onlyMyPatches}
+                onChange={(e) => setOnlyMyPatches(e.target.checked)}
+                disabled={!userDataReady}
+              />
+              <span>Only show my patches</span>
+            </label>
             <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
@@ -257,17 +318,17 @@ export default function HomePage() {
             <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
-                checked={showNotStarted}
-                onChange={(e) => setShowNotStarted(e.target.checked)}
+                checked={showWishlisted}
+                onChange={(e) => setShowWishlisted(e.target.checked)}
                 disabled={!userDataReady}
               />
-              <span>Not Started</span>
+              <span>Wishlisted</span>
             </label>
 
             {(showCompleted !== true || showInProgress !== true || showNotStarted !== true) && (
               <button
                 type="button"
-                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); }}
+                onClick={() => { setShowCompleted(true); setShowInProgress(true); setShowNotStarted(true); setOnlyMyPatches(false)}}
                 disabled={!userDataReady}
                 className="ml-1 text-xs text-blue-600 underline disabled:opacity-50"
               >
@@ -297,11 +358,12 @@ export default function HomePage() {
           </button>
         </div>
       )}
-      {/* PatchGrid: pass map + a loading flag so it can show subtle placeholders */}
       <PatchGrid
         patches={paginated}
         userPatchMap={userPatchMap}
         userDataReady={userDataReady}
+        wishlistSet={wishlistSet}
+        onWishlistChange={handleWishlistChange}
       />
     </div>
   );

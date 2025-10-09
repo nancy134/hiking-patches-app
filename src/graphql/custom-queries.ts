@@ -10,6 +10,7 @@ export const listUserPatchesWithPatch = /* GraphQL */ `
         difficulty
         imageUrl
         inProgress
+	wishlisted
         createdAt
         updatedAt
         patch {
@@ -120,6 +121,67 @@ export const getPatchCompletionRule = /* GraphQL */ `
       id
       name
       completionRule
+    }
+  }
+`;
+
+export const createUserPatchLite = /* GraphQL */ `
+  mutation CreateUserPatchLite($input: CreateUserPatchInput!) {
+    createUserPatch(input: $input) {
+      id patchID userID wishlisted inProgress dateCompleted
+    }
+  }
+`;
+
+export const updateUserPatchLite = /* GraphQL */ `
+  mutation UpdateUserPatchLite($input: UpdateUserPatchInput!) {
+    updateUserPatch(input: $input) {
+      id patchID userID wishlisted inProgress dateCompleted
+    }
+  }
+`;
+
+export const customCreateUserPatch = `
+  mutation customCreateUserPatch($input: CreateUserPatchInput!) {
+    createUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      inProgress
+      notes
+      difficulty
+      imageUrl
+      wishlisted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const customUpdateUserPatch = `
+  mutation customUpdateUserPatch($input: UpdateUserPatchInput!) {
+    updateUserPatch(input: $input) {
+      id
+      patchID
+      userID
+      dateCompleted
+      inProgress
+      notes
+      difficulty
+      imageUrl
+      wishlisted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const userPatchesByUserByPatchLite = /* GraphQL */ `
+  query UserPatchesByUserByPatchLite($userID: String!, $patchID: ID!, $limit: Int) {
+    userPatchesByUserByPatch(userID: $userID, patchID: { eq: $patchID }, limit: $limit) {
+      items { id patchID userID wishlisted inProgress dateCompleted }
+      nextToken
     }
   }
 `;
