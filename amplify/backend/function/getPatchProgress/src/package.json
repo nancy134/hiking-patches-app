@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "dependencies": {
+    "@aws-crypto/sha256-js": "3.x",
     "@aws-sdk/credential-provider-node": "3.x",
     "@aws-sdk/protocol-http": "3.x",
     "@aws-sdk/signature-v4": "3.x",
-    "@aws-crypto/sha256-js": "3.x"
+    "astronomy-engine": "^2.1.19"
   }
 }
-

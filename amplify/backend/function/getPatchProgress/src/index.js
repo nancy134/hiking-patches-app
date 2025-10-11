@@ -4,6 +4,110 @@ const { SignatureV4 } = require('@aws-sdk/signature-v4');
 const { Sha256 } = require('@aws-crypto/sha256-js');
 const { HttpRequest } = require('@aws-sdk/protocol-http');
 const { defaultProvider } = require('@aws-sdk/credential-provider-node');
+const { Seasons } = require('astronomy-engine');
+
+// Timezone for interpreting "local day" of a hike.
+// Override in Lambda env if needed (e.g., "America/New_York").
+const HIKES_TZ = process.env.HIKES_TZ || 'America/New_York';
+
+/** Parse the timezone offset (minutes) for a given UTC instant in a target tz. */
+function getOffsetMinutesAt(utcMs, tz) {
+  // Ask Intl for the short offset, e.g. "-05:00" or "GMT-05:00"
+  const s = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    timeZoneName: 'shortOffset',
+  }).format(new Date(utcMs));
+  // Extract something like -05:00 / +09 / GMT+01:00
+  const m = s.match(/([+-]\d{2})(?::?(\d{2}))?/);
+  if (!m) return 0;
+  const hh = parseInt(m[1], 10);
+  const mm = m[2] ? parseInt(m[2], 10) : 0;
+  return hh * 60 + Math.sign(hh) * mm;
+}
+
+/**
+ * Convert a *local* wall time in tz to the corresponding UTC instant.
+ * Two-iteration fixed-point handles DST transitions near the boundary.
+ */
+function localToUtcInstant(y, m /*0..11*/, d, hh = 0, mm = 0, tz = HIKES_TZ) {
+  let guess = Date.UTC(y, m, d, hh, mm);
+  for (let i = 0; i < 2; i++) {
+    const offMin = getOffsetMinutesAt(guess, tz);
+    guess = Date.UTC(y, m, d, hh, mm) - offMin * 60_000;
+  }
+  return new Date(guess);
+}
+
+/** Get local Y/M/D numbers for a given instant in a tz. */
+function getLocalYmdAt(dateLike, tz = HIKES_TZ) {
+  const d = typeof dateLike === 'string' || typeof dateLike === 'number' ? new Date(dateLike) : dateLike;
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(d);
+  const obj = Object.fromEntries(parts.map(p => [p.type, p.value]));
+  return { y: parseInt(obj.year, 10), m: parseInt(obj.month, 10) - 1, d: parseInt(obj.day, 10) };
+}
+
+/** UTC start/end bounds for the *local* calendar day that contains dateLike in tz. */
+function localDayBoundsToUtc(dateLike, tz = HIKES_TZ) {
+  const { y, m, d } = getLocalYmdAt(dateLike, tz);
+  const startUtc = localToUtcInstant(y, m, d, 0, 0, tz);
+  // Use 23:59:59.999 as end-of-day; conversion remains safe across DST shifts.
+  const endUtc = localToUtcInstant(y, m, d, 23, 59, tz);
+  endUtc.setSeconds(59, 999);
+  return { startUtc, endUtc };
+}
+
+/** Astronomical winter (Northern Hemisphere): Dec solstice → Mar equinox. */
+function isAstronomicalWinterLocalDay(dateLike, tz = HIKES_TZ) {
+  const { y, m } = getLocalYmdAt(dateLike, tz);
+  // Seasons() returns UTC instants for solstices/equinoxes in a given year.
+  const seasonsPrev = Seasons(y - 1);
+  const seasonsY    = Seasons(y);
+  const seasonsNext = Seasons(y + 1);
+
+  // There are two relevant winter intervals that could touch a given local day:
+  // A) Dec solstice of (y-1) → Mar equinox of (y)
+  // B) Dec solstice of (y)   → Mar equinox of (y+1)  (relevant for dates in Dec)
+  const winterA = { start: seasonsPrev.dec_solstice.date, end: seasonsY.mar_equinox.date };
+  const winterB = { start: seasonsY.dec_solstice.date,   end: seasonsNext.mar_equinox.date };
+
+  const { startUtc: dayStart, endUtc: dayEnd } = localDayBoundsToUtc(dateLike, tz);
+
+  const overlaps = (a1, a2, b1, b2) => a1 < b2 && b1 <= a2;
+
+  // Quick branch: months Jan/Feb => interval A is sufficient; Dec => interval B; Mar can straddle => check both.
+  if (m === 0 || m === 1) {
+    return overlaps(dayStart, dayEnd, winterA.start, winterA.end);
+  } else if (m === 11) {
+    return overlaps(dayStart, dayEnd, winterB.start, winterB.end);
+  }
+
+  // Shoulder days around March equinox still checked safely here.
+  return overlaps(dayStart, dayEnd, winterA.start, winterA.end) ||
+         overlaps(dayStart, dayEnd, winterB.start, winterB.end);
+}
+
+function getLocalMonthAt(dateLike, tz) {
+  const d = typeof dateLike === 'string' ? new Date(dateLike) : dateLike;
+  // month comes back as 1..12; convert to 0..11
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, month: 'numeric' })
+    .formatToParts(d);
+  const m = Number(parts.find(p => p.type === 'month').value);
+  return m - 1;
+}
+
+// Meteorological winter: Dec/Jan/Feb in the given timezone
+function isWinterLocal(dateLike, tz = HIKES_TZ) {
+  const m = getLocalMonthAt(dateLike, tz);
+  return m === 11 || m === 0 || m === 1; // Dec, Jan, Feb
+}
+
+// If you later want astronomical precision (solstice->equinox), replace isWinterLocal()
+// with a function that checks the local day overlap vs UTC solstice/equinox moments.
 
 function findEnvKey(suffix) {
   const hit = Object.entries(process.env).find(([k]) => k.endsWith(suffix));
@@ -42,7 +146,7 @@ const GQL_patchMountainsByPatch = `
 const GQL_userMountainsByUser = `
   query UserMountainsByUser($userID: ID!, $limit: Int, $nextToken: String) {
     userMountainsByUser(userID: $userID, limit: $limit, nextToken: $nextToken) {
-      items { id mountainID }
+      items { id mountainID dateClimbed }
       nextToken
     }
   }
@@ -118,29 +222,39 @@ async function graphQL(query, variables, { forceIAM = false } = {}) {
 }
 
 function normalizeRule(raw) {
-  if (!raw) return { type: 'default' };
+  if (!raw) return { type: 'default', winterOnly: false };
   let obj = raw;
   if (typeof raw === 'string') {
-    try { obj = JSON.parse(raw); } catch { return { type: 'default' }; }
+    try { obj = JSON.parse(raw); } catch { return { type: 'default', winterOnly: false }; }
   }
-  if (!obj || typeof obj !== 'object') return { type: 'default' };
-  if (obj.type === 'excludeDelisted') return { type: 'excludeDelisted' };
+  if (!obj || typeof obj !== 'object') return { type: 'default', winterOnly: false };
+
+  const base = { type: 'default', winterOnly: !!obj.winterOnly };
+
+  if (obj.type === 'excludeDelisted') return { ...base, type: 'excludeDelisted' };
   if (obj.type === 'anyN') {
     const n = Number(obj.n);
-    return Number.isFinite(n) && n > 0 ? { type: 'anyN', n: Math.floor(n) } : { type: 'default' };
+    return Number.isFinite(n) && n > 0 ? { ...base, type: 'anyN', n: Math.floor(n) } : base;
   }
-  return { type: 'default' };
+  return base;
 }
 
-function computePercent(rule, rows, hasAscent) {
+
+function computePercent(rule, rows, countsFn) {
   const items = rows.filter(r => r.mountainPatchMountainsId);
-  const completedAll = items.reduce((acc, r) => acc + (r.mountainPatchMountainsId && hasAscent(r.mountainPatchMountainsId) ? 1 : 0), 0);
+
+  const completedAll = items.reduce(
+    (acc, r) => acc + (r.mountainPatchMountainsId && countsFn(r.mountainPatchMountainsId, r) ? 1 : 0),
+    0
+  );
+
   if (rule.type === 'excludeDelisted') {
     const eligible = items.filter(r => !r.delisted);
     const denom = eligible.length || 1;
     const percent = Math.round((completedAll / denom) * 100);
     return { completed: completedAll, denom, percent, note: 'Delisted excluded from denominator' };
   }
+
   if (rule.type === 'anyN') {
     const denom = rule.n;
     const percent = Math.max(0, Math.min(100, Math.round((completedAll / denom) * 100)));
@@ -196,17 +310,51 @@ async function progressForPatch(patchId, userId) {
     fetchAllPatchMountains(patchId),
     fetchAllUserMountains(userId),
   ]);
+
   const rule = normalizeRule(patch?.completionRule);
-  const userSet = new Set(userMountains.map(u => u.mountainID).filter(Boolean));
-  const hasAscent = (mid) => userSet.has(mid);
-  const { completed, denom, percent, note } = computePercent(rule, patchMountains, hasAscent);
-  return { patchId, userId, completed, denom, percent, note };
+
+  // mountainID -> array of dateClimbed (ISO string or epoch ms)
+  const ascentsByMountain = new Map();
+  for (const u of userMountains) {
+    const mid = u.mountainID;
+    if (!mid) continue;
+    if (!ascentsByMountain.has(mid)) ascentsByMountain.set(mid, []);
+    ascentsByMountain.get(mid).push(u.dateClimbed || null);
+  }
+
+  // Counts any ascent:
+  const hasAscent = (mid, ascentsByMountain) => ascentsByMountain.has(mid);
+
+  // Counts only ascents whose *local hiking day* overlaps astronomical winter:
+  const hasAstronomicalWinterAscent = (mid, ascentsByMountain) => {
+    const arr = ascentsByMountain.get(mid);
+    if (!arr || arr.length === 0) return false;
+    return arr.some(d => d && isAstronomicalWinterLocalDay(d, HIKES_TZ));
+  };
+
+  const countsFn = rule.winterOnly
+    ? (mid) => hasAstronomicalWinterAscent(mid, ascentsByMountain)
+    : (mid) => hasAscent(mid, ascentsByMountain);
+
+  const { completed, denom, percent, note } =
+    computePercent(rule, patchMountains, countsFn);
+
+  const winterNote = rule.winterOnly ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)') : note;
+
+  return { patchId, userId, completed, denom, percent, note: winterNote };
 }
+
 
 async function batchProgress(patchIds, userId) {
   const userMountains = await fetchAllUserMountains(userId);
-  const userSet = new Set(userMountains.map(u => u.moutainUserMountainsId).filter(Boolean));
-  const hasAscent = (mid) => userSet.has(mid);
+
+  const ascentsByMountain = new Map();
+  for (const u of userMountains) {
+    const mid = u.mountainID;
+    if (!mid) continue;
+    if (!ascentsByMountain.has(mid)) ascentsByMountain.set(mid, []);
+    ascentsByMountain.get(mid).push(u.dateClimbed || null);
+  }
 
   const pool = 5;
   const chunks = [];
@@ -221,8 +369,14 @@ async function batchProgress(patchIds, userId) {
           fetchAllPatchMountains(patchId),
         ]);
         const rule = normalizeRule(patch?.completionRule);
-        const { completed, denom, percent, note } = computePercent(rule, patchMountains, hasAscent);
-        return { patchId, userId, completed, denom, percent, note };
+
+        const countsFn = rule.winterOnly
+          ? (mid) => hasAstronomicalWinterAscent(mid, ascentsByMountain)
+          : (mid) => hasAscent(mid, ascentsByMountain);
+
+        const { completed, denom, percent, note } = computePercent(rule, patchMountains, countsFn);
+        const winterNote = rule.winterOnly ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)') : note;
+        return { patchId, userId, completed, denom, percent, note: winterNote };
       })
     );
     results.push(...part);
