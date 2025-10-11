@@ -10,8 +10,8 @@ import { deleteUserMountainMinimal, createUserMountainMinimal } from '@/graphql/
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
-import { getPatchCompletionRule } from '@/graphql/custom-queries';
-import { GetPatchCompletionRuleQuery } from "@/graphql/custom-types";
+import { getPatchProgressSummary } from '@/graphql/queries';
+import type { GetPatchProgressSummaryQuery } from '@/API';
 
 const client = generateClient();
 
@@ -22,18 +22,16 @@ interface PatchMountainProps {
   userId?: string;
 }
 
-type CompletionRule =
-  | { type: 'default' }                                                // same as today
-  | { type: 'excludeDelisted' }                                        // remove delisted from denominator
-  | { type: 'anyN'; n: number };                                       // e.g., “any 10 count as 100%”
-
-/** --- Little UI helpers --- */
-function Spinner({ label }: { label?: string }) {
+function Spinner({
+  label,
+  as: Tag = 'span',
+  className = '',
+}: { label?: string; as?: 'span' | 'div'; className?: string }) {
   return (
-    <div className="inline-flex items-center gap-2" role="status" aria-live="polite">
+    <Tag className={`inline-flex items-center gap-2 ${className}`} role="status" aria-live="polite">
       <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
       {label ? <span className="text-sm text-gray-600">{label}</span> : null}
-    </div>
+    </Tag>
   );
 }
 
@@ -74,65 +72,6 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
-function computePercentFromRule<ItemWithMountain extends { id: string; mountain: { id: string } }>(
-  rule: CompletionRule,
-  items: ItemWithMountain[],
-  isCompleted: (pm: ItemWithMountain) => boolean
-) {
-  // Default = your existing behavior
-  const defaultCalc = () => {
-    const completed = items.filter(isCompleted).length;
-    const denom = items.length;
-    const percent = denom === 0 ? 0 : Math.round((completed / denom) * 100);
-    return { completed, denom, percent, note: undefined as string | undefined };
-  };
-
-  switch (rule.type) {
-    case 'excludeDelisted': {
-      const eligible = items.filter(pm => !(pm as any).delisted);
-      const completed = items.filter(isCompleted).length;
-      const denom = eligible.length || 1;
-      const percent = Math.round((completed / denom) * 100);
-      return { completed, denom, percent, note: 'Delisted included' };
-    }
-    case 'anyN': {
-      const completedAll = items.filter(isCompleted).length;
-      const denom = rule.n;
-      const percent = Math.max(0, Math.min(100, Math.round((completedAll / denom) * 100)));
-      return { completed: Math.min(completedAll, denom), denom, percent, note: `Any ${denom}` };
-    }
-    case 'default':
-    default:
-      return defaultCalc();
-  }
-}
-
-function normalizeRule(raw: unknown): CompletionRule {
-  if (!raw) return { type: 'default' };
-
-  // raw may already be an object (AppSync returns parsed JSON) or a string
-  let obj: any = raw;
-  if (typeof raw === 'string') {
-    try { obj = JSON.parse(raw); } catch { return { type: 'default' }; }
-  }
-  if (!obj || typeof obj !== 'object') return { type: 'default' };
-
-  const t = obj.type;
-  switch (t) {
-    case 'default':
-      return { type: 'default' };
-    case 'excludeDelisted':
-      return { type: 'excludeDelisted' };
-    case 'anyN': {
-      const n = Number(obj.n);
-      if (Number.isFinite(n) && n > 0) return { type: 'anyN', n: Math.floor(n) };
-      return { type: 'default' };
-    }
-    default:
-      return { type: 'default' };
-  }
-}
-
 export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
   // Derive the item type returned by *your* query (which can include nulls)
   type Query = LPWQuery;
@@ -159,7 +98,12 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   // Optional (but nice): error state (shown inline if it happens)
   const [error, setError] = useState<string | null>(null);
 
-  const [completionRule, setCompletionRule] = useState<CompletionRule | null>(null);
+  const [serverProgress, setServerProgress] = useState<{completed:number;denom:number;percent:number;note?:string|null}|null>(null);
+  const [loadingProgress, setLoadingProgress] = useState<boolean>(!!userId);
+
+  useEffect(() => {
+    if (!loadingPatch && !loadingUser) { refreshProgress(); }
+  }, [loadingPatch, loadingUser, patchId, userId]);
 
   useEffect(() => {
     const fetchData = async (pageSize = 100) => {
@@ -216,29 +160,6 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   }, [patchId]);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = (await client.graphql<GetPatchCompletionRuleQuery>({
-          query: getPatchCompletionRule,
-          variables: { id: patchId },
-        })) as GraphQLResult<GetPatchCompletionRuleQuery>;
-
-        const raw = r.data?.getPatch?.completionRule as unknown;
-
-        // Parse defensively; if anything is off, fall back to default
-        const parsed = normalizeRule(raw);
-        if (!cancelled) setCompletionRule(parsed);
-      } catch {
-        if (!cancelled) setCompletionRule({ type: 'default' });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [patchId]);
-
-  useEffect(() => {
     const fetchUserMountains = async () => {
       if (!userId) {
         setUserMountainMap({});
@@ -273,6 +194,29 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
     fetchUserMountains();
   }, [userId]);
+
+async function refreshProgress() {
+  if (!userId) { setServerProgress(null); setLoadingProgress(false); return; }
+  setLoadingProgress(true);
+  try {
+    const r = await client.graphql({
+      query: getPatchProgressSummary,
+      variables: { patchId, userId },
+      authMode: 'userPool',
+    }) as { data: GetPatchProgressSummaryQuery };
+
+    const p = r.data?.getPatchProgressSummary ?? null;
+    setServerProgress(
+      p ? { completed: p.completed, denom: p.denom, percent: p.percent, note: p.note ?? undefined } : null
+    );
+  } catch (e) {
+    console.error('Failed to load server progress:', e);
+    setServerProgress(null);
+  } finally {
+    setLoadingProgress(false);
+  }
+}
+
 
   // helper: completion for a mountain
   const isCompleted = (pm: ItemWithMountain) => (userMountainMap[pm.mountain.id] ?? []).length > 0;
@@ -377,14 +321,9 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
       setUserMountainMap(map);
     } finally {
       setLoadingUser(false);
+      await refreshProgress();
     }
   };
-
-  const { completed, denom, percent, note } = computePercentFromRule(
-    completionRule ?? { type: 'default' },
-    patchMountains,
-    isCompleted
-  );
 
   const controlsDisabled = loadingPatch;
 
@@ -396,10 +335,22 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
       <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
 
       <div className="flex items-center justify-between mb-1">
-<p className="text-sm text-gray-600">
-  Complete: {percent}% <span className="text-gray-400">({completed}/{denom})</span>
-  {note && <span className="ml-2 text-xs text-gray-500">— {note}</span>}
-</p>
+
+      <p className="text-sm text-gray-600">
+        {loadingProgress ? (
+          <span className="inline-flex items-center gap-2">
+            <Spinner label="Computing progress…" />
+          </span>
+        ) : serverProgress ? (
+          <>
+            Complete: {serverProgress.percent}%{' '}
+            <span className="text-gray-400">({serverProgress.completed}/{serverProgress.denom})</span>
+            {serverProgress.note && <span className="ml-2 text-xs text-gray-500">— {serverProgress.note}</span>}
+          </>
+        ) : (
+          <>Complete: — <span className="text-gray-400">(—/—)</span></>
+        )}
+      </p>
 
         {/* show secondary spinner while user ascents load/refresh */}
         {loadingUser && !loadingPatch && <Spinner label="Updating ascents…" />}

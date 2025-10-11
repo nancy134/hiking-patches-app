@@ -41,6 +41,7 @@ export default function PatchFormModal({
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
   const [anyNCount, setAnyNCount] = useState<number | ''>('');
+  const [winterOnly, setWinterOnly] = useState<boolean>(false);
 
   // Hydrate fields from incoming patch prop
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function PatchFormModal({
       if (!obj || typeof obj !== 'object') {
         setRuleType('default');
         setAnyNCount('');
+        setWinterOnly(false);
       } else {
         const t = obj.type as RuleType;
         if (t === 'excludeDelisted') {
@@ -77,25 +79,26 @@ export default function PatchFormModal({
           setRuleType('default');
           setAnyNCount('');
         }
+        setWinterOnly(!!obj.winterOnly);
       }
     }
   }, [patch]);
 
-  // Build the AWSJSON object we will save
-  const completionRuleObject = useMemo(() => {
-    switch (ruleType) {
-      case 'excludeDelisted':
-        return { type: 'excludeDelisted' };
-      case 'anyN': {
-        const n = typeof anyNCount === 'number' ? anyNCount : parseInt(String(anyNCount));
-        if (Number.isFinite(n) && n > 0) return { type: 'anyN', n };
-        return { type: 'default' }; // fallback if invalid
-      }
-      case 'default':
-      default:
-        return { type: 'default' };
+const completionRuleObject = useMemo(() => {
+  const winter = winterOnly ? { winterOnly: true } : {}; // ✅ include only if true
+  switch (ruleType) {
+    case 'excludeDelisted':
+      return { type: 'excludeDelisted', ...winter };
+    case 'anyN': {
+      const n = typeof anyNCount === 'number' ? anyNCount : parseInt(String(anyNCount));
+      if (Number.isFinite(n) && n > 0) return { type: 'anyN', n, ...winter };
+      return { type: 'default', ...winter }; // ✅ keep winterOnly if invalid N
     }
-  }, [ruleType, anyNCount]);
+    case 'default':
+    default:
+      return { type: 'default', ...winter };
+  }
+}, [ruleType, anyNCount, winterOnly]);
 
   const completionRulePreview = useMemo(
     () => JSON.stringify(completionRuleObject, null, 2),
@@ -114,7 +117,9 @@ export default function PatchFormModal({
       }
 
 const completionRuleToSend =
-  ruleType === 'default' ? undefined : JSON.stringify(completionRuleObject);
+  (ruleType !== 'default' || winterOnly)
+    ? JSON.stringify(completionRuleObject)
+    : undefined;
 
       const commonInput = {
         name,
@@ -277,43 +282,54 @@ const completionRuleToSend =
             </label>
 
             {/* Completion Rule Editor */}
-            <div className="border rounded p-3 space-y-3">
-              <div className="font-semibold">Completion Rule</div>
+<div className="border rounded p-3 space-y-3">
+  <div className="font-semibold">Completion Rule</div>
 
-              <select
-                value={ruleType}
-                onChange={(e) => setRuleType(e.target.value as RuleType)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="default">Default (completed / total)</option>
-                <option value="excludeDelisted">Exclude delisted from denominator</option>
-                <option value="anyN">Any N mountains</option>
-              </select>
+  <select
+    value={ruleType}
+    onChange={(e) => setRuleType(e.target.value as RuleType)}
+    className="w-full p-2 border rounded"
+  >
+    <option value="default">Default (completed / total)</option>
+    <option value="excludeDelisted">Exclude delisted from denominator</option>
+    <option value="anyN">Any N mountains</option>
+  </select>
 
-              {ruleType === 'anyN' && (
-                <label className="block">
-                  <span className="text-sm text-gray-700">N (e.g., 10)</span>
-                  <input
-                    type="number"
-                    min={1}
-                    value={anyNCount}
-                    onChange={(e) => {
-                      const n = parseInt(e.target.value);
-                      setAnyNCount(Number.isFinite(n) && n > 0 ? n : '');
-                    }}
-                    className="mt-1 w-full p-2 border rounded"
-                    placeholder="Enter N"
-                  />
-                </label>
-              )}
+  {ruleType === 'anyN' && (
+    <label className="block">
+      <span className="text-sm text-gray-700">N (e.g., 10)</span>
+      <input
+        type="number"
+        min={1}
+        value={anyNCount}
+        onChange={(e) => {
+          const n = parseInt(e.target.value);
+          setAnyNCount(Number.isFinite(n) && n > 0 ? n : '');
+        }}
+        className="mt-1 w-full p-2 border rounded"
+        placeholder="Enter N"
+      />
+    </label>
+  )}
 
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Preview (saved as AWSJSON):</div>
-                <pre className="bg-gray-50 border rounded p-2 text-xs overflow-x-auto">
+  {/* ✅ Winter-only toggle */}
+  <label className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      className="accent-blue-600"
+      checked={winterOnly}
+      onChange={(e) => setWinterOnly(e.target.checked)}
+    />
+    <span className="text-sm">Winter-only (astronomical winter)</span>
+  </label>
+
+  <div>
+    <div className="text-xs text-gray-500 mb-1">Preview (saved as AWSJSON):</div>
+    <pre className="bg-gray-50 border rounded p-2 text-xs overflow-x-auto">
 {completionRulePreview}
-                </pre>
-              </div>
-            </div>
+    </pre>
+  </div>
+</div>
             {/* /Completion Rule Editor */}
           </div>
 
