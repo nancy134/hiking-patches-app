@@ -21,12 +21,17 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     longitude
     popularity
     hasPeaks
+    hasTrails
     completionRule
     userPatches {
       nextToken
       __typename
     }
     patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
       nextToken
       __typename
     }
@@ -52,12 +57,17 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     longitude
     popularity
     hasPeaks
+    hasTrails
     completionRule
     userPatches {
       nextToken
       __typename
     }
     patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
       nextToken
       __typename
     }
@@ -83,12 +93,17 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     longitude
     popularity
     hasPeaks
+    hasTrails
     completionRule
     userPatches {
       nextToken
       __typename
     }
     patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
       nextToken
       __typename
     }
@@ -120,6 +135,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -161,6 +177,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -202,6 +219,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -369,6 +387,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -415,6 +434,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -461,6 +481,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       longitude
       popularity
       hasPeaks
+      hasTrails
       completionRule
       createdAt
       updatedAt
@@ -583,4 +604,289 @@ export const onDeleteUserMountain = /* GraphQL */ `subscription OnDeleteUserMoun
 ` as GeneratedSubscription<
   APITypes.OnDeleteUserMountainSubscriptionVariables,
   APITypes.OnDeleteUserMountainSubscription
+>;
+export const onCreateTrail = /* GraphQL */ `subscription OnCreateTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onCreateTrail(filter: $filter) {
+    id
+    name
+    description
+    lengthMiles
+    patchTrails {
+      nextToken
+      __typename
+    }
+    userTrails {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateTrailSubscriptionVariables,
+  APITypes.OnCreateTrailSubscription
+>;
+export const onUpdateTrail = /* GraphQL */ `subscription OnUpdateTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onUpdateTrail(filter: $filter) {
+    id
+    name
+    description
+    lengthMiles
+    patchTrails {
+      nextToken
+      __typename
+    }
+    userTrails {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateTrailSubscriptionVariables,
+  APITypes.OnUpdateTrailSubscription
+>;
+export const onDeleteTrail = /* GraphQL */ `subscription OnDeleteTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onDeleteTrail(filter: $filter) {
+    id
+    name
+    description
+    lengthMiles
+    patchTrails {
+      nextToken
+      __typename
+    }
+    userTrails {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteTrailSubscriptionVariables,
+  APITypes.OnDeleteTrailSubscription
+>;
+export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail(
+  $filter: ModelSubscriptionPatchTrailFilterInput
+) {
+  onCreatePatchTrail(filter: $filter) {
+    id
+    patchPatchTrailsId
+    trailPatchTrailsId
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      hasPeaks
+      hasTrails
+      completionRule
+      createdAt
+      updatedAt
+      __typename
+    }
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    requiredMiles
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreatePatchTrailSubscriptionVariables,
+  APITypes.OnCreatePatchTrailSubscription
+>;
+export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail(
+  $filter: ModelSubscriptionPatchTrailFilterInput
+) {
+  onUpdatePatchTrail(filter: $filter) {
+    id
+    patchPatchTrailsId
+    trailPatchTrailsId
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      hasPeaks
+      hasTrails
+      completionRule
+      createdAt
+      updatedAt
+      __typename
+    }
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    requiredMiles
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchTrailSubscriptionVariables,
+  APITypes.OnUpdatePatchTrailSubscription
+>;
+export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail(
+  $filter: ModelSubscriptionPatchTrailFilterInput
+) {
+  onDeletePatchTrail(filter: $filter) {
+    id
+    patchPatchTrailsId
+    trailPatchTrailsId
+    patch {
+      id
+      name
+      description
+      howToGet
+      imageUrl
+      regions
+      difficulty
+      latitude
+      longitude
+      popularity
+      hasPeaks
+      hasTrails
+      completionRule
+      createdAt
+      updatedAt
+      __typename
+    }
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    requiredMiles
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchTrailSubscriptionVariables,
+  APITypes.OnDeletePatchTrailSubscription
+>;
+export const onCreateUserTrail = /* GraphQL */ `subscription OnCreateUserTrail(
+  $filter: ModelSubscriptionUserTrailFilterInput
+  $userID: String
+) {
+  onCreateUserTrail(filter: $filter, userID: $userID) {
+    userID
+    trailID
+    dateCompleted
+    milesRemaining
+    notes
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserTrailSubscriptionVariables,
+  APITypes.OnCreateUserTrailSubscription
+>;
+export const onUpdateUserTrail = /* GraphQL */ `subscription OnUpdateUserTrail(
+  $filter: ModelSubscriptionUserTrailFilterInput
+  $userID: String
+) {
+  onUpdateUserTrail(filter: $filter, userID: $userID) {
+    userID
+    trailID
+    dateCompleted
+    milesRemaining
+    notes
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserTrailSubscriptionVariables,
+  APITypes.OnUpdateUserTrailSubscription
+>;
+export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
+  $filter: ModelSubscriptionUserTrailFilterInput
+  $userID: String
+) {
+  onDeleteUserTrail(filter: $filter, userID: $userID) {
+    userID
+    trailID
+    dateCompleted
+    milesRemaining
+    notes
+    trail {
+      id
+      name
+      description
+      lengthMiles
+      createdAt
+      updatedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteUserTrailSubscriptionVariables,
+  APITypes.OnDeleteUserTrailSubscription
 >;

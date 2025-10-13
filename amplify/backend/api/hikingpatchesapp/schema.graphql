@@ -26,9 +26,11 @@ type Patch @model
   longitude: Float
   popularity: Int
   hasPeaks: Boolean
+  hasTrails: Boolean
   completionRule: AWSJSON
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
+  patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])
 }
 
 type UserPatch @model 
@@ -149,4 +151,58 @@ type Query {
     @function(name: "getPatchProgress-${env}")
     @aws_cognito_user_pools
 }
+
+type Trail @model
+  @auth(rules: [
+    { allow: public, operations: [read] },
+    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+  ]) {
+  id: ID!
+  name: String!
+  description: String
+  lengthMiles: Float!
+
+  patchTrails: [PatchTrail] @hasMany(indexName: "byTrail", fields: ["id"])
+  userTrails: [UserTrail]   @hasMany(indexName: "byTrail", fields: ["id"])
+}
+
+type PatchTrail @model
+  @auth(rules: [
+    { allow: public, operations: [read] },
+    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+  ]) {
+  id: ID!
+
+  patchPatchTrailsId: ID @index(name: "byPatch", queryField: "patchTrailsByPatch")
+  trailPatchTrailsId: ID @index(name: "byTrail", queryField: "patchTrailsByTrail")
+
+  patch: Patch! @belongsTo(fields: ["patchPatchTrailsId"])
+  trail: Trail! @belongsTo(fields: ["trailPatchTrailsId"])
+
+  requiredMiles: Float
+}
+
+type UserTrail
+  @model
+  @auth(rules: [
+    { allow: owner, ownerField: "userID", operations: [create, update, delete, read] },
+    { allow: groups, groups: ["Admin"], operations: [read, delete, update] },
+    { allow: private, provider: iam, operations: [read] }
+  ]) {
+  # ✅ Composite PK: one record per (user, trail)
+  userID: ID!
+    @primaryKey(sortKeyFields: ["trailID"])                                # <-- primary key on FIELD (v2)
+    @index(name: "byUser", queryField: "userTrailsByUser")                 # list all trails for a user
+    @index(name: "byUserByDateCompleted", sortKeyFields: ["dateCompleted"], queryField: "userTrailsByUserByDateCompleted")
+
+  trailID: ID!
+    @index(name: "byTrail", queryField: "userTrailsByTrail")               # list all users for a trail
+
+  dateCompleted: AWSDate
+  milesRemaining: Float
+  notes: String
+
+  trail: Trail @belongsTo(fields: ["trailID"])
+}
+
 

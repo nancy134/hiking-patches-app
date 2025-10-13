@@ -65,9 +65,11 @@ export type Patch = {
   longitude?: number | null,
   popularity?: number | null,
   hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
   completionRule?: string | null,
   userPatches?: ModelUserPatchConnection | null,
   patchMountains?: ModelPatchMountainConnection | null,
+  patchTrails?: ModelPatchTrailConnection | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -104,6 +106,54 @@ export type UserPatch = {
   owner?: string | null,
 };
 
+export type ModelPatchTrailConnection = {
+  __typename: "ModelPatchTrailConnection",
+  items:  Array<PatchTrail | null >,
+  nextToken?: string | null,
+};
+
+export type PatchTrail = {
+  __typename: "PatchTrail",
+  id: string,
+  patchPatchTrailsId?: string | null,
+  trailPatchTrailsId?: string | null,
+  patch: Patch,
+  trail: Trail,
+  requiredMiles?: number | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type Trail = {
+  __typename: "Trail",
+  id: string,
+  name: string,
+  description?: string | null,
+  lengthMiles: number,
+  patchTrails?: ModelPatchTrailConnection | null,
+  userTrails?: ModelUserTrailConnection | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type ModelUserTrailConnection = {
+  __typename: "ModelUserTrailConnection",
+  items:  Array<UserTrail | null >,
+  nextToken?: string | null,
+};
+
+export type UserTrail = {
+  __typename: "UserTrail",
+  userID: string,
+  trailID: string,
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
+  notes?: string | null,
+  trail?: Trail | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
 export type ModelUserMountainConnection = {
   __typename: "ModelUserMountainConnection",
   items:  Array<UserMountain | null >,
@@ -115,6 +165,22 @@ export type CreateUserMountainInput = {
   userID: string,
   mountainID: string,
   dateClimbed: string,
+  notes?: string | null,
+};
+
+export type CreateUserTrailInput = {
+  userID: string,
+  trailID: string,
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
+  notes?: string | null,
+};
+
+export type UpdateUserTrailInput = {
+  userID: string,
+  trailID: string,
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
   notes?: string | null,
 };
 
@@ -247,43 +313,16 @@ export type UpdateUserPatchInput = {
   wishlisted?: boolean | null,
 };
 
-export type CreatePatchInput = {
-  id?: string | null,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  popularity?: number | null,
-  hasPeaks?: boolean | null,
-  completionRule?: string | null,
-};
-
-export type ModelPatchConditionInput = {
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  howToGet?: ModelStringInput | null,
-  imageUrl?: ModelStringInput | null,
-  regions?: ModelStringInput | null,
-  difficulty?: ModelDifficultyInput | null,
-  latitude?: ModelFloatInput | null,
-  longitude?: ModelFloatInput | null,
-  popularity?: ModelIntInput | null,
-  hasPeaks?: ModelBooleanInput | null,
-  completionRule?: ModelStringInput | null,
-  and?: Array< ModelPatchConditionInput | null > | null,
-  or?: Array< ModelPatchConditionInput | null > | null,
-  not?: ModelPatchConditionInput | null,
+export type ModelPatchTrailFilterInput = {
+  id?: ModelIDInput | null,
+  patchPatchTrailsId?: ModelIDInput | null,
+  trailPatchTrailsId?: ModelIDInput | null,
+  requiredMiles?: ModelFloatInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-};
-
-export type ModelDifficultyInput = {
-  eq?: Difficulty | null,
-  ne?: Difficulty | null,
+  and?: Array< ModelPatchTrailFilterInput | null > | null,
+  or?: Array< ModelPatchTrailFilterInput | null > | null,
+  not?: ModelPatchTrailFilterInput | null,
 };
 
 export type ModelFloatInput = {
@@ -298,6 +337,47 @@ export type ModelFloatInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
+export type CreatePatchInput = {
+  id?: string | null,
+  name: string,
+  description?: string | null,
+  howToGet?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  popularity?: number | null,
+  hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
+  completionRule?: string | null,
+};
+
+export type ModelPatchConditionInput = {
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  howToGet?: ModelStringInput | null,
+  imageUrl?: ModelStringInput | null,
+  regions?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  popularity?: ModelIntInput | null,
+  hasPeaks?: ModelBooleanInput | null,
+  hasTrails?: ModelBooleanInput | null,
+  completionRule?: ModelStringInput | null,
+  and?: Array< ModelPatchConditionInput | null > | null,
+  or?: Array< ModelPatchConditionInput | null > | null,
+  not?: ModelPatchConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type ModelDifficultyInput = {
+  eq?: Difficulty | null,
+  ne?: Difficulty | null,
+};
+
 export type UpdatePatchInput = {
   id: string,
   name?: string | null,
@@ -310,6 +390,7 @@ export type UpdatePatchInput = {
   longitude?: number | null,
   popularity?: number | null,
   hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
   completionRule?: string | null,
 };
 
@@ -463,6 +544,81 @@ export type UpdateUserMountainInput = {
   notes?: string | null,
 };
 
+export type CreateTrailInput = {
+  id?: string | null,
+  name: string,
+  description?: string | null,
+  lengthMiles: number,
+};
+
+export type ModelTrailConditionInput = {
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  lengthMiles?: ModelFloatInput | null,
+  and?: Array< ModelTrailConditionInput | null > | null,
+  or?: Array< ModelTrailConditionInput | null > | null,
+  not?: ModelTrailConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type UpdateTrailInput = {
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  lengthMiles?: number | null,
+};
+
+export type DeleteTrailInput = {
+  id: string,
+};
+
+export type CreatePatchTrailInput = {
+  id?: string | null,
+  patchPatchTrailsId?: string | null,
+  trailPatchTrailsId?: string | null,
+  requiredMiles?: number | null,
+};
+
+export type ModelPatchTrailConditionInput = {
+  patchPatchTrailsId?: ModelIDInput | null,
+  trailPatchTrailsId?: ModelIDInput | null,
+  requiredMiles?: ModelFloatInput | null,
+  and?: Array< ModelPatchTrailConditionInput | null > | null,
+  or?: Array< ModelPatchTrailConditionInput | null > | null,
+  not?: ModelPatchTrailConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type UpdatePatchTrailInput = {
+  id: string,
+  patchPatchTrailsId?: string | null,
+  trailPatchTrailsId?: string | null,
+  requiredMiles?: number | null,
+};
+
+export type DeletePatchTrailInput = {
+  id: string,
+};
+
+export type ModelUserTrailConditionInput = {
+  dateCompleted?: ModelStringInput | null,
+  milesRemaining?: ModelFloatInput | null,
+  notes?: ModelStringInput | null,
+  and?: Array< ModelUserTrailConditionInput | null > | null,
+  or?: Array< ModelUserTrailConditionInput | null > | null,
+  not?: ModelUserTrailConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type DeleteUserTrailInput = {
+  userID: string,
+  trailID: string,
+};
+
 export type PatchProgress = {
   __typename: "PatchProgress",
   patchId: string,
@@ -485,6 +641,7 @@ export type ModelPatchFilterInput = {
   longitude?: ModelFloatInput | null,
   popularity?: ModelIntInput | null,
   hasPeaks?: ModelBooleanInput | null,
+  hasTrails?: ModelBooleanInput | null,
   completionRule?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
@@ -577,6 +734,38 @@ export type ModelStringKeyConditionInput = {
   beginsWith?: string | null,
 };
 
+export type ModelTrailFilterInput = {
+  id?: ModelIDInput | null,
+  name?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  lengthMiles?: ModelFloatInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelTrailFilterInput | null > | null,
+  or?: Array< ModelTrailFilterInput | null > | null,
+  not?: ModelTrailFilterInput | null,
+};
+
+export type ModelTrailConnection = {
+  __typename: "ModelTrailConnection",
+  items:  Array<Trail | null >,
+  nextToken?: string | null,
+};
+
+export type ModelUserTrailFilterInput = {
+  userID?: ModelIDInput | null,
+  trailID?: ModelIDInput | null,
+  dateCompleted?: ModelStringInput | null,
+  milesRemaining?: ModelFloatInput | null,
+  notes?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelUserTrailFilterInput | null > | null,
+  or?: Array< ModelUserTrailFilterInput | null > | null,
+  not?: ModelUserTrailFilterInput | null,
+};
+
 export type ModelSubscriptionPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   name?: ModelSubscriptionStringInput | null,
@@ -589,6 +778,7 @@ export type ModelSubscriptionPatchFilterInput = {
   longitude?: ModelSubscriptionFloatInput | null,
   popularity?: ModelSubscriptionIntInput | null,
   hasPeaks?: ModelSubscriptionBooleanInput | null,
+  hasTrails?: ModelSubscriptionBooleanInput | null,
   completionRule?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
@@ -720,6 +910,41 @@ export type ModelSubscriptionUserMountainFilterInput = {
   owner?: ModelStringInput | null,
 };
 
+export type ModelSubscriptionTrailFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  name?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  lengthMiles?: ModelSubscriptionFloatInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionTrailFilterInput | null > | null,
+  or?: Array< ModelSubscriptionTrailFilterInput | null > | null,
+};
+
+export type ModelSubscriptionPatchTrailFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  patchPatchTrailsId?: ModelSubscriptionIDInput | null,
+  trailPatchTrailsId?: ModelSubscriptionIDInput | null,
+  requiredMiles?: ModelSubscriptionFloatInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
+};
+
+export type ModelSubscriptionUserTrailFilterInput = {
+  trailID?: ModelSubscriptionIDInput | null,
+  dateCompleted?: ModelSubscriptionStringInput | null,
+  milesRemaining?: ModelSubscriptionFloatInput | null,
+  notes?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
+  or?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
+  userID?: ModelStringInput | null,
+};
+
 export type DeleteUserMountainMinimalMutationVariables = {
   input: DeleteUserMountainInput,
 };
@@ -746,6 +971,36 @@ export type CreateUserMountainMinimalMutation = {
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
+  } | null,
+};
+
+export type CreateUserTrailMinimalMutationVariables = {
+  input: CreateUserTrailInput,
+};
+
+export type CreateUserTrailMinimalMutation = {
+  createUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+  } | null,
+};
+
+export type UpdateUserTrailMinimalMutationVariables = {
+  input: UpdateUserTrailInput,
+};
+
+export type UpdateUserTrailMinimalMutation = {
+  updateUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
   } | null,
 };
 
@@ -996,6 +1251,89 @@ export type UserPatchesByUserByPatchLiteQuery = {
   } | null,
 };
 
+export type ListPatchTrailsWithPatchQueryVariables = {
+  limit?: number | null,
+  nextToken?: string | null,
+  filter?: ModelPatchTrailFilterInput | null,
+};
+
+export type ListPatchTrailsWithPatchQuery = {
+  listPatchTrails?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      id: string,
+      patchPatchTrailsId?: string | null,
+      trailPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      patch:  {
+        __typename: "Patch",
+        id: string,
+        name: string,
+        description?: string | null,
+        createdAt: string,
+      },
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetPatchWithTrailsQueryVariables = {
+  id: string,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetPatchWithTrailsQuery = {
+  getPatch?:  {
+    __typename: "Patch",
+    id: string,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      items:  Array< {
+        __typename: "PatchTrail",
+        id: string,
+        requiredMiles?: number | null,
+        trailPatchTrailsId?: string | null,
+        trail:  {
+          __typename: "Trail",
+          id: string,
+          name: string,
+          lengthMiles: number,
+        },
+      } | null >,
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type ListPatchTrailsWithTrailQueryVariables = {
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchTrailsWithTrailQuery = {
+  listPatchTrails?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      id: string,
+      requiredMiles?: number | null,
+      patchPatchTrailsId?: string | null,
+      trailPatchTrailsId?: string | null,
+      trail:  {
+        __typename: "Trail",
+        id: string,
+        name: string,
+        lengthMiles: number,
+      },
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type CreatePatchMutationVariables = {
   input: CreatePatchInput,
   condition?: ModelPatchConditionInput | null,
@@ -1015,6 +1353,7 @@ export type CreatePatchMutation = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -1022,6 +1361,10 @@ export type CreatePatchMutation = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1048,6 +1391,7 @@ export type UpdatePatchMutation = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -1055,6 +1399,10 @@ export type UpdatePatchMutation = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1081,6 +1429,7 @@ export type DeletePatchMutation = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -1088,6 +1437,10 @@ export type DeletePatchMutation = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1118,6 +1471,7 @@ export type CreateUserPatchMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1158,6 +1512,7 @@ export type UpdateUserPatchMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1198,6 +1553,7 @@ export type DeleteUserPatchMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1371,6 +1727,7 @@ export type CreatePatchMountainMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1417,6 +1774,7 @@ export type UpdatePatchMountainMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1463,6 +1821,7 @@ export type DeletePatchMountainMutation = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1578,6 +1937,294 @@ export type DeleteUserMountainMutation = {
   } | null,
 };
 
+export type CreateTrailMutationVariables = {
+  input: CreateTrailInput,
+  condition?: ModelTrailConditionInput | null,
+};
+
+export type CreateTrailMutation = {
+  createTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateTrailMutationVariables = {
+  input: UpdateTrailInput,
+  condition?: ModelTrailConditionInput | null,
+};
+
+export type UpdateTrailMutation = {
+  updateTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteTrailMutationVariables = {
+  input: DeleteTrailInput,
+  condition?: ModelTrailConditionInput | null,
+};
+
+export type DeleteTrailMutation = {
+  deleteTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreatePatchTrailMutationVariables = {
+  input: CreatePatchTrailInput,
+  condition?: ModelPatchTrailConditionInput | null,
+};
+
+export type CreatePatchTrailMutation = {
+  createPatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchTrailMutationVariables = {
+  input: UpdatePatchTrailInput,
+  condition?: ModelPatchTrailConditionInput | null,
+};
+
+export type UpdatePatchTrailMutation = {
+  updatePatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchTrailMutationVariables = {
+  input: DeletePatchTrailInput,
+  condition?: ModelPatchTrailConditionInput | null,
+};
+
+export type DeletePatchTrailMutation = {
+  deletePatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateUserTrailMutationVariables = {
+  input: CreateUserTrailInput,
+  condition?: ModelUserTrailConditionInput | null,
+};
+
+export type CreateUserTrailMutation = {
+  createUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateUserTrailMutationVariables = {
+  input: UpdateUserTrailInput,
+  condition?: ModelUserTrailConditionInput | null,
+};
+
+export type UpdateUserTrailMutation = {
+  updateUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteUserTrailMutationVariables = {
+  input: DeleteUserTrailInput,
+  condition?: ModelUserTrailConditionInput | null,
+};
+
+export type DeleteUserTrailMutation = {
+  deleteUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetPatchProgressSummaryQueryVariables = {
   patchId: string,
   userId: string,
@@ -1630,6 +2277,7 @@ export type GetPatchQuery = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -1637,6 +2285,10 @@ export type GetPatchQuery = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1666,6 +2318,7 @@ export type ListPatchesQuery = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1696,6 +2349,7 @@ export type GetUserPatchQuery = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1913,6 +2567,7 @@ export type GetPatchMountainQuery = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2165,6 +2820,294 @@ export type UserMountainsByMountainQuery = {
   } | null,
 };
 
+export type GetTrailQueryVariables = {
+  id: string,
+};
+
+export type GetTrailQuery = {
+  getTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListTrailsQueryVariables = {
+  filter?: ModelTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListTrailsQuery = {
+  listTrails?:  {
+    __typename: "ModelTrailConnection",
+    items:  Array< {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetPatchTrailQueryVariables = {
+  id: string,
+};
+
+export type GetPatchTrailQuery = {
+  getPatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListPatchTrailsQueryVariables = {
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchTrailsQuery = {
+  listPatchTrails?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      id: string,
+      patchPatchTrailsId?: string | null,
+      trailPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchTrailsByPatchQueryVariables = {
+  patchPatchTrailsId: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type PatchTrailsByPatchQuery = {
+  patchTrailsByPatch?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      id: string,
+      patchPatchTrailsId?: string | null,
+      trailPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchTrailsByTrailQueryVariables = {
+  trailPatchTrailsId: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type PatchTrailsByTrailQuery = {
+  patchTrailsByTrail?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      id: string,
+      patchPatchTrailsId?: string | null,
+      trailPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetUserTrailQueryVariables = {
+  userID: string,
+  trailID: string,
+};
+
+export type GetUserTrailQuery = {
+  getUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListUserTrailsQueryVariables = {
+  userID?: string | null,
+  trailID?: ModelIDKeyConditionInput | null,
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type ListUserTrailsQuery = {
+  listUserTrails?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      userID: string,
+      trailID: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByUserQueryVariables = {
+  userID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserTrailsByUserQuery = {
+  userTrailsByUser?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      userID: string,
+      trailID: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByUserByDateCompletedQueryVariables = {
+  userID: string,
+  dateCompleted?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserTrailsByUserByDateCompletedQuery = {
+  userTrailsByUserByDateCompleted?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      userID: string,
+      trailID: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByTrailQueryVariables = {
+  trailID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserTrailsByTrailQuery = {
+  userTrailsByTrail?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      userID: string,
+      trailID: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreatePatchSubscriptionVariables = {
   filter?: ModelSubscriptionPatchFilterInput | null,
 };
@@ -2183,6 +3126,7 @@ export type OnCreatePatchSubscription = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -2190,6 +3134,10 @@ export type OnCreatePatchSubscription = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -2215,6 +3163,7 @@ export type OnUpdatePatchSubscription = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -2222,6 +3171,10 @@ export type OnUpdatePatchSubscription = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -2247,6 +3200,7 @@ export type OnDeletePatchSubscription = {
     longitude?: number | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     completionRule?: string | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
@@ -2254,6 +3208,10 @@ export type OnDeletePatchSubscription = {
     } | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -2284,6 +3242,7 @@ export type OnCreateUserPatchSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2324,6 +3283,7 @@ export type OnUpdateUserPatchSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2364,6 +3324,7 @@ export type OnDeleteUserPatchSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2530,6 +3491,7 @@ export type OnCreatePatchMountainSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2575,6 +3537,7 @@ export type OnUpdatePatchMountainSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2620,6 +3583,7 @@ export type OnDeletePatchMountainSubscription = {
       longitude?: number | null,
       popularity?: number | null,
       hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
       completionRule?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -2732,5 +3696,287 @@ export type OnDeleteUserMountainSubscription = {
     createdAt: string,
     updatedAt: string,
     owner?: string | null,
+  } | null,
+};
+
+export type OnCreateTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnCreateTrailSubscription = {
+  onCreateTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnUpdateTrailSubscription = {
+  onUpdateTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnDeleteTrailSubscription = {
+  onDeleteTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreatePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnCreatePatchTrailSubscription = {
+  onCreatePatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnUpdatePatchTrailSubscription = {
+  onUpdatePatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnDeletePatchTrailSubscription = {
+  onDeletePatchTrail?:  {
+    __typename: "PatchTrail",
+    id: string,
+    patchPatchTrailsId?: string | null,
+    trailPatchTrailsId?: string | null,
+    patch:  {
+      __typename: "Patch",
+      id: string,
+      name: string,
+      description?: string | null,
+      howToGet?: string | null,
+      imageUrl?: string | null,
+      regions?: Array< string | null > | null,
+      difficulty?: Difficulty | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      popularity?: number | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      completionRule?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    },
+    trail:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    },
+    requiredMiles?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnCreateUserTrailSubscription = {
+  onCreateUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnUpdateUserTrailSubscription = {
+  onUpdateUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnDeleteUserTrailSubscription = {
+  onDeleteUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      id: string,
+      name: string,
+      description?: string | null,
+      lengthMiles: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
   } | null,
 };

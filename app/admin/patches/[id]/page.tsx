@@ -13,6 +13,7 @@ import { listPatchMountains } from '@/graphql/queries';
 import { createPatchMountain } from '@/graphql/mutations';
 import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import MountainSelector from '@/components/MountainSelector';
+import TrailSelector from '@/components/TrailSelector';
 
 const client = generateClient();
 
@@ -72,6 +73,7 @@ export default function AdminPatchDetailPage() {
       <Header />
       <h1 className="text-2xl font-bold mb-4">Patch Details for {patch.name}</h1>
       <MountainSelector patchId={id}/>
+      <TrailSelector patchId={patch.id} />
     </div>
 
   );
