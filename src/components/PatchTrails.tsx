@@ -5,14 +5,13 @@ import { generateClient } from 'aws-amplify/api';
 import type { GraphQLResult } from '@aws-amplify/api';
 
 import { listPatchTrailsWithTrail } from '@/graphql/custom-queries';
-import { getPatchProgressSummary, listUserTrails } from '@/graphql/queries'; // ensure listUserTrails exists from codegen
 import { createUserTrailMinimal, updateUserTrailMinimal } from '@/graphql/custom-mutations';
+import { listUserTrails } from '@/graphql/queries';
 
 import type {
   Trail,
   PatchTrail,
   ListPatchTrailsWithTrailQuery,
-  GetPatchProgressSummaryQuery,
   ListUserTrailsQuery,
   UserTrail,
 } from '@/API';
@@ -36,7 +35,15 @@ function Spinner({ label }: { label?: string }) {
   );
 }
 
-export default function PatchTrails({ patchId, userId }: { patchId: string; userId?: string }) {
+export default function PatchTrails({
+  patchId,
+  userId,
+  onProgressShouldRefresh,
+}: {
+  patchId: string;
+  userId?: string;
+  onProgressShouldRefresh?: () => void; // NEW: ask parent to refresh lambda progress
+}) {
   const [rows, setRows] = useState<ItemWithTrail[]>([]);
   const [loadingPatch, setLoadingPatch] = useState(true);
 
@@ -44,9 +51,6 @@ export default function PatchTrails({ patchId, userId }: { patchId: string; user
   const [loadingUser, setLoadingUser] = useState(!!userId);
 
   const [modalRow, setModalRow] = useState<ItemWithTrail | null>(null);
-
-  const [serverProgress, setServerProgress] = useState<{completed:number;denom:number;percent:number;note?:string|null}|null>(null);
-  const [loadingProgress, setLoadingProgress] = useState(!!userId);
 
   // fetch patch trails
   useEffect(() => {
@@ -103,26 +107,6 @@ export default function PatchTrails({ patchId, userId }: { patchId: string; user
       }
     })();
   }, [userId]);
-
-  // progress from lambda
-  useEffect(() => { refreshProgress(); }, [loadingPatch, loadingUser, patchId, userId]);
-  async function refreshProgress() {
-    if (!userId || loadingPatch || loadingUser) return;
-    setLoadingProgress(true);
-    try {
-      const r = (await client.graphql({
-        query: getPatchProgressSummary,
-        variables: { patchId, userId },
-        authMode: 'userPool',
-      })) as { data: GetPatchProgressSummaryQuery };
-      const p = r.data?.getPatchProgressSummary ?? null;
-      setServerProgress(p ? { completed: p.completed, denom: p.denom, percent: p.percent, note: p.note ?? undefined } : null);
-    } catch {
-      setServerProgress(null);
-    } finally {
-      setLoadingProgress(false);
-    }
-  }
 
   const [q, setQ] = useState('');
   const visible = useMemo(() => {
@@ -193,7 +177,7 @@ export default function PatchTrails({ patchId, userId }: { patchId: string; user
         setUserMap(map);
       } finally {
         setModalRow(null);
-        await refreshProgress();
+        onProgressShouldRefresh?.();
       }
     }
   }
@@ -205,23 +189,9 @@ export default function PatchTrails({ patchId, userId }: { patchId: string; user
       <h2 className="text-xl font-semibold mb-2">Trails in Patch</h2>
 
       <div className="flex items-center justify-between mb-1">
-        <p className="text-sm text-gray-600">
-          {loadingProgress ? (
-            <Spinner label="Computing progress…" />
-          ) : serverProgress ? (
-            <>
-              Complete: {serverProgress.percent}%{' '}
-              <span className="text-gray-400">({serverProgress.completed}/{serverProgress.denom})</span>
-              {serverProgress.note && <span className="ml-2 text-xs text-gray-500">— {serverProgress.note}</span>}
-            </>
-          ) : (
-            <>Complete: — <span className="text-gray-400">(—/—)</span></>
-          )}
-        </p>
-
+        {/* Parent shows overall progress; keep only the user syncing indicator */}
         {loadingUser && !loadingPatch && <Spinner label="Syncing your trail progress…" />}
       </div>
-
       <div className="flex gap-2 items-center mb-3">
         <input
           type="search"

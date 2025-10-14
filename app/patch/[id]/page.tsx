@@ -29,6 +29,8 @@ import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
 import PatchTrails from '@/components/PatchTrails';
+import ProgressSummary from '@/components/ProgressSummary';
+import { usePatchProgressSummary } from '@/hooks/usePatchProgressSummary';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -257,6 +259,10 @@ export default function PatchDetailPage() {
       setMessage('❌ Failed to mark patch as completed.');
     }
   };
+
+  const { progress, loading: loadingProgress, refresh: refreshProgress } =
+    usePatchProgressSummary(patch?.id ?? null, user?.userId ?? null);
+
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
     <>
@@ -341,14 +347,26 @@ export default function PatchDetailPage() {
             }}
           />
         </div>
+
+        {user && (
+          <div className="bg-white p-4 rounded shadow mt-6">
+            <ProgressSummary
+              loading={loadingProgress}
+              completed={progress?.completed ?? null}
+              denom={progress?.denom ?? null}
+              percent={progress?.percent ?? null}
+              note={progress?.note ?? null}
+            />
+          </div>
+        )}
         { patch.hasPeaks &&
         <div className="bg-white p-4 rounded shadow mt-6">
-          <PatchMountains patchId={patch.id} userId={user.userId} />
+          <PatchMountains patchId={patch.id} userId={user.userId} onProgressShouldRefresh={refreshProgress}/>
         </div>
         }
         {patch.hasTrails && (
         <div className="bg-white p-4 rounded shadow mt-6">
-          <PatchTrails patchId={patch.id} userId={user.userId} />
+          <PatchTrails patchId={patch.id} userId={user.userId} onProgressShouldRefresh={refreshProgress}/>
         </div>
         )}
         </>
