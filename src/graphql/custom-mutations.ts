@@ -21,3 +21,35 @@ export const createUserMountainMinimal = /* GraphQL */ `
   }
 `;
 
+export const createUserTrailMinimal = /* GraphQL */ `
+  mutation CreateUserTrailMinimal($input: CreateUserTrailInput!) {
+    createUserTrail(input: $input) {
+      userID
+      trailID
+      dateCompleted
+      milesRemaining
+      notes
+    }
+  }
+`;
+
+export const updateUserTrailMinimal = /* GraphQL */ `
+  mutation UpdateUserTrailMinimal($input: UpdateUserTrailInput!) {
+    updateUserTrail(input: $input) {
+      userID
+      trailID
+      dateCompleted
+      milesRemaining
+      notes
+    }
+  }
+`;
+
+export const deleteUserTrailMinimal = /* GraphQL */ `
+  mutation DeleteUserTrailMinimal($input: DeleteUserTrailInput!) {
+    deleteUserTrail(input: $input) {
+      userID
+      trailID
+    }
+  }
+`;

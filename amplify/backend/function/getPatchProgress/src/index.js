@@ -7,28 +7,18 @@ const { defaultProvider } = require('@aws-sdk/credential-provider-node');
 const { Seasons } = require('astronomy-engine');
 
 // Timezone for interpreting "local day" of a hike.
-// Override in Lambda env if needed (e.g., "America/New_York").
 const HIKES_TZ = process.env.HIKES_TZ || 'America/New_York';
 
-/** Parse the timezone offset (minutes) for a given UTC instant in a target tz. */
+/** ---- Timezone helpers & astronomical winter ---- */
 function getOffsetMinutesAt(utcMs, tz) {
-  // Ask Intl for the short offset, e.g. "-05:00" or "GMT-05:00"
-  const s = new Intl.DateTimeFormat('en-US', {
-    timeZone: tz,
-    timeZoneName: 'shortOffset',
-  }).format(new Date(utcMs));
-  // Extract something like -05:00 / +09 / GMT+01:00
+  const s = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' })
+    .format(new Date(utcMs));
   const m = s.match(/([+-]\d{2})(?::?(\d{2}))?/);
   if (!m) return 0;
   const hh = parseInt(m[1], 10);
   const mm = m[2] ? parseInt(m[2], 10) : 0;
   return hh * 60 + Math.sign(hh) * mm;
 }
-
-/**
- * Convert a *local* wall time in tz to the corresponding UTC instant.
- * Two-iteration fixed-point handles DST transitions near the boundary.
- */
 function localToUtcInstant(y, m /*0..11*/, d, hh = 0, mm = 0, tz = HIKES_TZ) {
   let guess = Date.UTC(y, m, d, hh, mm);
   for (let i = 0; i < 2; i++) {
@@ -37,103 +27,55 @@ function localToUtcInstant(y, m /*0..11*/, d, hh = 0, mm = 0, tz = HIKES_TZ) {
   }
   return new Date(guess);
 }
-
-/** Get local Y/M/D numbers for a given instant in a tz. */
 function getLocalYmdAt(dateLike, tz = HIKES_TZ) {
   const d = typeof dateLike === 'string' || typeof dateLike === 'number' ? new Date(dateLike) : dateLike;
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: tz,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(d);
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' })
+    .formatToParts(d);
   const obj = Object.fromEntries(parts.map(p => [p.type, p.value]));
   return { y: parseInt(obj.year, 10), m: parseInt(obj.month, 10) - 1, d: parseInt(obj.day, 10) };
 }
-
-/** UTC start/end bounds for the *local* calendar day that contains dateLike in tz. */
 function localDayBoundsToUtc(dateLike, tz = HIKES_TZ) {
   const { y, m, d } = getLocalYmdAt(dateLike, tz);
   const startUtc = localToUtcInstant(y, m, d, 0, 0, tz);
-  // Use 23:59:59.999 as end-of-day; conversion remains safe across DST shifts.
   const endUtc = localToUtcInstant(y, m, d, 23, 59, tz);
   endUtc.setSeconds(59, 999);
   return { startUtc, endUtc };
 }
-
-/** Astronomical winter (Northern Hemisphere): Dec solstice → Mar equinox. */
 function isAstronomicalWinterLocalDay(dateLike, tz = HIKES_TZ) {
   const { y, m } = getLocalYmdAt(dateLike, tz);
-  // Seasons() returns UTC instants for solstices/equinoxes in a given year.
   const seasonsPrev = Seasons(y - 1);
   const seasonsY    = Seasons(y);
   const seasonsNext = Seasons(y + 1);
-
-  // There are two relevant winter intervals that could touch a given local day:
-  // A) Dec solstice of (y-1) → Mar equinox of (y)
-  // B) Dec solstice of (y)   → Mar equinox of (y+1)  (relevant for dates in Dec)
   const winterA = { start: seasonsPrev.dec_solstice.date, end: seasonsY.mar_equinox.date };
   const winterB = { start: seasonsY.dec_solstice.date,   end: seasonsNext.mar_equinox.date };
-
   const { startUtc: dayStart, endUtc: dayEnd } = localDayBoundsToUtc(dateLike, tz);
-
   const overlaps = (a1, a2, b1, b2) => a1 < b2 && b1 <= a2;
-
-  // Quick branch: months Jan/Feb => interval A is sufficient; Dec => interval B; Mar can straddle => check both.
-  if (m === 0 || m === 1) {
-    return overlaps(dayStart, dayEnd, winterA.start, winterA.end);
-  } else if (m === 11) {
-    return overlaps(dayStart, dayEnd, winterB.start, winterB.end);
-  }
-
-  // Shoulder days around March equinox still checked safely here.
+  if (m === 0 || m === 1) return overlaps(dayStart, dayEnd, winterA.start, winterA.end);
+  if (m === 11)           return overlaps(dayStart, dayEnd, winterB.start, winterB.end);
   return overlaps(dayStart, dayEnd, winterA.start, winterA.end) ||
          overlaps(dayStart, dayEnd, winterB.start, winterB.end);
 }
 
-function getLocalMonthAt(dateLike, tz) {
-  const d = typeof dateLike === 'string' ? new Date(dateLike) : dateLike;
-  // month comes back as 1..12; convert to 0..11
-  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, month: 'numeric' })
-    .formatToParts(d);
-  const m = Number(parts.find(p => p.type === 'month').value);
-  return m - 1;
-}
-
-// Meteorological winter: Dec/Jan/Feb in the given timezone
-function isWinterLocal(dateLike, tz = HIKES_TZ) {
-  const m = getLocalMonthAt(dateLike, tz);
-  return m === 11 || m === 0 || m === 1; // Dec, Jan, Feb
-}
-
-// If you later want astronomical precision (solstice->equinox), replace isWinterLocal()
-// with a function that checks the local day overlap vs UTC solstice/equinox moments.
-
+/** ---- AppSync helpers ---- */
 function findEnvKey(suffix) {
   const hit = Object.entries(process.env).find(([k]) => k.endsWith(suffix));
   return hit?.[1];
 }
-
 function getAppSyncEndpoint() {
-  // e.g. API_<APINAME>_GRAPHQLAPIENDPOINTOUTPUT
   const url = findEnvKey('GRAPHQLAPIENDPOINTOUTPUT');
-  if (!url) {
-    throw new Error('AppSync endpoint env var not found (…GRAPHQLAPIENDPOINTOUTPUT).');
-  }
+  if (!url) throw new Error('AppSync endpoint env var not found (…GRAPHQLAPIENDPOINTOUTPUT).');
   return url;
 }
-
 function getAppSyncApiKey() {
-  // e.g. API_<APINAME>_GRAPHQLAPIKEYOUTPUT (only present if API key auth enabled)
   return findEnvKey('GRAPHQLAPIKEYOUTPUT') || null;
 }
 
+// --- GraphQL operations (added trails) ---
 const GQL_getPatch = `
   query GetPatch($id: ID!) {
     getPatch(id: $id) { id completionRule }
   }
 `;
-
 const GQL_patchMountainsByPatch = `
   query PatchMountainsByPatch($patchId: ID!, $limit: Int, $nextToken: String) {
     patchMountainsByPatch(patchPatchMountainsId: $patchId, limit: $limit, nextToken: $nextToken) {
@@ -142,7 +84,14 @@ const GQL_patchMountainsByPatch = `
     }
   }
 `;
-
+const GQL_patchTrailsByPatch = `
+  query PatchTrailsByPatch($patchId: ID!, $limit: Int, $nextToken: String) {
+    patchTrailsByPatch(patchPatchTrailsId: $patchId, limit: $limit, nextToken: $nextToken) {
+      items { id trailPatchTrailsId requiredMiles }
+      nextToken
+    }
+  }
+`;
 const GQL_userMountainsByUser = `
   query UserMountainsByUser($userID: ID!, $limit: Int, $nextToken: String) {
     userMountainsByUser(userID: $userID, limit: $limit, nextToken: $nextToken) {
@@ -151,28 +100,29 @@ const GQL_userMountainsByUser = `
     }
   }
 `;
+const GQL_userTrailsByUser = `
+  query UserTrailsByUser($userID: ID!, $limit: Int, $nextToken: String) {
+    userTrailsByUser(userID: $userID, limit: $limit, nextToken: $nextToken) {
+      items { userID trailID dateCompleted milesRemaining }
+      nextToken
+    }
+  }
+`;
 
-// forceIAM=true => always sign with SigV4
 async function graphQL(query, variables, { forceIAM = false } = {}) {
   const endpoint = getAppSyncEndpoint();
   const url = new URL(endpoint);
   const region = process.env.AWS_REGION || process.env.REGION || 'us-east-1';
   const body = JSON.stringify({ query, variables });
 
-  // --- API KEY PATH (simple)
   const apiKey = getAppSyncApiKey();
   if (apiKey && !forceIAM) {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-api-key': apiKey },
-      body
-    });
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': apiKey }, body });
     const json = await res.json();
     if (!res.ok || json.errors) throw new Error(`AppSync(APIKEY) error: ${JSON.stringify(json.errors || json)}`);
     return json.data;
   }
 
-  // --- IAM PATH (use https to preserve signed headers)
   const request = new HttpRequest({
     protocol: 'https:',
     hostname: url.hostname,
@@ -181,33 +131,18 @@ async function graphQL(query, variables, { forceIAM = false } = {}) {
     headers: { host: url.hostname, 'content-type': 'application/json' },
     body
   });
-
-  const signer = new SignatureV4({
-    credentials: defaultProvider(),
-    service: 'appsync',
-    region,
-    sha256: Sha256
-  });
-
+  const signer = new SignatureV4({ credentials: defaultProvider(), service: 'appsync', region, sha256: Sha256 });
   const signed = await signer.sign(request);
 
   const resBody = await new Promise((resolve, reject) => {
     const req = https.request(
-      {
-        hostname: url.hostname,
-        method: 'POST',
-        path: request.path,
-        headers: signed.headers // includes Authorization, X-Amz-Date, X-Amz-Security-Token, host
-      },
+      { hostname: url.hostname, method: 'POST', path: request.path, headers: signed.headers },
       (res) => {
         let data = '';
         res.on('data', (c) => (data += c));
         res.on('end', () => {
-          if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-            resolve(data);
-          } else {
-            reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-          }
+          if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) resolve(data);
+          else reject(new Error(`HTTP ${res.statusCode}: ${data}`));
         });
       }
     );
@@ -221,16 +156,14 @@ async function graphQL(query, variables, { forceIAM = false } = {}) {
   return json.data;
 }
 
+/** ---- Rule parsing ---- */
 function normalizeRule(raw) {
   if (!raw) return { type: 'default', winterOnly: false };
   let obj = raw;
-  if (typeof raw === 'string') {
-    try { obj = JSON.parse(raw); } catch { return { type: 'default', winterOnly: false }; }
-  }
+  if (typeof raw === 'string') { try { obj = JSON.parse(raw); } catch { return { type: 'default', winterOnly: false }; } }
   if (!obj || typeof obj !== 'object') return { type: 'default', winterOnly: false };
 
   const base = { type: 'default', winterOnly: !!obj.winterOnly };
-
   if (obj.type === 'excludeDelisted') return { ...base, type: 'excludeDelisted' };
   if (obj.type === 'anyN') {
     const n = Number(obj.n);
@@ -239,17 +172,77 @@ function normalizeRule(raw) {
   return base;
 }
 
+/** ---- Fetchers (now include trails) ---- */
+async function fetchPatch(patchId) {
+  const data = await graphQL(GQL_getPatch, { id: patchId });
+  return data.getPatch ?? {};
+}
+async function fetchAllPatchMountains(patchId) {
+  const out = [];
+  let nextToken = null;
+  do {
+    const data = await graphQL(GQL_patchMountainsByPatch, { patchId, limit: 200, nextToken });
+    const conn = data.patchMountainsByPatch;
+    if (conn?.items?.length) out.push(...conn.items);
+    nextToken = conn?.nextToken ?? null;
+  } while (nextToken);
+  return out;
+}
+async function fetchAllPatchTrails(patchId) {
+  const out = [];
+  let nextToken = null;
+  do {
+    const data = await graphQL(GQL_patchTrailsByPatch, { patchId, limit: 200, nextToken });
+    const conn = data.patchTrailsByPatch;
+    if (conn?.items?.length) out.push(...conn.items);
+    nextToken = conn?.nextToken ?? null;
+  } while (nextToken);
+  return out;
+}
+async function fetchAllUserMountains(userId) {
+  const out = [];
+  let nextToken = null;
+  do {
+    const data = await graphQL(GQL_userMountainsByUser, { userID: userId, limit: 200, nextToken }, { forceIAM: true });
+    const conn = data.userMountainsByUser;
+    if (conn?.items?.length) out.push(...conn.items);
+    nextToken = conn?.nextToken ?? null;
+  } while (nextToken);
+  return out;
+}
+async function fetchAllUserTrails(userId) {
+  const out = [];
+  let nextToken = null;
+  do {
+    const data = await graphQL(GQL_userTrailsByUser, { userID: userId, limit: 200, nextToken }, { forceIAM: true });
+    const conn = data.userTrailsByUser;
+    if (conn?.items?.length) out.push(...conn.items);
+    nextToken = conn?.nextToken ?? null;
+  } while (nextToken);
+  return out;
+}
 
-function computePercent(rule, rows, countsFn) {
-  const items = rows.filter(r => r.mountainPatchMountainsId);
+/** ---- Security ---- */
+function ensureCallerIsUserOrAdmin(event, userId) {
+  const sub = event.identity?.sub || event.identity?.username;
+  const groups = event.identity?.groups || [];
+  const isAdmin = groups.includes('Admin');
+  if (!isAdmin && sub !== userId && event.identity?.username !== userId) {
+    throw new Error("Not authorized to access another user's progress.");
+  }
+}
 
-  const completedAll = items.reduce(
-    (acc, r) => acc + (r.mountainPatchMountainsId && countsFn(r.mountainPatchMountainsId, r) ? 1 : 0),
-    0
-  );
+/** ---- Combined compute across mountains + trails ---- */
+function computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEligibleMountain }) {
+  // items = array of { kind: 'm'|'t', id, delisted? }
+  const completedAll = items.reduce((acc, it) => {
+    if (it.kind === 'm') return acc + (isMountainDone(it.id) ? 1 : 0);
+    return acc + (isTrailDone(it.id, it) ? 1 : 0);
+  }, 0);
 
   if (rule.type === 'excludeDelisted') {
-    const eligible = items.filter(r => !r.delisted);
+    // Eligible = non-delisted mountains + all trails
+    const eligible = items.filter(it => it.kind === 't' || isEligibleMountain(it));
     const denom = eligible.length || 1;
     const percent = Math.round((completedAll / denom) * 100);
     return { completed: completedAll, denom, percent, note: 'Delisted excluded from denominator' };
@@ -266,54 +259,19 @@ function computePercent(rule, rows, countsFn) {
   return { completed: completedAll, denom, percent, note: undefined };
 }
 
-async function fetchPatch(patchId) {
-  const data = await graphQL(GQL_getPatch, { id: patchId });
-  return data.getPatch ?? {};
-}
-
-async function fetchAllPatchMountains(patchId) {
-  const out = [];
-  let nextToken = null;
-  do {
-    const data = await graphQL(GQL_patchMountainsByPatch, { patchId, limit: 200, nextToken });
-    const conn = data.patchMountainsByPatch;
-    if (conn?.items?.length) out.push(...conn.items);
-    nextToken = conn?.nextToken ?? null;
-  } while (nextToken);
-  return out;
-}
-
-async function fetchAllUserMountains(userId) {
-  const out = [];
-  let nextToken = null;
-  do {
-    const data = await graphQL(GQL_userMountainsByUser, { userID: userId, limit: 200, nextToken }, {forceIAM: true});
-    const conn = data.userMountainsByUser;
-    if (conn?.items?.length) out.push(...conn.items);
-    nextToken = conn?.nextToken ?? null;
-  } while (nextToken);
-  return out;
-}
-
-function ensureCallerIsUserOrAdmin(event, userId) {
-  const sub = event.identity?.sub || event.identity?.username;
-  const groups = event.identity?.groups || [];
-  const isAdmin = groups.includes('Admin');
-  if (!isAdmin && sub !== userId && event.identity?.username !== userId) {
-    throw new Error("Not authorized to access another user's progress.");
-  }
-}
-
+/** ---- Per-patch progress ---- */
 async function progressForPatch(patchId, userId) {
-  const [patch, patchMountains, userMountains] = await Promise.all([
+  const [patch, patchMountains, patchTrails, userMountains, userTrails] = await Promise.all([
     fetchPatch(patchId),
     fetchAllPatchMountains(patchId),
+    fetchAllPatchTrails(patchId),
     fetchAllUserMountains(userId),
+    fetchAllUserTrails(userId),
   ]);
 
   const rule = normalizeRule(patch?.completionRule);
 
-  // mountainID -> array of dateClimbed (ISO string or epoch ms)
+  // Mountains: map mountainID -> [dates...]
   const ascentsByMountain = new Map();
   for (const u of userMountains) {
     const mid = u.mountainID;
@@ -321,33 +279,58 @@ async function progressForPatch(patchId, userId) {
     if (!ascentsByMountain.has(mid)) ascentsByMountain.set(mid, []);
     ascentsByMountain.get(mid).push(u.dateClimbed || null);
   }
+  // Trails: map trailID -> single record { dateCompleted, milesRemaining }
+  const trailById = new Map();
+  for (const ut of userTrails) {
+    const tid = ut.trailID;
+    if (!tid) continue;
+    // one-to-one; last write wins (or first, doesn’t matter much here)
+    trailById.set(tid, { dateCompleted: ut.dateCompleted || null, milesRemaining: ut.milesRemaining });
+  }
 
-  // Counts any ascent:
-  const hasAscent = (mid, ascentsByMountain) => ascentsByMountain.has(mid);
-
-  // Counts only ascents whose *local hiking day* overlaps astronomical winter:
-  const hasAstronomicalWinterAscent = (mid, ascentsByMountain) => {
+  const hasAnyAscent = (mid) => ascentsByMountain.has(mid);
+  const hasAstronomicalWinterAscent = (mid) => {
     const arr = ascentsByMountain.get(mid);
     if (!arr || arr.length === 0) return false;
     return arr.some(d => d && isAstronomicalWinterLocalDay(d, HIKES_TZ));
   };
+  const isMountainDone = (mid) => (rule.winterOnly ? hasAstronomicalWinterAscent(mid) : hasAnyAscent(mid));
 
-  const countsFn = rule.winterOnly
-    ? (mid) => hasAstronomicalWinterAscent(mid, ascentsByMountain)
-    : (mid) => hasAscent(mid, ascentsByMountain);
+  const isTrailDone = (trailId /* string */, ptRow /* has requiredMiles */) => {
+    const ut = trailById.get(trailId);
+    if (!ut) return false;
+    if (ut.dateCompleted) return true;
+    if (ut.milesRemaining == null) return false;
+    const rem = Number(ut.milesRemaining);
+    return Number.isFinite(rem) && rem <= 0; // completed if 0 or negative
+  };
+
+  const isEligibleMountain = (it) => it.kind === 'm' && !it.delisted;
+
+  // Combine items: mountains + trails
+  const items = [
+    ...patchMountains.map(r => ({ kind: 'm', id: r.mountainPatchMountainsId, delisted: !!r.delisted })),
+    ...patchTrails.map(r => ({ kind: 't', id: r.trailPatchTrailsId, requiredMiles: r.requiredMiles ?? null })),
+  ].filter(x => !!x.id);
 
   const { completed, denom, percent, note } =
-    computePercent(rule, patchMountains, countsFn);
+    computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEligibleMountain });
 
-  const winterNote = rule.winterOnly ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)') : note;
+  const winterNote = rule.winterOnly
+    ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)')
+    : note;
 
   return { patchId, userId, completed, denom, percent, note: winterNote };
 }
 
-
+/** ---- Batch progress ---- */
 async function batchProgress(patchIds, userId) {
-  const userMountains = await fetchAllUserMountains(userId);
+  const [userMountains, userTrails] = await Promise.all([
+    fetchAllUserMountains(userId),
+    fetchAllUserTrails(userId),
+  ]);
 
+  // Prepare user maps once
   const ascentsByMountain = new Map();
   for (const u of userMountains) {
     const mid = u.mountainID;
@@ -355,6 +338,19 @@ async function batchProgress(patchIds, userId) {
     if (!ascentsByMountain.has(mid)) ascentsByMountain.set(mid, []);
     ascentsByMountain.get(mid).push(u.dateClimbed || null);
   }
+  const trailById = new Map();
+  for (const ut of userTrails) {
+    const tid = ut.trailID;
+    if (!tid) continue;
+    trailById.set(tid, { dateCompleted: ut.dateCompleted || null, milesRemaining: ut.milesRemaining });
+  }
+
+  const hasAnyAscent = (mid) => ascentsByMountain.has(mid);
+  const hasAstronomicalWinterAscent = (mid) => {
+    const arr = ascentsByMountain.get(mid);
+    if (!arr || arr.length === 0) return false;
+    return arr.some(d => d && isAstronomicalWinterLocalDay(d, HIKES_TZ));
+  };
 
   const pool = 5;
   const chunks = [];
@@ -364,18 +360,35 @@ async function batchProgress(patchIds, userId) {
   for (const group of chunks) {
     const part = await Promise.all(
       group.map(async (patchId) => {
-        const [patch, patchMountains] = await Promise.all([
+        const [patch, patchMountains, patchTrails] = await Promise.all([
           fetchPatch(patchId),
           fetchAllPatchMountains(patchId),
+          fetchAllPatchTrails(patchId),
         ]);
         const rule = normalizeRule(patch?.completionRule);
 
-        const countsFn = rule.winterOnly
-          ? (mid) => hasAstronomicalWinterAscent(mid, ascentsByMountain)
-          : (mid) => hasAscent(mid, ascentsByMountain);
+        const isMountainDone = (mid) => (rule.winterOnly ? hasAstronomicalWinterAscent(mid) : hasAnyAscent(mid));
+        const isTrailDone = (trailId) => {
+          const ut = trailById.get(trailId);
+          if (!ut) return false;
+          if (ut.dateCompleted) return true;
+          if (ut.milesRemaining == null) return false;
+          const rem = Number(ut.milesRemaining);
+          return Number.isFinite(rem) && rem <= 0;
+        };
+        const isEligibleMountain = (it) => it.kind === 'm' && !it.delisted;
 
-        const { completed, denom, percent, note } = computePercent(rule, patchMountains, countsFn);
-        const winterNote = rule.winterOnly ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)') : note;
+        const items = [
+          ...patchMountains.map(r => ({ kind: 'm', id: r.mountainPatchMountainsId, delisted: !!r.delisted })),
+          ...patchTrails.map(r => ({ kind: 't', id: r.trailPatchTrailsId, requiredMiles: r.requiredMiles ?? null })),
+        ].filter(x => !!x.id);
+
+        const { completed, denom, percent, note } =
+          computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEligibleMountain });
+        const winterNote = rule.winterOnly
+          ? (note ? `${note}; Winter-only (astronomical)` : 'Winter-only (astronomical)')
+          : note;
+
         return { patchId, userId, completed, denom, percent, note: winterNote };
       })
     );
@@ -384,6 +397,7 @@ async function batchProgress(patchIds, userId) {
   return results;
 }
 
+/** ---- Handler ---- */
 exports.handler = async (event) => {
   const args = event.arguments || {};
   if (!args.userId) throw new Error('userId is required.');

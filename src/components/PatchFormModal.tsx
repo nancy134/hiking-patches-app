@@ -37,6 +37,7 @@ export default function PatchFormModal({
   const [longitude, setLongitude] = useState<number | null>(null);
   const [popularity, setPopularity] = useState<number | null>(null);
   const [hasPeaks, setHasPeaks] = useState<boolean>(false);
+  const [hasTrails, setHasTrails] = useState<boolean>(false);
 
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
@@ -55,6 +56,7 @@ export default function PatchFormModal({
       setLongitude(isNaN(Number(patch.longitude)) ? null : patch.longitude ?? null);
       setPopularity(isNaN(Number(patch.popularity)) ? null : Number(patch.popularity));
       setHasPeaks(patch.hasPeaks ?? false);
+      setHasTrails((patch as any).hasTrails ?? false);
 
       // Parse completionRule (can be object or JSON string from AppSync)
       const raw = (patch as any)?.completionRule as unknown;
@@ -132,6 +134,7 @@ const completionRuleToSend =
         longitude,
         popularity,
         hasPeaks,
+        hasTrails,
         completionRule: completionRuleToSend, // <-- NEW
       };
 
@@ -279,6 +282,16 @@ const completionRuleToSend =
                 className="accent-blue-600"
               />
               This patch includes specific peaks
+            </label>
+
+            <label className="flex items-center gap-2"> {/* NEW: hasTrails */}
+              <input
+                type="checkbox"
+                checked={hasTrails}
+                onChange={(e) => setHasTrails(e.target.checked)}
+                className="accent-blue-600"
+              />
+              This patch includes specific trails
             </label>
 
             {/* Completion Rule Editor */}
