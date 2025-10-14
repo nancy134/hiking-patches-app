@@ -5,7 +5,7 @@ import { generateClient } from 'aws-amplify/api';
 import type { GraphQLResult } from '@aws-amplify/api';
 
 import { listPatchTrailsWithTrail } from '@/graphql/custom-queries';
-import { createUserTrailMinimal, updateUserTrailMinimal } from '@/graphql/custom-mutations';
+import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal } from '@/graphql/custom-mutations';
 import { listUserTrails } from '@/graphql/queries';
 
 import type {
