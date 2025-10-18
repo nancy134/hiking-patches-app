@@ -9,7 +9,7 @@ import { useAuth } from '@/context/auth-context';
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
-  const { user, isAdmin, setUser, logout } = useAuth();
+  const { user, isAdmin, setUser, logout, authReady } = useAuth();
   const [authTab, setAuthTab] = useState<'signIn' | 'signUp'>('signIn');
 
   useEffect(() => {
@@ -33,19 +33,20 @@ export default function Header() {
       <div className="space-x-4">
         <Link href="/" className="text-blue-600 hover:underline">Home</Link>
         <Link href="/about" className="text-blue-600 hover:underline">About</Link>
-        <Link href="/safety" className="text-blue-600 hover:underlin">Safety</Link>
+        <Link href="/safety" className="text-blue-600 hover:underline">Safety</Link>
 
-        {user ? (
+        {!authReady ? (
+          // You can swap this for a subtle skeleton or nothing at all
+          <span className="inline-block h-4 w-20 rounded bg-gray-200 align-middle" aria-hidden="true" />
+
+        ) : user ? (
           <>
             <Link href="/my-patches" className="text-blue-600 hover:underline">My Patches</Link>
             {isAdmin && (
               <Link href="/admin" className="text-blue-600 hover:underline">Admin</Link>
             )}
             <button
-              onClick={async () => {
-                await logout();
-                setUser(null);
-              }}
+              onClick={logout}
               className="text-blue-600 hover:underline hover:text-blue-800"
             >
               Log out
