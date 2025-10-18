@@ -10,8 +10,6 @@ import { deleteUserMountainMinimal, createUserMountainMinimal } from '@/graphql/
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
-import { getPatchProgressSummary } from '@/graphql/queries';
-import type { GetPatchProgressSummaryQuery } from '@/API';
 
 const client = generateClient();
 
@@ -20,6 +18,7 @@ type UserMountainMap = Record<string, UserMountain[] | undefined>;
 interface PatchMountainProps {
   patchId: string;
   userId?: string;
+  onProgressShouldRefresh?: () => void;
 }
 
 function Spinner({
@@ -97,13 +96,6 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
   // Optional (but nice): error state (shown inline if it happens)
   const [error, setError] = useState<string | null>(null);
-
-  const [serverProgress, setServerProgress] = useState<{completed:number;denom:number;percent:number;note?:string|null}|null>(null);
-  const [loadingProgress, setLoadingProgress] = useState<boolean>(!!userId);
-
-  useEffect(() => {
-    if (!loadingPatch && !loadingUser) { refreshProgress(); }
-  }, [loadingPatch, loadingUser, patchId, userId]);
 
   useEffect(() => {
     const fetchData = async (pageSize = 100) => {
@@ -194,29 +186,6 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
     fetchUserMountains();
   }, [userId]);
-
-async function refreshProgress() {
-  if (!userId) { setServerProgress(null); setLoadingProgress(false); return; }
-  setLoadingProgress(true);
-  try {
-    const r = await client.graphql({
-      query: getPatchProgressSummary,
-      variables: { patchId, userId },
-      authMode: 'userPool',
-    }) as { data: GetPatchProgressSummaryQuery };
-
-    const p = r.data?.getPatchProgressSummary ?? null;
-    setServerProgress(
-      p ? { completed: p.completed, denom: p.denom, percent: p.percent, note: p.note ?? undefined } : null
-    );
-  } catch (e) {
-    console.error('Failed to load server progress:', e);
-    setServerProgress(null);
-  } finally {
-    setLoadingProgress(false);
-  }
-}
-
 
   // helper: completion for a mountain
   const isCompleted = (pm: ItemWithMountain) => (userMountainMap[pm.mountain.id] ?? []).length > 0;
@@ -321,7 +290,6 @@ async function refreshProgress() {
       setUserMountainMap(map);
     } finally {
       setLoadingUser(false);
-      await refreshProgress();
     }
   };
 
@@ -333,28 +301,6 @@ async function refreshProgress() {
       {loadingPatch && <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent animate-[pulse_1.2s_ease-in-out_infinite]" />}
 
       <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
-
-      <div className="flex items-center justify-between mb-1">
-
-      <p className="text-sm text-gray-600">
-        {loadingProgress ? (
-          <span className="inline-flex items-center gap-2">
-            <Spinner label="Computing progress…" />
-          </span>
-        ) : serverProgress ? (
-          <>
-            Complete: {serverProgress.percent}%{' '}
-            <span className="text-gray-400">({serverProgress.completed}/{serverProgress.denom})</span>
-            {serverProgress.note && <span className="ml-2 text-xs text-gray-500">— {serverProgress.note}</span>}
-          </>
-        ) : (
-          <>Complete: — <span className="text-gray-400">(—/—)</span></>
-        )}
-      </p>
-
-        {/* show secondary spinner while user ascents load/refresh */}
-        {loadingUser && !loadingPatch && <Spinner label="Updating ascents…" />}
-      </div>
 
       {error && (
         <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">

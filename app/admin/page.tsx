@@ -5,12 +5,12 @@ export default function AdminDashboard() {
   const sections = [
     {
       title: 'Manage Patches',
-      description: 'View and update existing hiking patches.',
+      description: 'Create, edit, update and delete patches.',
       href: '/admin/patches',
     },
     {
       title: 'Review Requests',
-      description: 'Review new patch submissions.',
+      description: 'Review user requests for new patches.',
       href: '/admin/requests',
     },
     {
@@ -20,9 +20,14 @@ export default function AdminDashboard() {
     },
     {
       title: "Mountains",
-      description: "Management mountains",
+      description: "Create, edit, update and delete mountains",
       href: "/admin/mountains"
-    }
+    },
+    {
+      title: "Trails",
+      description: "Create, edit, update and delete trails",
+      href: "/admin/trails"
+    },
   ];
 
   return (

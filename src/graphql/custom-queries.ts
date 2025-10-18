@@ -43,6 +43,7 @@ export const getPatchWithMountainsPaged = /* GraphQL */ `
       difficulty
       popularity
       hasPeaks
+      hasTrails
       patchMountains(limit: $limit, nextToken: $nextToken) {
         items {
           id
@@ -186,3 +187,58 @@ export const userPatchesByUserByPatchLite = /* GraphQL */ `
   }
 `;
 
+export const listPatchTrailsWithPatch = /* GraphQL */ `
+  query ListPatchTrailsWithPatch($limit: Int, $nextToken: String, $filter: ModelPatchTrailFilterInput) {
+    listPatchTrails(limit: $limit, nextToken: $nextToken, filter: $filter) {
+      items {
+        id
+        patchPatchTrailsId
+        trailPatchTrailsId
+        requiredMiles
+        patch { id name description createdAt }
+      }
+      nextToken
+    }
+  }
+`;
+
+export const getPatchWithTrailsPaged = /* GraphQL */ `
+  query GetPatchWithTrails($id: ID!, $limit: Int, $nextToken: String) {
+    getPatch(id: $id) {
+      id
+      name
+      patchTrails(limit: $limit, nextToken: $nextToken) {
+        items {
+          id
+          requiredMiles
+          trailPatchTrailsId
+          trail {
+            id
+            name
+            lengthMiles
+          }
+        }
+        nextToken
+      }
+    }
+  }
+`;
+
+export const listPatchTrailsWithTrail = /* GraphQL */ `
+  query ListPatchTrailsWithTrail($filter: ModelPatchTrailFilterInput, $limit: Int, $nextToken: String) {
+    listPatchTrails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        requiredMiles
+        patchPatchTrailsId
+        trailPatchTrailsId
+        trail {
+          id
+          name
+          lengthMiles
+        }
+      }
+      nextToken
+    }
+  }
+`;
