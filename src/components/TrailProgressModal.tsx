@@ -1,3 +1,4 @@
+// components/TrailProgressModal.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ export default function TrailProgressModal({
   existing,
   trailName,
   requiredMiles,
+  trailLengthMiles, // ⬅️ NEW
 }: {
   open: boolean;
   onClose: () => void;
@@ -17,6 +19,7 @@ export default function TrailProgressModal({
   existing?: Partial<UserTrail> | null;
   trailName: string;
   requiredMiles?: number | null; // from PatchTrail, optional
+  trailLengthMiles?: number | null; // ⬅️ NEW: always show the trail length if we have it
 }) {
   const [mode, setMode] = useState<'complete' | 'partial'>('partial');
   const [dateCompleted, setDateCompleted] = useState<string>('');
@@ -51,8 +54,16 @@ export default function TrailProgressModal({
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-md">
-        <h3 className="text-lg font-semibold mb-3">Update Trail Progress</h3>
-        <p className="text-sm text-gray-600 mb-3">{trailName}</p>
+        <h3 className="text-lg font-semibold mb-1">Update Trail Progress</h3>
+        <p className="text-sm text-gray-700">{trailName}</p>
+
+        {/* Always show trail length, regardless of required miles */}
+        <p className="text-xs text-gray-500 mb-3">
+          Trail length: {trailLengthMiles != null ? `${trailLengthMiles} mi` : '—'}
+          {requiredMiles != null && (
+            <> · Required for this patch: {requiredMiles} mi</>
+          )}
+        </p>
 
         <form onSubmit={submit} className="space-y-4">
           <fieldset className="space-y-2">
@@ -87,9 +98,6 @@ export default function TrailProgressModal({
                 className="mt-1 w-full border rounded px-3 py-2"
                 placeholder={requiredMiles != null ? `e.g. ${requiredMiles}` : 'e.g. 5'}
               />
-              {requiredMiles != null && (
-                <p className="text-xs text-gray-500 mt-1">Required for this patch: {requiredMiles} mi</p>
-              )}
             </div>
           ) : (
             <div>

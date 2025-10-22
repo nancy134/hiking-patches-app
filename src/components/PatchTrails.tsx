@@ -7,7 +7,7 @@ import type { GraphQLResult } from '@aws-amplify/api';
 import { listPatchTrailsWithTrail } from '@/graphql/custom-queries';
 import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal } from '@/graphql/custom-mutations';
 import { listUserTrails } from '@/graphql/queries';
-
+import Link from 'next/link';
 import type {
   Trail,
   PatchTrail,
@@ -236,7 +236,14 @@ export default function PatchTrails({
             return (
               <tr key={t.id} className="border-t">
                 <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
-                <td className="p-2">{t.name}</td>
+                <td className="p-2">
+                  <Link
+                    href={`/trail/${t.id}?patchId=${patchId}`}
+                    className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm"
+                  >
+                    {t.name}
+                </Link>
+                </td>
                 <td className="p-2">{t.lengthMiles ?? '—'}</td>
                 <td className="p-2">{status}</td>
                 {userId && (
@@ -260,6 +267,7 @@ export default function PatchTrails({
         open={!!modalRow}
         trailName={modalRow?.trail?.name ?? ''}
         requiredMiles={modalRow?.requiredMiles ?? null}
+        trailLengthMiles={modalRow?.trail?.lengthMiles ?? null}
         existing={modalRow ? userMap[modalRow.trail.id] : null}
         onClose={() => setModalRow(null)}
         onSave={(data) => {
