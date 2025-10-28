@@ -184,6 +184,11 @@ export type UpdateUserTrailInput = {
   notes?: string | null,
 };
 
+export type DeleteUserTrailInput = {
+  userID: string,
+  trailID: string,
+};
+
 export type ModelUserPatchFilterInput = {
   id?: ModelIDInput | null,
   patchID?: ModelIDInput | null,
@@ -614,11 +619,6 @@ export type ModelUserTrailConditionInput = {
   userID?: ModelStringInput | null,
 };
 
-export type DeleteUserTrailInput = {
-  userID: string,
-  trailID: string,
-};
-
 export type PatchProgress = {
   __typename: "PatchProgress",
   patchId: string,
@@ -1004,6 +1004,18 @@ export type UpdateUserTrailMinimalMutation = {
   } | null,
 };
 
+export type DeleteUserTrailMinimalMutationVariables = {
+  input: DeleteUserTrailInput,
+};
+
+export type DeleteUserTrailMinimalMutation = {
+  deleteUserTrail?:  {
+    __typename: "UserTrail",
+    userID: string,
+    trailID: string,
+  } | null,
+};
+
 export type ListUserPatchesWithPatchQueryVariables = {
   filter?: ModelUserPatchFilterInput | null,
   limit?: number | null,
@@ -1062,6 +1074,7 @@ export type GetPatchWithMountainsQuery = {
     difficulty?: Difficulty | null,
     popularity?: number | null,
     hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
       items:  Array< {

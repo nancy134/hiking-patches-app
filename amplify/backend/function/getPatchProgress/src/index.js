@@ -155,8 +155,6 @@ async function graphQL(query, variables, { forceIAM = false } = {}) {
   if (json.errors) throw new Error(`AppSync(IAM) error: ${JSON.stringify(json.errors)}`);
   return json.data;
 }
-
-/** ---- Rule parsing ---- */
 function normalizeRule(raw) {
   if (!raw) return { type: 'default', winterOnly: false };
   let obj = raw;
@@ -164,11 +162,21 @@ function normalizeRule(raw) {
   if (!obj || typeof obj !== 'object') return { type: 'default', winterOnly: false };
 
   const base = { type: 'default', winterOnly: !!obj.winterOnly };
+
   if (obj.type === 'excludeDelisted') return { ...base, type: 'excludeDelisted' };
+
   if (obj.type === 'anyN') {
     const n = Number(obj.n);
     return Number.isFinite(n) && n > 0 ? { ...base, type: 'anyN', n: Math.floor(n) } : base;
   }
+
+  if (obj.type === 'trailMilesTarget') {
+    const miles = Number(obj.miles);
+    return Number.isFinite(miles) && miles > 0
+      ? { ...base, type: 'trailMilesTarget', miles: Math.floor(miles) }
+      : base;
+  }
+
   return base;
 }
 
@@ -244,19 +252,58 @@ function computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEl
     // Eligible = non-delisted mountains + all trails
     const eligible = items.filter(it => it.kind === 't' || isEligibleMountain(it));
     const denom = eligible.length || 1;
-    const percent = Math.round((completedAll / denom) * 100);
+    const percent = Math.floor((completedAll / denom) * 100);
     return { completed: completedAll, denom, percent, note: 'Delisted excluded from denominator' };
   }
 
   if (rule.type === 'anyN') {
     const denom = rule.n;
-    const percent = Math.max(0, Math.min(100, Math.round((completedAll / denom) * 100)));
+    const percent = Math.max(0, Math.min(100, Math.floor((completedAll / denom) * 100)));
     return { completed: Math.min(completedAll, denom), denom, percent, note: `Any ${denom}` };
   }
 
   const denom = items.length;
-  const percent = denom === 0 ? 0 : Math.round((completedAll / denom) * 100);
+  const percent = denom === 0 ? 0 : Math.floor((completedAll / denom) * 100);
   return { completed: completedAll, denom, percent, note: undefined };
+}
+
+function milesDoneForTrail(ptRow /* { requiredMiles } */, ut /* { dateCompleted, milesRemaining } */) {
+  if (!ptRow) return 0;
+  console.log("ptRow:");
+  console.log(ptRow);
+  const req = Number(ptRow.requiredMiles);
+  if (!Number.isFinite(req) || req <= 0) return 0;
+
+  if (!ut) return 0;
+
+  if (ut.dateCompleted) {
+    // Completed: count full trail mileage if known
+    return Math.max(0, req);
+  }
+
+  if (ut.milesRemaining == null) return 0;
+  console.log("ut.milesRemaining: "+ut.milesRemaining);
+  const rem = Number(ut.milesRemaining);
+  if (!Number.isFinite(rem)) return 0;
+
+  // Miles done = required - remaining; clamp to [0, required]
+  const done = req - rem;
+  return Math.max(0, Math.min(req, done));
+}
+
+function sumTrailMilesCompleted(items /* combined items array */, trailById /* Map */) {
+  let sum = 0;
+  for (const it of items) {
+    if (it.kind !== 't') continue;
+    console.log("it:");
+    console.log(it);
+    const ut = trailById.get(it.id);
+    console.log("ut: ");
+    console.log(ut);
+    sum += milesDoneForTrail(it, ut);
+    console.log("sum: "+sum);
+  }
+  return sum;
 }
 
 /** ---- Per-patch progress ---- */
@@ -312,6 +359,19 @@ async function progressForPatch(patchId, userId) {
     ...patchMountains.map(r => ({ kind: 'm', id: r.mountainPatchMountainsId, delisted: !!r.delisted })),
     ...patchTrails.map(r => ({ kind: 't', id: r.trailPatchTrailsId, requiredMiles: r.requiredMiles ?? null })),
   ].filter(x => !!x.id);
+
+  if (rule.type === 'trailMilesTarget') {
+    const totalDone = sumTrailMilesCompleted(items, trailById);
+    console.log("totalDone: "+totalDone);
+    const denom = Math.max(1, rule.miles); // avoid divide-by-zero
+    console.log("denom: "+denom);
+    const completed = Math.min(totalDone, denom);
+    console.log("completed: "+completed);
+    const percent = Math.floor((completed / denom) * 100);
+    console.log("percent: "+percent);
+    const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
+    return { patchId, userId, completed, denom, percent, note: winterNote ?? 'Trail miles target' };
+  }
 
   const { completed, denom, percent, note } =
     computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEligibleMountain });
@@ -382,6 +442,15 @@ async function batchProgress(patchIds, userId) {
           ...patchMountains.map(r => ({ kind: 'm', id: r.mountainPatchMountainsId, delisted: !!r.delisted })),
           ...patchTrails.map(r => ({ kind: 't', id: r.trailPatchTrailsId, requiredMiles: r.requiredMiles ?? null })),
         ].filter(x => !!x.id);
+
+        if (rule.type === 'trailMilesTarget') {
+          const totalDone = sumTrailMilesCompleted(items, trailById);
+          const denom = Math.max(1, rule.miles);
+          const completed = Math.min(totalDone, denom);
+          const percent = Math.floor((completed / denom) * 100);
+          const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
+          return { patchId, userId, completed, denom, percent, note: winterNote ?? 'Trail miles target' };
+        }
 
         const { completed, denom, percent, note } =
           computeCombinedPercent(rule, items, { isMountainDone, isTrailDone, isEligibleMountain });

@@ -15,28 +15,47 @@ export default function ProgressSummary({
   denom,
   percent,
   note,
+  unit,
 }: {
   loading: boolean;
   completed?: number | null;
   denom?: number | null;
   percent?: number | null;
   note?: string | null;
+  unit?: 'miles' | null;
 }) {
+  if (loading) return <div>Loading progress…</div>;
+
+  const left = completed ?? 0;
+  const right = denom ?? 0;
+  const label = unit === 'miles'
+    ? `${completed?.toFixed(1)} / ${denom} miles`
+    : `${completed} / ${denom}`;
+
   return (
+  <div className="flex flex-col gap-2">
     <div className="flex items-center justify-between">
-      <p className="text-sm text-gray-700">
-        {loading ? (
-          <Spinner label="Computing progress…" />
-        ) : typeof percent === 'number' && typeof completed === 'number' && typeof denom === 'number' ? (
-          <>
-            Complete: {percent}% <span className="text-gray-400">({completed}/{denom})</span>
-            {note ? <span className="ml-2 text-xs text-gray-500">— {note}</span> : null}
-          </>
-        ) : (
-          <>Complete: — <span className="text-gray-400">(—/—)</span></>
+      <div className="font-medium">Progress</div>
+      <div className="text-sm text-gray-600 flex items-center gap-2">
+        <span>{label}</span>
+        {typeof percent === 'number' && (
+          <span className="text-gray-500">({percent.toFixed(0)}%)</span>
         )}
-      </p>
+      </div>
     </div>
+
+    <div className="w-full bg-gray-100 rounded h-3 overflow-hidden">
+      <div
+        className="bg-blue-600 h-3 transition-all duration-300"
+        style={{ width: `${Math.max(0, Math.min(100, percent ?? 0))}%` }}
+        aria-valuenow={percent ?? 0}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
+    </div>
+
+    {note && <div className="text-xs text-gray-500">{note}</div>}
+  </div>
   );
 }
 

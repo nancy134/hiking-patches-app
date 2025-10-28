@@ -136,8 +136,8 @@ type PatchProgress
 {
   patchId: ID!
   userId: ID!
-  completed: Int!  # how many patch mountains the user has at least 1 ascent for
-  denom: Int!      # denominator after applying rule (e.g., exclude delisted, or any N)
+  completed: Float!  # how many patch mountains the user has at least 1 ascent for
+  denom: Float!      # denominator after applying rule (e.g., exclude delisted, or any N)
   percent: Int!    # 0..100, rounded
   note: String
 }
