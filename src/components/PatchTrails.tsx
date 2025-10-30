@@ -35,6 +35,13 @@ function Spinner({ label }: { label?: string }) {
   );
 }
 
+// Add near the top of the file (just above the component or with other helpers)
+function fmtMiles(n: number | null | undefined) {
+  if (n == null || !Number.isFinite(Number(n))) return '—';
+  const v = Number(n);
+  return Number.isInteger(v) ? String(v) : v.toFixed(2);
+}
+
 export default function PatchTrails({
   patchId,
   userId,
@@ -214,54 +221,84 @@ export default function PatchTrails({
         )}
       </div>
 
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 w-10 text-right">#</th>
-            <th className="text-left p-2">Trail</th>
-            <th className="text-left p-2">Length (mi)</th>
-            <th className="text-left p-2">Your Status</th>
-            {userId && <th className="text-left p-2">Action</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {visible.map((pt, idx) => {
-            const t = pt.trail!;
-            const ut = userMap[t.id];
-            const done = !!ut?.dateCompleted || (ut?.milesRemaining != null && ut.milesRemaining <= 0);
-            const status = done
-              ? (ut?.dateCompleted ? `Completed on ${ut.dateCompleted}` : 'Completed')
-              : (ut?.milesRemaining != null ? `${ut.milesRemaining} mi remaining` : 'Not started');
+{/* wrap table to handle squish on small screens */}
+<div className="overflow-x-auto">
+  <table className="w-full border-collapse text-sm">
+    <thead>
+      <tr className="bg-gray-100">
+        <th className="p-2 w-10 text-right">#</th>
+        <th className="text-left p-2">Trail name</th>
+        <th className="text-left p-2">Length (mi)</th>
+        <th className="text-left p-2">Miles completed</th>
+        <th className="text-left p-2">Miles remaining</th>
+        <th className="text-left p-2">Date completed</th>
+        {userId && <th className="text-left p-2">Action</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {visible.map((pt, idx) => {
+        const t = pt.trail!;
+        const ut = userMap[t.id];
 
-            return (
-              <tr key={t.id} className="border-t">
-                <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
-                <td className="p-2">
-                  <Link
-                    href={`/trail/${t.id}?patchId=${patchId}`}
-                    className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm"
-                  >
-                    {t.name}
-                </Link>
-                </td>
-                <td className="p-2">{t.lengthMiles ?? '—'}</td>
-                <td className="p-2">{status}</td>
-                {userId && (
-                  <td className="p-2">
-                    <button
-                      onClick={() => setModalRow(pt)}
-                      className="text-blue-600 hover:underline text-sm disabled:opacity-50"
-                      disabled={loadingUser}
-                    >
-                      {ut ? 'Update' : 'Log Progress'}
-                    </button>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+        const required = pt.requiredMiles != null ? Number(pt.requiredMiles) : null;
+        const lengthMi = t.lengthMiles != null ? Number(t.lengthMiles) : null;
+
+        let milesRemaining: number | null = null;
+        let milesCompleted: number | null = null;
+        let dateCompleted: string | null = ut?.dateCompleted ?? null;
+
+        // If the user has a numeric milesRemaining, start from that
+        if (ut && ut.milesRemaining != null && Number.isFinite(Number(ut.milesRemaining))) {
+          milesRemaining = Number(ut.milesRemaining);
+
+          // If required is known, compute completed from required - remaining
+          if (required != null && Number.isFinite(required)) {
+            const done = Math.max(0, Math.min(required, required - milesRemaining));
+            milesCompleted = done;
+          } else {
+            // No required miles set → leave completed as '—'
+            milesCompleted = null;
+          }
+        }
+
+        // If they marked completed and required is known, force full credit
+        if (ut?.dateCompleted && required != null && Number.isFinite(required)) {
+          milesCompleted = required;
+          milesRemaining = 0;
+        }
+
+        return (
+          <tr key={t.id} className="border-t">
+            <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
+            <td className="p-2">
+              <Link
+                href={`/trail/${t.id}?patchId=${patchId}`}
+                className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm"
+              >
+                {t.name}
+              </Link>
+            </td>
+            <td className="p-2">{fmtMiles(lengthMi)}</td>
+            <td className="p-2">{fmtMiles(milesCompleted)}</td>
+            <td className="p-2">{fmtMiles(milesRemaining)}</td>
+            <td className="p-2">{dateCompleted ?? '—'}</td>
+            {userId && (
+              <td className="p-2">
+                <button
+                  onClick={() => setModalRow(pt)}
+                  className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+                  disabled={loadingUser}
+                >
+                  {ut ? 'Update' : 'Log Progress'}
+                </button>
+              </td>
+            )}
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
 
       <TrailProgressModal
         open={!!modalRow}
