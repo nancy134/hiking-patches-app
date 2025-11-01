@@ -314,6 +314,18 @@ function sumTrailMilesCompleted(items /* combined items array */, trailById /* M
   return sum;
 }
 
+function sumRequiredTrailMiles(items) {
+  let total = 0;
+  for (const it of items) {
+    if (it.kind !== 't') continue;
+    const reqMiles = toNumOrNull(it.requiredMiles);
+    const lenMiles = it.trail && toNumOrNull(it.trail.lengthMiles);
+    const req = reqMiles ?? lenMiles;
+    if (req && req > 0) total += req;
+  }
+  return total;
+}
+
 /** ---- Per-patch progress ---- */
 async function progressForPatch(patchId, userId) {
   const [patch, patchMountains, patchTrails, userMountains, userTrails] = await Promise.all([
@@ -380,6 +392,17 @@ async function progressForPatch(patchId, userId) {
     const percent = Math.floor((completed / denom) * 100);
     const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
     return { patchId, userId, completed, denom, percent, note: winterNote ?? 'Trail miles target' };
+  }
+
+  const hasMountains = items.some(it => it.kind === 'm');
+  const hasTrails = items.some(it => it.kind === 't');
+
+  if (!hasMountains && hasTrails && rule.type === 'default') {
+    const denom = Math.max(1, sumRequiredTrailMiles(items));  // total required miles
+    const completed = Math.min(sumTrailMilesCompleted(items, trailById), denom);
+    const percent = Math.floor((completed / denom) * 100);
+    const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
+    return { patchId, userId, completed, denom, percent, note: winterNote ?? 'All trail miles' };
   }
 
   const { completed, denom, percent, note } =
@@ -464,6 +487,17 @@ async function batchProgress(patchIds, userId) {
           const percent = Math.floor((completed / denom) * 100);
           const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
           return { patchId, userId, completed, denom, percent, note: winterNote ?? 'Trail miles target' };
+        }
+
+        const hasMountains = items.some(it => it.kind === 'm');
+        const hasTrails = items.some(it => it.kind === 't');
+
+        if (!hasMountains && hasTrails && rule.type === 'default') {
+          const denom = Math.max(1, sumRequiredTrailMiles(items));  // total required miles
+          const completed = Math.min(sumTrailMilesCompleted(items, trailById), denom);
+          const percent = Math.floor((completed / denom) * 100);
+          const winterNote = rule.winterOnly ? 'Winter-only (astronomical)' : undefined;
+          return { patchId, userId, completed, denom, percent, note: winterNote ?? 'All trail miles' };
         }
 
         const { completed, denom, percent, note } =
