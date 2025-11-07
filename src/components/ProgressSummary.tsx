@@ -26,36 +26,54 @@ export default function ProgressSummary({
 }) {
   if (loading) return <div>Loading progress…</div>;
 
-  const left = completed ?? 0;
-  const right = denom ?? 0;
-  const label = unit === 'miles'
-    ? `${completed?.toFixed(1)} / ${denom} miles`
-    : `${completed} / ${denom}`;
+  const progress = Math.max(0, Math.min(100, percent ?? 0));
+  const isComplete = progress >= 100;
+
+  const label =
+    unit === 'miles'
+      ? `${completed?.toFixed(1)} / ${denom} miles`
+      : `${completed} / ${denom}`;
 
   return (
-  <div className="flex flex-col gap-2">
-    <div className="flex items-center justify-between">
-      <div className="font-medium">Progress</div>
-      <div className="text-sm text-gray-600 flex items-center gap-2">
-        <span>{label}</span>
-        {typeof percent === 'number' && (
-          <span className="text-gray-500">({percent.toFixed(0)}%)</span>
-        )}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div className="font-medium">Progress</div>
+        <div className="text-sm text-gray-600 flex items-center gap-2">
+          <span>{label}</span>
+          {typeof percent === 'number' && (
+            <span className="text-gray-500">({percent.toFixed(0)}%)</span>
+          )}
+        </div>
       </div>
-    </div>
 
-    <div className="w-full bg-gray-100 rounded h-3 overflow-hidden">
-      <div
-        className="bg-blue-600 h-3 transition-all duration-300"
-        style={{ width: `${Math.max(0, Math.min(100, percent ?? 0))}%` }}
-        aria-valuenow={percent ?? 0}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      />
-    </div>
+      {/* single progress bar */}
+      <div className="w-full bg-gray-100 rounded h-3 overflow-hidden">
+        <div
+          className="bg-blue-600 h-3 transition-all duration-300"
+          style={{ width: `${progress}%` }}
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
 
-    {note && <div className="text-xs text-gray-500">{note}</div>}
-  </div>
+      {note && <div className="text-xs text-gray-500">{note}</div>}
+
+{/* button only */}
+<div className="flex justify-center">
+  <button
+    disabled={!isComplete}
+    className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+      isComplete
+        ? 'bg-green-600 text-white hover:bg-blue-700'
+        : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+    }`}
+  >
+    Get the Patch Now
+  </button>
+</div>
+
+    </div>
   );
 }
 
