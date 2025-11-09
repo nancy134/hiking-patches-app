@@ -28,6 +28,7 @@ type Patch @model
   hasPeaks: Boolean
   hasTrails: Boolean
   completionRule: AWSJSON
+  isPurchasable: Boolean
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
   patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])

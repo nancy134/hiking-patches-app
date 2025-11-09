@@ -16,7 +16,7 @@ type RuleType =
   | 'default'
   | 'excludeDelisted'
   | 'anyN'
-  | 'trailMilesTarget'; // NEW
+  | 'trailMilesTarget';
 
 export default function PatchFormModal({
   patch,
@@ -39,12 +39,13 @@ export default function PatchFormModal({
   const [popularity, setPopularity] = useState<number | null>(null);
   const [hasPeaks, setHasPeaks] = useState<boolean>(false);
   const [hasTrails, setHasTrails] = useState<boolean>(false);
+  const [isPurchasable, setIsPurchasable] = useState<boolean>(false); // NEW
 
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
   const [anyNCount, setAnyNCount] = useState<number | ''>('');
   const [winterOnly, setWinterOnly] = useState<boolean>(false);
-  const [trailMilesTarget, setTrailMilesTarget] = useState<number | ''>(''); // NEW
+  const [trailMilesTarget, setTrailMilesTarget] = useState<number | ''>('');
 
   // Hydrate fields from incoming patch prop
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function PatchFormModal({
       setPopularity(isNaN(Number(patch.popularity)) ? null : Number(patch.popularity));
       setHasPeaks(patch.hasPeaks ?? false);
       setHasTrails((patch as any).hasTrails ?? false);
+      setIsPurchasable((patch as any).isPurchasable ?? false); // NEW
 
       // Parse completionRule (can be object or JSON string from AppSync)
       const raw = (patch as any)?.completionRule as unknown;
@@ -69,7 +71,7 @@ export default function PatchFormModal({
       if (!obj || typeof obj !== 'object') {
         setRuleType('default');
         setAnyNCount('');
-        setTrailMilesTarget(''); // NEW
+        setTrailMilesTarget('');
         setWinterOnly(false);
       } else {
         const t = obj.type as RuleType;
@@ -82,7 +84,7 @@ export default function PatchFormModal({
           const n = Number(obj.n);
           setAnyNCount(Number.isFinite(n) && n > 0 ? Math.floor(n) : '');
           setTrailMilesTarget('');
-        } else if (t === 'trailMilesTarget') { // NEW
+        } else if (t === 'trailMilesTarget') {
           setRuleType('trailMilesTarget');
           const miles = Number(obj.miles);
           setTrailMilesTarget(Number.isFinite(miles) && miles > 0 ? Math.floor(miles) : '');
@@ -98,25 +100,22 @@ export default function PatchFormModal({
   }, [patch]);
 
   const completionRuleObject = useMemo(() => {
-    const winter = winterOnly ? { winterOnly: true } : {}; // include only if true
+    const winter = winterOnly ? { winterOnly: true } : {};
     switch (ruleType) {
       case 'excludeDelisted':
         return { type: 'excludeDelisted', ...winter };
-
       case 'anyN': {
         const n = typeof anyNCount === 'number' ? anyNCount : parseInt(String(anyNCount));
         if (Number.isFinite(n) && n > 0) return { type: 'anyN', n: Math.floor(n), ...winter };
         return { type: 'default', ...winter };
       }
-
-      case 'trailMilesTarget': { // NEW
+      case 'trailMilesTarget': {
         const miles = typeof trailMilesTarget === 'number'
           ? trailMilesTarget
           : parseInt(String(trailMilesTarget));
         if (Number.isFinite(miles) && miles > 0) return { type: 'trailMilesTarget', miles: Math.floor(miles), ...winter };
         return { type: 'default', ...winter };
       }
-
       case 'default':
       default:
         return { type: 'default', ...winter };
@@ -156,7 +155,8 @@ export default function PatchFormModal({
         popularity,
         hasPeaks,
         hasTrails,
-        completionRule: completionRuleToSend, // <-- saved as AWSJSON
+        isPurchasable, // NEW
+        completionRule: completionRuleToSend, // saved as AWSJSON
       };
 
       if (patch?.id) {
@@ -305,7 +305,7 @@ export default function PatchFormModal({
               This patch includes specific peaks
             </label>
 
-            <label className="flex items-center gap-2"> {/* NEW: hasTrails */}
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={hasTrails}
@@ -313,6 +313,17 @@ export default function PatchFormModal({
                 className="accent-blue-600"
               />
               This patch includes specific trails
+            </label>
+
+            {/* NEW: isPurchasable toggle */}
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isPurchasable}
+                onChange={(e) => setIsPurchasable(e.target.checked)}
+                className="accent-blue-600"
+              />
+              Patch can be purchased on our website
             </label>
 
             {/* Completion Rule Editor */}
@@ -327,7 +338,7 @@ export default function PatchFormModal({
                 <option value="default">Default (completed / total)</option>
                 <option value="excludeDelisted">Exclude delisted from denominator</option>
                 <option value="anyN">Any N mountains</option>
-                <option value="trailMilesTarget">Trail miles target</option> {/* NEW */}
+                <option value="trailMilesTarget">Trail miles target</option>
               </select>
 
               {ruleType === 'anyN' && (
@@ -347,7 +358,7 @@ export default function PatchFormModal({
                 </label>
               )}
 
-              {ruleType === 'trailMilesTarget' && ( // NEW
+              {ruleType === 'trailMilesTarget' && (
                 <label className="block">
                   <span className="text-sm text-gray-700">
                     Miles target (e.g., 100)

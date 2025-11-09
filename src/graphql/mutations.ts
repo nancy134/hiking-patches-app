@@ -26,6 +26,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -65,6 +66,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -104,6 +106,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -146,6 +149,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -188,6 +192,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -230,6 +235,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -411,6 +417,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -459,6 +466,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -507,6 +515,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -729,6 +738,7 @@ export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -774,6 +784,7 @@ export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -819,6 +830,7 @@ export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename

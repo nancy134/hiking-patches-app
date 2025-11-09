@@ -45,6 +45,7 @@ export const getPatchWithMountainsPaged = /* GraphQL */ `
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       patchMountains(limit: $limit, nextToken: $nextToken) {
         items {
           id

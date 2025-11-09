@@ -23,6 +23,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -59,6 +60,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -95,6 +97,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -137,6 +140,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -179,6 +183,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -221,6 +226,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -389,6 +395,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -436,6 +443,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -483,6 +491,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -695,6 +704,7 @@ export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -739,6 +749,7 @@ export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -783,6 +794,7 @@ export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename

@@ -53,6 +53,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -91,6 +92,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -121,6 +123,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -354,6 +357,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -717,6 +721,7 @@ export const getPatchTrail = /* GraphQL */ `query GetPatchTrail($id: ID!) {
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename

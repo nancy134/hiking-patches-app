@@ -368,6 +368,7 @@ export default function PatchDetailPage() {
               percent={progress?.percent ?? null}
               note={progress?.note ?? null}
               unit={progressUnit}
+              isPurchasable={patch.isPurchasable}
             />
           </div>
         )}

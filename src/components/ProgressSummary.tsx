@@ -2,7 +2,11 @@
 
 function Spinner({ label }: { label?: string }) {
   return (
-    <span className="inline-flex items-center gap-2" role="status" aria-live="polite">
+    <span
+      className="inline-flex items-center gap-2"
+      role="status"
+      aria-live="polite"
+    >
       <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
       {label ? <span className="text-sm text-gray-600">{label}</span> : null}
     </span>
@@ -16,6 +20,7 @@ export default function ProgressSummary({
   percent,
   note,
   unit,
+  isPurchasable,
 }: {
   loading: boolean;
   completed?: number | null;
@@ -23,6 +28,7 @@ export default function ProgressSummary({
   percent?: number | null;
   note?: string | null;
   unit?: 'miles' | null;
+  isPurchasable?: boolean | null;
 }) {
   if (loading) return <div>Loading progress…</div>;
 
@@ -46,7 +52,7 @@ export default function ProgressSummary({
         </div>
       </div>
 
-      {/* single progress bar */}
+      {/* progress bar */}
       <div className="w-full bg-gray-100 rounded h-3 overflow-hidden">
         <div
           className="bg-blue-600 h-3 transition-all duration-300"
@@ -59,26 +65,27 @@ export default function ProgressSummary({
 
       {note && <div className="text-xs text-gray-500">{note}</div>}
 
-{/* button only */}
-<div className="flex justify-center">
-<button
-  disabled={!isComplete}
-  onClick={() => {
-    if (isComplete) window.location.href = 'https://buy.stripe.com/test_fZu00kaggbzYaqAg9g7ss00';
-  }}
-  className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-    isComplete
-      ? 'bg-green-600 text-white hover:bg-green-700'
-      : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-  }`}
->
-  Get the Patch Now
-</button>
-
-</div>
-
-
-
+      {/* show button only if purchasable */}
+      {isPurchasable && (
+        <div className="flex justify-center">
+          <button
+            disabled={!isComplete}
+            onClick={() => {
+              if (isComplete) {
+                window.location.href =
+                  'https://buy.stripe.com/test_fZu00kaggbzYaqAg9g7ss00';
+              }
+            }}
+            className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isComplete
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+            }`}
+          >
+            Get the Patch Now
+          </button>
+        </div>
+      )}
     </div>
   );
 }
