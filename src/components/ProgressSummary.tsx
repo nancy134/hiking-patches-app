@@ -61,17 +61,23 @@ export default function ProgressSummary({
 
 {/* button only */}
 <div className="flex justify-center">
-  <button
-    disabled={!isComplete}
-    className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-      isComplete
-        ? 'bg-green-600 text-white hover:bg-blue-700'
-        : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-    }`}
-  >
-    Get the Patch Now
-  </button>
+<button
+  disabled={!isComplete}
+  onClick={() => {
+    if (isComplete) window.location.href = 'https://buy.stripe.com/test_fZu00kaggbzYaqAg9g7ss00';
+  }}
+  className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+    isComplete
+      ? 'bg-green-600 text-white hover:bg-green-700'
+      : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+  }`}
+>
+  Get the Patch Now
+</button>
+
 </div>
+
+
 
     </div>
   );
