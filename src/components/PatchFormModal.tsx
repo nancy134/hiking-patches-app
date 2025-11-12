@@ -243,7 +243,7 @@ export default function PatchFormModal({
               className="w-full p-2 border rounded h-32"
             >
               {[
-                'Connecticut', 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
+                'Connecticut', 'Florida', 'Maine', 'Massachusetts', 'New Hampshire', 'New York', 'Vermont'
               ].map((region) => (
                 <option key={region} value={region}>{region}</option>
               ))}
