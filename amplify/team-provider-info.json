@@ -18,7 +18,8 @@
       },
       "api": {
         "hikingpatchesapp": {},
-        "listusers": {}
+        "listusers": {},
+        "checkoutApi": {}
       },
       "storage": {
         "patchImages": {}
@@ -31,6 +32,16 @@
         "getPatchProgress": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
           "s3Key": "amplify-builds/getPatchProgress-674d39703977544e7171-build.zip"
+        },
+        "createCheckout": {
+          "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
+          "s3Key": "amplify-builds/createCheckout-37312f65376c57795557-build.zip",
+          "cancelUrl": "http://localhost:3000/purchase/cancel",
+          "successUrl": "http://localhost:3000/purchase/success?session_id={CHECKOUT_SESSION_ID}"
+        },
+        "stripeWebhook": {
+          "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
+          "s3Key": "amplify-builds/stripeWebhook-2f2b4d724f2b52453441-build.zip"
         }
       }
     }
@@ -56,7 +67,13 @@
         "listUsersFunction": {
           "deploymentBucketName": "amplify-hikingpatchesapp-staging-a9b1a-deployment",
           "s3Key": "amplify-builds/listUsersFunction-666c2b31462b46453739-build.zip"
-        }
+        },
+        "getPatchProgress": {
+          "deploymentBucketName": "amplify-hikingpatchesapp-staging-a9b1a-deployment",
+          "s3Key": "amplify-builds/getPatchProgress-674d39703977544e7171-build.zip"
+        },
+        "createCheckout": {},
+        "stripeWebhook": {}
       },
       "storage": {
         "patchImages": {}

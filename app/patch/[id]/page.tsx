@@ -369,6 +369,7 @@ export default function PatchDetailPage() {
               note={progress?.note ?? null}
               unit={progressUnit}
               isPurchasable={patch.isPurchasable}
+              patchId={patch.id}
             />
           </div>
         )}

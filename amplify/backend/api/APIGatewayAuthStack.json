@@ -13,6 +13,9 @@
     },
     "listusers": {
       "Type": "String"
+    },
+    "checkoutApi": {
+      "Type": "String"
     }
   },
   "Conditions": {

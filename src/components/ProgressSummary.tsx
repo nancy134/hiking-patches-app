@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 function Spinner({ label }: { label?: string }) {
   return (
     <span
@@ -21,6 +23,7 @@ export default function ProgressSummary({
   note,
   unit,
   isPurchasable,
+  patchId
 }: {
   loading: boolean;
   completed?: number | null;
@@ -29,7 +32,10 @@ export default function ProgressSummary({
   note?: string | null;
   unit?: 'miles' | null;
   isPurchasable?: boolean | null;
+  patchId?: string;
 }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+
   if (loading) return <div>Loading progress…</div>;
 
   const progress = Math.max(0, Math.min(100, percent ?? 0));
@@ -39,6 +45,41 @@ export default function ProgressSummary({
     unit === 'miles'
       ? `${completed?.toFixed(1)} / ${denom} miles`
       : `${completed} / ${denom}`;
+
+  // ✅ Stripe API call (Amplify backend)
+  async function handlePurchase() {
+    if (!isComplete) return;
+    setIsProcessing(true);
+
+    try {
+      const res = await fetch(
+        'https://vnzv6ekyv8.execute-api.us-east-1.amazonaws.com/dev/checkout',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: 'user123', // replace with your real user ID
+            priceId: 'price_1SPwP7LOL75knmAUEnDOvOO2',
+            patchId: patchId
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data?.url) {
+        window.location.href = data.url; // redirect to Stripe Checkout
+      } else {
+        alert('Something went wrong creating your checkout session.');
+        console.error('Stripe response:', data);
+      }
+    } catch (err) {
+      console.error('Error calling Stripe checkout API:', err);
+      alert('There was a problem connecting to Stripe.');
+    } finally {
+      setIsProcessing(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -69,20 +110,15 @@ export default function ProgressSummary({
       {isPurchasable && (
         <div className="flex justify-center">
           <button
-            disabled={!isComplete}
-            onClick={() => {
-              if (isComplete) {
-                window.location.href =
-                  'https://buy.stripe.com/test_fZu00kaggbzYaqAg9g7ss00';
-              }
-            }}
-            className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+            disabled={!isComplete || isProcessing}
+            onClick={handlePurchase}
+            className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
               isComplete
                 ? 'bg-green-600 text-white hover:bg-green-700'
                 : 'bg-gray-300 text-gray-600 cursor-not-allowed'
             }`}
           >
-            Get the Patch Now
+            {isProcessing ? <Spinner label="Connecting…" /> : 'Get the Patch Now'}
           </button>
         </div>
       )}
