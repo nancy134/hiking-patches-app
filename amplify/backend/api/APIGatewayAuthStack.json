@@ -11,10 +11,10 @@
     "env": {
       "Type": "String"
     },
-    "listusers": {
+    "checkoutApi": {
       "Type": "String"
     },
-    "checkoutApi": {
+    "listusers": {
       "Type": "String"
     }
   },

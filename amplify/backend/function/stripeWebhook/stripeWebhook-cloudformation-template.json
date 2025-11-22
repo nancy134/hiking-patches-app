@@ -15,12 +15,6 @@
     },
     "s3Key": {
       "Type": "String"
-    },
-    "stripeSecretKey": {
-      "Type": "String"
-    },
-    "stripeWebhookSecret": {
-      "Type": "String"
     }
   },
   "Conditions": {
@@ -75,12 +69,6 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
-            },
-            "STRIPE_SECRET_KEY": {
-              "Ref": "stripeSecretKey"
-            },
-            "STRIPE_WEBHOOK_SECRET": {
-              "Ref": "stripeWebhookSecret"
             }
           }
         },

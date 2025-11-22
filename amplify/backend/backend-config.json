@@ -168,14 +168,6 @@
         }
       ]
     },
-    "AMPLIFY_function_createCheckout_stripeSecretKey": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "createCheckout"
-        }
-      ]
-    },
     "AMPLIFY_function_createCheckout_successUrl": {
       "usedBy": [
         {
@@ -225,22 +217,6 @@
       ]
     },
     "AMPLIFY_function_stripeWebhook_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "stripeWebhook"
-        }
-      ]
-    },
-    "AMPLIFY_function_stripeWebhook_stripeSecretKey": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "stripeWebhook"
-        }
-      ]
-    },
-    "AMPLIFY_function_stripeWebhook_stripeWebhookSecret": {
       "usedBy": [
         {
           "category": "function",
