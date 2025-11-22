@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
-export default function CancelPage({
-  searchParams
+export default async function CancelPage({
+  searchParams,
 }: {
-  searchParams: {patchId?: string};
-})
- {
-  const { patchId } = searchParams;
+  searchParams: Promise<{ patchId?: string }>;
+}) {
+  const { patchId } = await searchParams;
+
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <h1 className="text-2xl font-semibold">Payment canceled</h1>
@@ -23,7 +23,10 @@ export default function CancelPage({
             Back to Patch
           </Link>
         ) : (
-          <Link href="/" className="rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-800">
+          <Link
+            href="/"
+            className="rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-800"
+          >
             Back to Dashboard
           </Link>
         )}

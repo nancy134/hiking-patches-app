@@ -1,13 +1,16 @@
-// Server component (no "use client" needed)
 import Link from 'next/link';
 
 type Props = {
-  searchParams: { session_id?: string, patchId?: string };
+  searchParams: Promise<{
+    session_id?: string;
+    patchId?: string;
+  }>;
 };
 
-export default function SuccessPage({ searchParams }: Props) {
-  const sessionId = searchParams?.session_id ?? '';
-  const patchId = searchParams?.patchId ?? '';
+export default async function SuccessPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const sessionId = params.session_id ?? '';
+  const patchId = params.patchId ?? '';
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
@@ -32,7 +35,6 @@ export default function SuccessPage({ searchParams }: Props) {
       </div>
 
       <div className="mt-8 flex items-center gap-3">
-
         {patchId ? (
           <Link
             href={`/patch/${patchId}`}
@@ -41,7 +43,10 @@ export default function SuccessPage({ searchParams }: Props) {
             Continue to Patch
           </Link>
         ) : (
-          <Link href="/" className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+          <Link
+            href="/"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
             Go to Dashboard
           </Link>
         )}
