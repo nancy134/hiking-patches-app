@@ -38,6 +38,9 @@ export default function ProgressSummary({
 
   if (loading) return <div>Loading progress…</div>;
 
+  const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_API!;
+  const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID!;
+
   const progress = Math.max(0, Math.min(100, percent ?? 0));
   const isComplete = progress >= 100;
 
@@ -53,13 +56,13 @@ export default function ProgressSummary({
 
     try {
       const res = await fetch(
-        'https://vnzv6ekyv8.execute-api.us-east-1.amazonaws.com/dev/checkout',
+        checkoutUrl,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: 'user123', // replace with your real user ID
-            priceId: 'price_1SPwP7LOL75knmAUEnDOvOO2',
+            priceId: priceId,
             patchId: patchId
           }),
         }
