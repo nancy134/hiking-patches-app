@@ -72,7 +72,10 @@
           "deploymentBucketName": "amplify-hikingpatchesapp-staging-a9b1a-deployment",
           "s3Key": "amplify-builds/getPatchProgress-674d39703977544e7171-build.zip"
         },
-        "createCheckout": {},
+        "createCheckout": {
+          "cancelUrl": "http://staging.hiking-patches.com/purchase/cancel",
+          "successUrl": "http://staging.hiking-patches.com/purchase/success?session_id={CHECKOUT_SESSION_ID}"
+	 },
         "stripeWebhook": {}
       },
       "storage": {
