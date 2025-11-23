@@ -244,3 +244,16 @@ export const listPatchTrailsWithTrail = /* GraphQL */ `
     }
   }
 `;
+
+export const getTrailPublic = /* GraphQL */ `query GetTrail($id: ID!) {
+  getTrail(id: $id) {
+    id
+    name
+    description
+    lengthMiles
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+`;

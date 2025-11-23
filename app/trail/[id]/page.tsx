@@ -10,7 +10,8 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import { useAuth } from '@/context/auth-context';
 
-import { getTrail, listUserTrails } from '@/graphql/queries';
+import { listUserTrails } from '@/graphql/queries';
+import { getTrailPublic } from '@/graphql/custom-queries';
 import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal } from '@/graphql/custom-mutations';
 
 import type { Trail, ListUserTrailsQuery, UserTrail } from '@/API';
@@ -47,9 +48,8 @@ export default function TrailDetailPage() {
       setErrorTrail(null);
       try {
         const res = (await client.graphql({
-          query: getTrail as any,
+          query: getTrailPublic as any,
           variables: { id: trailId },
-          authMode: 'userPool',
         })) as GraphQLResult<{ getTrail: Trail | null }>;
         console.log(res.data?.getTrail);
         setTrail(res.data?.getTrail ?? null);
