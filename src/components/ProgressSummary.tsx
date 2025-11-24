@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/context/auth-context';
 
 function Spinner({ label }: { label?: string }) {
   return (
@@ -35,6 +36,7 @@ export default function ProgressSummary({
   patchId?: string;
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useAuth();
 
   if (loading) return <div>Loading progress…</div>;
 
@@ -61,7 +63,7 @@ export default function ProgressSummary({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: 'user123', // replace with your real user ID
+            userId: user.userId,
             priceId: priceId,
             patchId: patchId
           }),
