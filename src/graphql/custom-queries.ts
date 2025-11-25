@@ -245,7 +245,7 @@ export const listPatchTrailsWithTrail = /* GraphQL */ `
   }
 `;
 
-export const getTrailPublic = /* GraphQL */ `query GetTrail($id: ID!) {
+export const getTrailPublic = /* GraphQL */ `query GetTrailPublic($id: ID!) {
   getTrail(id: $id) {
     id
     name

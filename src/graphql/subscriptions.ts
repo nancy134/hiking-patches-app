@@ -902,3 +902,57 @@ export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
   APITypes.OnDeleteUserTrailSubscriptionVariables,
   APITypes.OnDeleteUserTrailSubscription
 >;
+export const onCreatePatchPurchase = /* GraphQL */ `subscription OnCreatePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onCreatePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreatePatchPurchaseSubscriptionVariables,
+  APITypes.OnCreatePatchPurchaseSubscription
+>;
+export const onUpdatePatchPurchase = /* GraphQL */ `subscription OnUpdatePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onUpdatePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchPurchaseSubscriptionVariables,
+  APITypes.OnUpdatePatchPurchaseSubscription
+>;
+export const onDeletePatchPurchase = /* GraphQL */ `subscription OnDeletePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onDeletePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchPurchaseSubscriptionVariables,
+  APITypes.OnDeletePatchPurchaseSubscription
+>;

@@ -206,4 +206,21 @@ type UserTrail
   trail: Trail @belongsTo(fields: ["trailID"])
 }
 
+type PatchPurchase 
+  @model
+  @auth(
+    rules: [
+      # Users can see their own purchases
+      { allow: owner, ownerField: "userId" }
+
+      # Backend (Stripe webhook via API key) can create rows
+      { allow: public, provider: apiKey, operations: [create, read] }
+    ]
+  ) {
+  id: ID!
+  userId: ID!
+  patchId: ID!
+  stripeSessionId: String!
+  createdAt: AWSDateTime!
+}
 

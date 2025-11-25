@@ -987,3 +987,41 @@ export const userTrailsByTrail = /* GraphQL */ `query UserTrailsByTrail(
   APITypes.UserTrailsByTrailQueryVariables,
   APITypes.UserTrailsByTrailQuery
 >;
+export const getPatchPurchase = /* GraphQL */ `query GetPatchPurchase($id: ID!) {
+  getPatchPurchase(id: $id) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetPatchPurchaseQueryVariables,
+  APITypes.GetPatchPurchaseQuery
+>;
+export const listPatchPurchases = /* GraphQL */ `query ListPatchPurchases(
+  $filter: ModelPatchPurchaseFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPatchPurchases(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      userId
+      patchId
+      stripeSessionId
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListPatchPurchasesQueryVariables,
+  APITypes.ListPatchPurchasesQuery
+>;

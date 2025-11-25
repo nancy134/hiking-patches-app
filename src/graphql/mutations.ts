@@ -938,3 +938,57 @@ export const deleteUserTrail = /* GraphQL */ `mutation DeleteUserTrail(
   APITypes.DeleteUserTrailMutationVariables,
   APITypes.DeleteUserTrailMutation
 >;
+export const createPatchPurchase = /* GraphQL */ `mutation CreatePatchPurchase(
+  $input: CreatePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  createPatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreatePatchPurchaseMutationVariables,
+  APITypes.CreatePatchPurchaseMutation
+>;
+export const updatePatchPurchase = /* GraphQL */ `mutation UpdatePatchPurchase(
+  $input: UpdatePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  updatePatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchPurchaseMutationVariables,
+  APITypes.UpdatePatchPurchaseMutation
+>;
+export const deletePatchPurchase = /* GraphQL */ `mutation DeletePatchPurchase(
+  $input: DeletePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  deletePatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchPurchaseMutationVariables,
+  APITypes.DeletePatchPurchaseMutation
+>;

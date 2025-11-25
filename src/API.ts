@@ -623,6 +623,47 @@ export type ModelUserTrailConditionInput = {
   userID?: ModelStringInput | null,
 };
 
+export type CreatePatchPurchaseInput = {
+  id?: string | null,
+  userId: string,
+  patchId: string,
+  stripeSessionId: string,
+  createdAt?: string | null,
+};
+
+export type ModelPatchPurchaseConditionInput = {
+  userId?: ModelIDInput | null,
+  patchId?: ModelIDInput | null,
+  stripeSessionId?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  and?: Array< ModelPatchPurchaseConditionInput | null > | null,
+  or?: Array< ModelPatchPurchaseConditionInput | null > | null,
+  not?: ModelPatchPurchaseConditionInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type PatchPurchase = {
+  __typename: "PatchPurchase",
+  id: string,
+  userId: string,
+  patchId: string,
+  stripeSessionId: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdatePatchPurchaseInput = {
+  id: string,
+  userId?: string | null,
+  patchId?: string | null,
+  stripeSessionId?: string | null,
+  createdAt?: string | null,
+};
+
+export type DeletePatchPurchaseInput = {
+  id: string,
+};
+
 export type PatchProgress = {
   __typename: "PatchProgress",
   patchId: string,
@@ -769,6 +810,24 @@ export type ModelUserTrailFilterInput = {
   and?: Array< ModelUserTrailFilterInput | null > | null,
   or?: Array< ModelUserTrailFilterInput | null > | null,
   not?: ModelUserTrailFilterInput | null,
+};
+
+export type ModelPatchPurchaseFilterInput = {
+  id?: ModelIDInput | null,
+  userId?: ModelIDInput | null,
+  patchId?: ModelIDInput | null,
+  stripeSessionId?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelPatchPurchaseFilterInput | null > | null,
+  or?: Array< ModelPatchPurchaseFilterInput | null > | null,
+  not?: ModelPatchPurchaseFilterInput | null,
+};
+
+export type ModelPatchPurchaseConnection = {
+  __typename: "ModelPatchPurchaseConnection",
+  items:  Array<PatchPurchase | null >,
+  nextToken?: string | null,
 };
 
 export type ModelSubscriptionPatchFilterInput = {
@@ -951,6 +1010,17 @@ export type ModelSubscriptionUserTrailFilterInput = {
   userID?: ModelStringInput | null,
 };
 
+export type ModelSubscriptionPatchPurchaseFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  patchId?: ModelSubscriptionIDInput | null,
+  stripeSessionId?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPatchPurchaseFilterInput | null > | null,
+  or?: Array< ModelSubscriptionPatchPurchaseFilterInput | null > | null,
+  userId?: ModelStringInput | null,
+};
+
 export type DeleteUserMountainMinimalMutationVariables = {
   input: DeleteUserMountainInput,
 };
@@ -1082,6 +1152,7 @@ export type GetPatchWithMountainsQuery = {
     hasPeaks?: boolean | null,
     hasTrails?: boolean | null,
     completionRule?: string | null,
+    isPurchasable?: boolean | null,
     patchMountains?:  {
       __typename: "ModelPatchMountainConnection",
       items:  Array< {
@@ -1351,6 +1422,22 @@ export type ListPatchTrailsWithTrailQuery = {
       },
     } | null >,
     nextToken?: string | null,
+  } | null,
+};
+
+export type GetTrailPublicQueryVariables = {
+  id: string,
+};
+
+export type GetTrailPublicQuery = {
+  getTrail?:  {
+    __typename: "Trail",
+    id: string,
+    name: string,
+    description?: string | null,
+    lengthMiles: number,
+    createdAt: string,
+    updatedAt: string,
   } | null,
 };
 
@@ -2257,6 +2344,57 @@ export type DeleteUserTrailMutation = {
   } | null,
 };
 
+export type CreatePatchPurchaseMutationVariables = {
+  input: CreatePatchPurchaseInput,
+  condition?: ModelPatchPurchaseConditionInput | null,
+};
+
+export type CreatePatchPurchaseMutation = {
+  createPatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchPurchaseMutationVariables = {
+  input: UpdatePatchPurchaseInput,
+  condition?: ModelPatchPurchaseConditionInput | null,
+};
+
+export type UpdatePatchPurchaseMutation = {
+  updatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchPurchaseMutationVariables = {
+  input: DeletePatchPurchaseInput,
+  condition?: ModelPatchPurchaseConditionInput | null,
+};
+
+export type DeletePatchPurchaseMutation = {
+  deletePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetPatchProgressSummaryQueryVariables = {
   patchId: string,
   userId: string,
@@ -3145,6 +3283,44 @@ export type UserTrailsByTrailQuery = {
   } | null,
 };
 
+export type GetPatchPurchaseQueryVariables = {
+  id: string,
+};
+
+export type GetPatchPurchaseQuery = {
+  getPatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListPatchPurchasesQueryVariables = {
+  filter?: ModelPatchPurchaseFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchPurchasesQuery = {
+  listPatchPurchases?:  {
+    __typename: "ModelPatchPurchaseConnection",
+    items:  Array< {
+      __typename: "PatchPurchase",
+      id: string,
+      userId: string,
+      patchId: string,
+      stripeSessionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreatePatchSubscriptionVariables = {
   filter?: ModelSubscriptionPatchFilterInput | null,
 };
@@ -4025,6 +4201,57 @@ export type OnDeleteUserTrailSubscription = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreatePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnCreatePatchPurchaseSubscription = {
+  onCreatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnUpdatePatchPurchaseSubscription = {
+  onUpdatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnDeletePatchPurchaseSubscription = {
+  onDeletePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    id: string,
+    userId: string,
+    patchId: string,
+    stripeSessionId: string,
     createdAt: string,
     updatedAt: string,
   } | null,

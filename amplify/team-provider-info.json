@@ -41,7 +41,7 @@
         },
         "stripeWebhook": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/stripeWebhook-2f2b4d724f2b52453441-build.zip"
+          "s3Key": "amplify-builds/stripeWebhook-626c5168546d63452f54-build.zip"
         }
       }
     }
@@ -75,7 +75,7 @@
         "createCheckout": {
           "cancelUrl": "http://staging.hiking-patches.com/purchase/cancel",
           "successUrl": "http://staging.hiking-patches.com/purchase/success?session_id={CHECKOUT_SESSION_ID}"
-	 },
+        },
         "stripeWebhook": {}
       },
       "storage": {

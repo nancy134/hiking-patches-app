@@ -55,7 +55,10 @@ export default function ProgressSummary({
   async function handlePurchase() {
     if (!isComplete) return;
     setIsProcessing(true);
-
+    if (!user) {
+      alert("Please sign in to purchase this patch.");
+      return;
+    }
     try {
       const res = await fetch(
         checkoutUrl,
