@@ -109,10 +109,7 @@ export default function ProgressSummary(props: {
       return;
     }
 
-    if (hasPurchased) {
-      alert('You have already purchased this patch.');
-      return;
-    }
+    // 👇 removed the hasPurchased early-return so they can buy multiple times
 
     setIsProcessing(true);
 
@@ -171,10 +168,10 @@ export default function ProgressSummary(props: {
       {isPurchasable && (
         <div className="flex flex-col items-center">
           <button
-            disabled={!isComplete || isProcessing || hasPurchased}
+            disabled={!isComplete || isProcessing}
             onClick={handlePurchase}
             className={`mt-2 px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-              !isComplete || hasPurchased
+              !isComplete
                 ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                 : 'bg-green-600 text-white hover:bg-green-700'
             }`}
@@ -182,7 +179,7 @@ export default function ProgressSummary(props: {
             {isProcessing ? (
               <Spinner label="Connecting…" />
             ) : hasPurchased ? (
-              'Already Purchased'
+              'Purchase another Patch'
             ) : (
               'Get the Patch Now'
             )}
@@ -198,7 +195,8 @@ export default function ProgressSummary(props: {
               {!checkingPurchase && hasPurchased && (
                 <p className="mt-2 text-xs text-green-700 text-center">
                   You’ve already purchased this patch. You can view it any time
-                  from your dashboard.
+                  from your dashboard, or purchase another patch using the
+                  button above.
                 </p>
               )}
             </>
