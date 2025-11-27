@@ -132,6 +132,7 @@ export default function PatchDetailPage() {
               patchID: { eq: id },
             },
           },
+          authMode: 'userPool',
         });
         const match = response.data?.listUserPatches?.items?.[0];
         if (match) {
