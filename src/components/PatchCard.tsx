@@ -1,4 +1,3 @@
-// src/components/PatchCard.tsx
 import Link from 'next/link';
 import { Patch } from '@/API';
 import { PatchDisplay } from './PatchDisplay';
@@ -13,7 +12,11 @@ type Props = {
 };
 
 export function PatchCard({ patch, status = '', wishInit = false, onWishlistChange }: Props) {
-  const topRight = !status ? (
+  // Show overlay if the patch tracks EITHER peaks or trails
+  const hasProgress =
+    Boolean((patch as any).hasPeaks) || Boolean((patch as any).hasTrails);
+
+  const topRight = (
     <div className="inline-flex items-center gap-2">
       <WishHeartButton
         patchId={patch.id}
@@ -21,12 +24,17 @@ export function PatchCard({ patch, status = '', wishInit = false, onWishlistChan
         onChange={(next) => onWishlistChange?.(patch.id, next)}
       />
       {status ? (
-        <span className={`${status === 'Completed' ? 'bg-green-600' : 'bg-yellow-400 text-black'} text-xs px-2 py-1 rounded-full shadow`}>
+        <span
+          className={`${
+            status === 'Completed' ? 'bg-green-600 text-white' : 'bg-yellow-400 text-black'
+          } text-xs px-2 py-1 rounded-full shadow`}
+        >
           {status}
         </span>
       ) : null}
     </div>
-  ) : undefined;
+  );
+
   return (
     <Link href={`/patch/${patch.id}`} className="block">
       <PatchDisplay
@@ -37,11 +45,7 @@ export function PatchCard({ patch, status = '', wishInit = false, onWishlistChan
         difficulty={patch.difficulty}
         status={status}
         topRight={topRight}
-        extraFooter={
-          !!patch.hasPeaks ? (
-            <UserProgressOverlay patchId={patch.id} showLabel />
-          ) : null
-        }
+        extraFooter={hasProgress ? <UserProgressOverlay patchId={patch.id} showLabel /> : null}
       />
     </Link>
   );

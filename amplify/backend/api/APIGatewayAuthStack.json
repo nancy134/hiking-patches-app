@@ -11,6 +11,9 @@
     "env": {
       "Type": "String"
     },
+    "checkoutApi": {
+      "Type": "String"
+    },
     "listusers": {
       "Type": "String"
     }

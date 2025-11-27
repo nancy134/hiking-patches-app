@@ -251,11 +251,12 @@ export default function HomePage() {
           >
             <option value="">All Regions</option>
             <option value="Connecticut">Connecticut</option>
+            <option value="Florida">Florida</option>
             <option value="Maine">Maine</option>
             <option value="Massachusetts">Massachusetts</option>
             <option value="New Hampshire">New Hampshire</option>
-            <option value="Vermont">Vermont</option>
             <option value="New York">New York</option>
+            <option value="Vermont">Vermont</option>
           </select>
         </div>
 

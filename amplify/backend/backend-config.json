@@ -1,5 +1,27 @@
 {
   "api": {
+    "checkoutApi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "stripeWebhook"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "createCheckout"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "hikingpatchesapp": {
       "dependsOn": [
         {
@@ -80,6 +102,11 @@
     }
   },
   "function": {
+    "createCheckout": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "getPatchProgress": {
       "build": true,
       "dependsOn": [
@@ -109,9 +136,46 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "stripeWebhook": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
+    "AMPLIFY_function_createCheckout_cancelUrl": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCheckout"
+        }
+      ]
+    },
+    "AMPLIFY_function_createCheckout_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCheckout"
+        }
+      ]
+    },
+    "AMPLIFY_function_createCheckout_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCheckout"
+        }
+      ]
+    },
+    "AMPLIFY_function_createCheckout_successUrl": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCheckout"
+        }
+      ]
+    },
     "AMPLIFY_function_getPatchProgress_deploymentBucketName": {
       "usedBy": [
         {
@@ -141,6 +205,22 @@
         {
           "category": "function",
           "resourceName": "listUsersFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeWebhook_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeWebhook"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeWebhook_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeWebhook"
         }
       ]
     }

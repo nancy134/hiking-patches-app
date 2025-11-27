@@ -23,6 +23,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -59,6 +60,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -95,6 +97,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -118,9 +121,9 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
 >;
 export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onCreateUserPatch(filter: $filter, owner: $owner) {
+  onCreateUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -137,6 +140,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -150,7 +154,6 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -160,9 +163,9 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
 >;
 export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onUpdateUserPatch(filter: $filter, owner: $owner) {
+  onUpdateUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -179,6 +182,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -192,7 +196,6 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -202,9 +205,9 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
 >;
 export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onDeleteUserPatch(filter: $filter, owner: $owner) {
+  onDeleteUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -221,6 +224,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -234,7 +238,6 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -389,6 +392,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -436,6 +440,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -483,6 +488,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -695,6 +701,7 @@ export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -739,6 +746,7 @@ export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -783,6 +791,7 @@ export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -889,4 +898,58 @@ export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
 ` as GeneratedSubscription<
   APITypes.OnDeleteUserTrailSubscriptionVariables,
   APITypes.OnDeleteUserTrailSubscription
+>;
+export const onCreatePatchPurchase = /* GraphQL */ `subscription OnCreatePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onCreatePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreatePatchPurchaseSubscriptionVariables,
+  APITypes.OnCreatePatchPurchaseSubscription
+>;
+export const onUpdatePatchPurchase = /* GraphQL */ `subscription OnUpdatePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onUpdatePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchPurchaseSubscriptionVariables,
+  APITypes.OnUpdatePatchPurchaseSubscription
+>;
+export const onDeletePatchPurchase = /* GraphQL */ `subscription OnDeletePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onDeletePatchPurchase(filter: $filter, userId: $userId) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchPurchaseSubscriptionVariables,
+  APITypes.OnDeletePatchPurchaseSubscription
 >;

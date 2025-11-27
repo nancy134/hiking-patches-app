@@ -26,6 +26,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -65,6 +66,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -104,6 +106,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -146,6 +149,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -159,7 +163,6 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -188,6 +191,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -201,7 +205,6 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -230,6 +233,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -243,7 +247,6 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -411,6 +414,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -459,6 +463,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -507,6 +512,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -729,6 +735,7 @@ export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -774,6 +781,7 @@ export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -819,6 +827,7 @@ export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -925,4 +934,58 @@ export const deleteUserTrail = /* GraphQL */ `mutation DeleteUserTrail(
 ` as GeneratedMutation<
   APITypes.DeleteUserTrailMutationVariables,
   APITypes.DeleteUserTrailMutation
+>;
+export const createPatchPurchase = /* GraphQL */ `mutation CreatePatchPurchase(
+  $input: CreatePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  createPatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreatePatchPurchaseMutationVariables,
+  APITypes.CreatePatchPurchaseMutation
+>;
+export const updatePatchPurchase = /* GraphQL */ `mutation UpdatePatchPurchase(
+  $input: UpdatePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  updatePatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchPurchaseMutationVariables,
+  APITypes.UpdatePatchPurchaseMutation
+>;
+export const deletePatchPurchase = /* GraphQL */ `mutation DeletePatchPurchase(
+  $input: DeletePatchPurchaseInput!
+  $condition: ModelPatchPurchaseConditionInput
+) {
+  deletePatchPurchase(input: $input, condition: $condition) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchPurchaseMutationVariables,
+  APITypes.DeletePatchPurchaseMutation
 >;

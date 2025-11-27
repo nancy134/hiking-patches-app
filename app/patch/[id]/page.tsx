@@ -1,5 +1,6 @@
 // app/patch/[id]/page.tsx
 'use client';
+import { useMemo } from 'react';
 import { 
   createUserPatch,
   updateUserPatch
@@ -263,6 +264,16 @@ export default function PatchDetailPage() {
   const { progress, loading: loadingProgress, refresh: refreshProgress } =
     usePatchProgressSummary(patch?.id ?? null, user?.userId ?? null);
 
+  const progressUnit = useMemo<'miles' | null>(() => {
+    const raw: unknown = (patch as any)?.completionRule;
+    if (!raw) return null;
+    try {
+      const obj = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return obj?.type === 'trailMilesTarget' ? 'miles' : null;
+    } catch {
+      return null;
+    }
+  }, [patch]);
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
     <>
@@ -356,6 +367,9 @@ export default function PatchDetailPage() {
               denom={progress?.denom ?? null}
               percent={progress?.percent ?? null}
               note={progress?.note ?? null}
+              unit={progressUnit}
+              isPurchasable={patch.isPurchasable}
+              patchId={patch.id}
             />
           </div>
         )}

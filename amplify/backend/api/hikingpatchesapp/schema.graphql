@@ -10,10 +10,17 @@ enum Difficulty {
   EXTRA_EXTRA_HARD
 }
 
-type Patch @model 
+type Patch
+  @model
   @auth(rules: [
+    # Keep existing public read (e.g. unauthenticated users / API key / IAM)
     { allow: public, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete]}
+
+    # NEW: allow any signed-in Cognito user (userPools) to read patches
+    { allow: private, provider: userPools, operations: [read] },
+
+    # Admin group: full access via Cognito user pools
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, create, update, delete] }
   ]) {
   id: ID!
   name: String!
@@ -28,26 +35,28 @@ type Patch @model
   hasPeaks: Boolean
   hasTrails: Boolean
   completionRule: AWSJSON
-  userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])  
+  isPurchasable: Boolean
+  userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
   patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])
 }
 
-type UserPatch @model 
+type UserPatch
+  @model
   @auth(rules: [
-  { allow: public, operations: [read] },
-  { allow: owner, operations: [read, create, update, delete] },
-  ]) 
-{
+    # Only the owner (userID) can see / change their own records
+    { allow: owner, ownerField: "userID", provider: userPools, operations: [read, create, update, delete] }
+
+    # (Optional) Admins can see all:
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, update, delete] }
+  ]) {
   id: ID!
 
-  # Single-field index to list by patch
   patchID: ID!
     @index(name: "byPatch", queryField: "userPatchesByPatch")
 
   patch: Patch @belongsTo(fields: ["patchID"])
 
-  # Composite index: (userID, patchID) -> userPatchesByUserByPatch
   userID: String!
     @index(
       name: "byUserByPatch",
@@ -136,8 +145,8 @@ type PatchProgress
 {
   patchId: ID!
   userId: ID!
-  completed: Int!  # how many patch mountains the user has at least 1 ascent for
-  denom: Int!      # denominator after applying rule (e.g., exclude delisted, or any N)
+  completed: Float!  # how many patch mountains the user has at least 1 ascent for
+  denom: Float!      # denominator after applying rule (e.g., exclude delisted, or any N)
   percent: Int!    # 0..100, rounded
   note: String
 }
@@ -205,4 +214,21 @@ type UserTrail
   trail: Trail @belongsTo(fields: ["trailID"])
 }
 
+type PatchPurchase 
+  @model
+  @auth(
+    rules: [
+      # Users can see their own purchases
+      { allow: owner, ownerField: "userId" }
+
+      # Backend (Stripe webhook via API key) can create rows
+      { allow: public, provider: apiKey, operations: [create, read] }
+    ]
+  ) {
+  id: ID!
+  userId: ID!
+  patchId: ID!
+  stripeSessionId: String!
+  createdAt: AWSDateTime!
+}
 

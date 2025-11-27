@@ -1,0 +1,13 @@
+{
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "cancelUrl",
+      "environmentVariableName": "CANCEL_URL"
+    },
+    {
+      "cloudFormationParameterName": "successUrl",
+      "environmentVariableName": "SUCCESS_URL"
+    }
+  ]
+}

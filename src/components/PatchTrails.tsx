@@ -7,7 +7,7 @@ import type { GraphQLResult } from '@aws-amplify/api';
 import { listPatchTrailsWithTrail } from '@/graphql/custom-queries';
 import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal } from '@/graphql/custom-mutations';
 import { listUserTrails } from '@/graphql/queries';
-
+import Link from 'next/link';
 import type {
   Trail,
   PatchTrail,
@@ -33,6 +33,12 @@ function Spinner({ label }: { label?: string }) {
       {label ? <span className="text-sm text-gray-600">{label}</span> : null}
     </span>
   );
+}
+
+/** Always show miles with two decimals */
+function fmtMiles(n: number | null | undefined) {
+  if (n == null || !Number.isFinite(Number(n))) return '—';
+  return Number(n).toFixed(2);
 }
 
 export default function PatchTrails({
@@ -94,12 +100,9 @@ export default function PatchTrails({
         })) as { data: ListUserTrailsQuery };
 
         const map: UserTrailMap = {};
-        // Depending on codegen, this might be connection or custom query; map accordingly.
-        // If listUserTrails is a connection with `filter`, then:
         (r.data as any)?.listUserTrails?.items?.forEach((ut: UserTrail | null) => {
           if (ut?.trailID) map[ut.trailID] = ut;
         });
-        // If you generated a queryField `userTrailsByUser`, swap above to use that shape.
 
         setUserMap(map);
       } finally {
@@ -124,25 +127,21 @@ export default function PatchTrails({
     const trailID = row.trail.id;
     const existing = userMap[trailID];
 
-    // Build field fragments, OMITTING nulls
     const fields: Record<string, any> = { userID: userId, trailID };
-    if (payload.dateCompleted) fields.dateCompleted = payload.dateCompleted;      // <-- only if provided
-    if (payload.milesRemaining != null) fields.milesRemaining = Number(payload.milesRemaining); // <-- only if provided
+    if (payload.dateCompleted) fields.dateCompleted = payload.dateCompleted;
+    if (payload.milesRemaining != null) fields.milesRemaining = Number(payload.milesRemaining);
     if (payload.notes != null && payload.notes !== '') fields.notes = payload.notes;
 
-    // If we are switching from "completed" to "partial", we must REMOVE the dateCompleted attribute.
     const clearingDateCompleted = !!existing?.dateCompleted && !payload.dateCompleted;
 
     try {
       if (!existing) {
-        // CREATE (no nulls)
         await client.graphql({
           query: createUserTrailMinimal,
           variables: { input: fields },
           authMode: 'userPool',
         });
       } else if (clearingDateCompleted) {
-        // DELETE then RECREATE without dateCompleted so the GSI entry is removed correctly
         await client.graphql({
           query: deleteUserTrailMinimal,
           variables: { input: { userID: existing.userID!, trailID: existing.trailID! } },
@@ -150,11 +149,10 @@ export default function PatchTrails({
         });
         await client.graphql({
           query: createUserTrailMinimal,
-          variables: { input: fields }, // this has no dateCompleted
+          variables: { input: fields },
           authMode: 'userPool',
         });
       } else {
-        // Plain UPDATE, but still omitting any nulls
         await client.graphql({
           query: updateUserTrailMinimal,
           variables: { input: fields },
@@ -162,11 +160,10 @@ export default function PatchTrails({
         });
       }
     } finally {
-      // refresh user map
       try {
         const r = (await client.graphql({
           query: listUserTrails,
-          variables: { userID: userId }, // or filter shape if that’s your query
+          variables: { userID: userId },
           authMode: 'userPool',
         })) as { data: ListUserTrailsQuery };
 
@@ -189,7 +186,6 @@ export default function PatchTrails({
       <h2 className="text-xl font-semibold mb-2">Trails in Patch</h2>
 
       <div className="flex items-center justify-between mb-1">
-        {/* Parent shows overall progress; keep only the user syncing indicator */}
         {loadingUser && !loadingPatch && <Spinner label="Syncing your trail progress…" />}
       </div>
       <div className="flex gap-2 items-center mb-3">
@@ -214,52 +210,103 @@ export default function PatchTrails({
         )}
       </div>
 
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 w-10 text-right">#</th>
-            <th className="text-left p-2">Trail</th>
-            <th className="text-left p-2">Length (mi)</th>
-            <th className="text-left p-2">Your Status</th>
-            {userId && <th className="text-left p-2">Action</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {visible.map((pt, idx) => {
-            const t = pt.trail!;
-            const ut = userMap[t.id];
-            const done = !!ut?.dateCompleted || (ut?.milesRemaining != null && ut.milesRemaining <= 0);
-            const status = done
-              ? (ut?.dateCompleted ? `Completed on ${ut.dateCompleted}` : 'Completed')
-              : (ut?.milesRemaining != null ? `${ut.milesRemaining} mi remaining` : 'Not started');
+      {/* wrap table to handle squish on small screens */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 w-10 text-right">#</th>
+              <th className="text-left p-2">Trail name</th>
+              <th className="text-left p-2">Length (mi)</th>
+              <th className="text-left p-2">Miles completed</th>
+              <th className="text-left p-2">Miles remaining</th>
+              <th className="text-left p-2">Date completed</th>
+              {userId && <th className="text-left p-2">Action</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {visible.map((pt, idx) => {
+              const t = pt.trail!;
+              const ut = userMap[t.id];
 
-            return (
-              <tr key={t.id} className="border-t">
-                <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
-                <td className="p-2">{t.name}</td>
-                <td className="p-2">{t.lengthMiles ?? '—'}</td>
-                <td className="p-2">{status}</td>
-                {userId && (
+              const lengthMi = t.lengthMiles != null && Number.isFinite(Number(t.lengthMiles))
+                ? Number(t.lengthMiles)
+                : null;
+
+              const requiredFromPatch = pt.requiredMiles != null && Number.isFinite(Number(pt.requiredMiles))
+                ? Number(pt.requiredMiles)
+                : null;
+
+              // ✅ required defaults to requiredMiles, falling back to lengthMiles
+              const required = requiredFromPatch != null
+                ? requiredFromPatch
+                : (lengthMi != null ? lengthMi : null);
+
+              let milesRemaining: number | null = null;
+              let milesCompleted: number | null = null;
+              let dateCompleted: string | null = ut?.dateCompleted ?? null;
+
+              // If the user has a numeric milesRemaining, compute from required
+              if (ut && ut.milesRemaining != null && Number.isFinite(Number(ut.milesRemaining))) {
+                milesRemaining = Number(ut.milesRemaining);
+
+                if (required != null) {
+                  const done = Math.max(0, Math.min(required, required - milesRemaining));
+                  milesCompleted = done;
+                } else {
+                  milesCompleted = null; // no required or length to compute against
+                }
+              }
+
+              // If they marked completed, give full credit against required (or length fallback)
+              if (ut?.dateCompleted) {
+                if (required != null) {
+                  milesCompleted = required;
+                  milesRemaining = 0;
+                } else if (lengthMi != null) {
+                  milesCompleted = lengthMi;
+                  milesRemaining = 0;
+                }
+              }
+
+              return (
+                <tr key={t.id} className="border-t">
+                  <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
                   <td className="p-2">
-                    <button
-                      onClick={() => setModalRow(pt)}
-                      className="text-blue-600 hover:underline text-sm disabled:opacity-50"
-                      disabled={loadingUser}
+                    <Link
+                      href={`/trail/${t.id}?patchId=${patchId}`}
+                      className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm"
                     >
-                      {ut ? 'Update' : 'Log Progress'}
-                    </button>
+                      {t.name}
+                    </Link>
                   </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  <td className="p-2">{fmtMiles(lengthMi)}</td>
+                  <td className="p-2">{fmtMiles(milesCompleted)}</td>
+                  <td className="p-2">{fmtMiles(milesRemaining)}</td>
+                  <td className="p-2">{dateCompleted ?? '—'}</td>
+                  {userId && (
+                    <td className="p-2">
+                      <button
+                        onClick={() => setModalRow(pt)}
+                        className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+                        disabled={loadingUser}
+                      >
+                        {ut ? 'Update' : 'Log Progress'}
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       <TrailProgressModal
         open={!!modalRow}
         trailName={modalRow?.trail?.name ?? ''}
         requiredMiles={modalRow?.requiredMiles ?? null}
+        trailLengthMiles={modalRow?.trail?.lengthMiles ?? null}
         existing={modalRow ? userMap[modalRow.trail.id] : null}
         onClose={() => setModalRow(null)}
         onSave={(data) => {

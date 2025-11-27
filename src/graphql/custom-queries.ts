@@ -44,6 +44,8 @@ export const getPatchWithMountainsPaged = /* GraphQL */ `
       popularity
       hasPeaks
       hasTrails
+      completionRule
+      isPurchasable
       patchMountains(limit: $limit, nextToken: $nextToken) {
         items {
           id
@@ -241,4 +243,17 @@ export const listPatchTrailsWithTrail = /* GraphQL */ `
       nextToken
     }
   }
+`;
+
+export const getTrailPublic = /* GraphQL */ `query GetTrailPublic($id: ID!) {
+  getTrail(id: $id) {
+    id
+    name
+    description
+    lengthMiles
+    createdAt
+    updatedAt
+    __typename
+  }
+}
 `;

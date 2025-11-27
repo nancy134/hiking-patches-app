@@ -53,6 +53,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     hasPeaks
     hasTrails
     completionRule
+    isPurchasable
     userPatches {
       nextToken
       __typename
@@ -91,6 +92,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -121,6 +123,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -134,7 +137,6 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -160,7 +162,6 @@ export const listUserPatches = /* GraphQL */ `query ListUserPatches(
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -197,7 +198,6 @@ export const userPatchesByPatch = /* GraphQL */ `query UserPatchesByPatch(
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -236,7 +236,6 @@ export const userPatchesByUserByPatch = /* GraphQL */ `query UserPatchesByUserBy
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -354,6 +353,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -717,6 +717,7 @@ export const getPatchTrail = /* GraphQL */ `query GetPatchTrail($id: ID!) {
       hasPeaks
       hasTrails
       completionRule
+      isPurchasable
       createdAt
       updatedAt
       __typename
@@ -981,4 +982,42 @@ export const userTrailsByTrail = /* GraphQL */ `query UserTrailsByTrail(
 ` as GeneratedQuery<
   APITypes.UserTrailsByTrailQueryVariables,
   APITypes.UserTrailsByTrailQuery
+>;
+export const getPatchPurchase = /* GraphQL */ `query GetPatchPurchase($id: ID!) {
+  getPatchPurchase(id: $id) {
+    id
+    userId
+    patchId
+    stripeSessionId
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetPatchPurchaseQueryVariables,
+  APITypes.GetPatchPurchaseQuery
+>;
+export const listPatchPurchases = /* GraphQL */ `query ListPatchPurchases(
+  $filter: ModelPatchPurchaseFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPatchPurchases(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      userId
+      patchId
+      stripeSessionId
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListPatchPurchasesQueryVariables,
+  APITypes.ListPatchPurchasesQuery
 >;
