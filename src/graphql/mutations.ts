@@ -944,6 +944,9 @@ export const createPatchPurchase = /* GraphQL */ `mutation CreatePatchPurchase(
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -962,6 +965,9 @@ export const updatePatchPurchase = /* GraphQL */ `mutation UpdatePatchPurchase(
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -980,6 +986,9 @@ export const deletePatchPurchase = /* GraphQL */ `mutation DeletePatchPurchase(
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename

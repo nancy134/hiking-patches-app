@@ -908,6 +908,9 @@ export const onCreatePatchPurchase = /* GraphQL */ `subscription OnCreatePatchPu
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -926,6 +929,9 @@ export const onUpdatePatchPurchase = /* GraphQL */ `subscription OnUpdatePatchPu
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -944,6 +950,9 @@ export const onDeletePatchPurchase = /* GraphQL */ `subscription OnDeletePatchPu
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename

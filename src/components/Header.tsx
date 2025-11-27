@@ -9,7 +9,7 @@ import { useAuth } from '@/context/auth-context';
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
-  const { user, isAdmin, setUser, logout, authReady } = useAuth();
+  const { user, isAdmin, authReady } = useAuth();
   const [authTab, setAuthTab] = useState<'signIn' | 'signUp'>('signIn');
 
   useEffect(() => {
@@ -26,43 +26,69 @@ export default function Header() {
   return (
     <header className="flex justify-between items-center p-4 border-b mb-4">
       <Link href="/" className="text-2xl font-bold flex items-center space-x-2">
-        <img src="/images/person-hiking-solid.svg" alt="Logo" className="h-6 w-6" />
+        <img
+          src="/images/person-hiking-solid.svg"
+          alt="Logo"
+          className="h-6 w-6"
+        />
         <span>Hiking Patches</span>
       </Link>
 
       <div className="space-x-4">
-        <Link href="/" className="text-blue-600 hover:underline">Home</Link>
-        <Link href="/about" className="text-blue-600 hover:underline">About</Link>
-        <Link href="/safety" className="text-blue-600 hover:underline">Safety</Link>
+        <Link href="/" className="text-blue-600 hover:underline">
+          Home
+        </Link>
+        <Link href="/about" className="text-blue-600 hover:underline">
+          About
+        </Link>
+        <Link href="/safety" className="text-blue-600 hover:underline">
+          Safety
+        </Link>
 
         {!authReady ? (
           // You can swap this for a subtle skeleton or nothing at all
-          <span className="inline-block h-4 w-20 rounded bg-gray-200 align-middle" aria-hidden="true" />
-
+          <span
+            className="inline-block h-4 w-20 rounded bg-gray-200 align-middle"
+            aria-hidden="true"
+          />
         ) : user ? (
           <>
-            <Link href="/my-patches" className="text-blue-600 hover:underline">My Patches</Link>
+            <Link href="/my-patches" className="text-blue-600 hover:underline">
+              My Patches
+            </Link>
             {isAdmin && (
-              <Link href="/admin" className="text-blue-600 hover:underline">Admin</Link>
+              <Link href="/admin" className="text-blue-600 hover:underline">
+                Admin
+              </Link>
             )}
-            <button
-              onClick={logout}
+            {/* New Account screen link instead of direct Log out */}
+            <Link
+              href="/account"
               className="text-blue-600 hover:underline hover:text-blue-800"
             >
-              Log out
-            </button>
+              Account
+            </Link>
           </>
         ) : (
           <>
-            <button onClick={() => openModal("signIn")} className="text-blue-600 hover:underline">
+            <button
+              onClick={() => openModal('signIn')}
+              className="text-blue-600 hover:underline"
+            >
               Sign in
             </button>
-            <button onClick={() => openModal("signUp")} className="text-blue-600 hover:underline">
+            <button
+              onClick={() => openModal('signUp')}
+              className="text-blue-600 hover:underline"
+            >
               Create Account
             </button>
 
-
-            <Dialog open={showLogin} onClose={() => setShowLogin(false)} className="relative z-50">
+            <Dialog
+              open={showLogin}
+              onClose={() => setShowLogin(false)}
+              className="relative z-50"
+            >
               {/* Background overlay */}
               <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 

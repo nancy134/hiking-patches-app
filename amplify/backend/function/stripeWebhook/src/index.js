@@ -19,6 +19,9 @@ const CREATE_PATCH_PURCHASE = /* GraphQL */ `
       userId
       patchId
       stripeSessionId
+      amount
+      currency
+      stripeReceiptUrl
       createdAt
     }
   }
@@ -61,11 +64,45 @@ exports.handler = async (event) => {
         stripeSessionId,
       });
 
-      if (!userId || !patchId) {
+     if (!userId || !patchId) {
         console.warn(
           'Missing userId or patchId in session metadata; skipping DB save.'
         );
       } else {
+        // 🔹 Pull more info from Stripe using the session
+        let amount = null;
+        let currency = null;
+        let stripeReceiptUrl = null;
+
+        try {
+          if (session.payment_intent) {
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              session.payment_intent,
+              { expand: ['charges'] }
+            );
+
+            amount = paymentIntent.amount_received || paymentIntent.amount || null;
+            currency = paymentIntent.currency || null;
+ 
+            const charge = paymentIntent.charges?.data?.[0];
+            if (charge && charge.receipt_url) {
+              stripeReceiptUrl = charge.receipt_url;
+            }
+
+            console.log('PaymentIntent details', {
+              amount,
+              currency,
+              stripeReceiptUrl,
+            });
+          } else {
+            console.warn(
+              'No payment_intent on checkout.session; cannot derive amount/receipt'
+            );
+          }
+        } catch (err) {
+          console.error('Error retrieving PaymentIntent for session', err);
+        }
+
         // Call AppSync to create PatchPurchase
         const graphqlBody = {
           query: CREATE_PATCH_PURCHASE,
@@ -74,6 +111,9 @@ exports.handler = async (event) => {
               userId,
               patchId,
               stripeSessionId,
+              amount,
+              currency,
+              stripeReceiptUrl,
             },
           },
         };
@@ -93,16 +133,13 @@ exports.handler = async (event) => {
           console.error('Error creating PatchPurchase in AppSync', {
             status: resp.status,
             body: json,
-            errors: json.errors
+            errors: json.errors,
           });
         } else {
           console.log('PatchPurchase created', json.data.createPatchPurchase);
         }
       }
     }
-
-    // Handle other Stripe event types if you want
-    // e.g. payment_intent.succeeded, charge.refunded, etc.
 
     return { statusCode: 200, body: JSON.stringify({ received: true }) };
   } catch (err) {

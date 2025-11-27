@@ -229,6 +229,9 @@ type PatchPurchase
   userId: ID!
   patchId: ID!
   stripeSessionId: String!
+  amount: Int        # amount in smallest currency unit (e.g. cents)
+  currency: String
+  stripeReceiptUrl: String
   createdAt: AWSDateTime!
 }
 

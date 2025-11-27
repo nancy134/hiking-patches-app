@@ -989,6 +989,9 @@ export const getPatchPurchase = /* GraphQL */ `query GetPatchPurchase($id: ID!) 
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -1009,6 +1012,9 @@ export const listPatchPurchases = /* GraphQL */ `query ListPatchPurchases(
       userId
       patchId
       stripeSessionId
+      amount
+      currency
+      stripeReceiptUrl
       createdAt
       updatedAt
       __typename
