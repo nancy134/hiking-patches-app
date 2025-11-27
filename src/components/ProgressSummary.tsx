@@ -10,7 +10,16 @@ import type { ListPatchPurchasesQuery, PatchPurchase } from '@/API';
 const client = generateClient();
 
 function Spinner({ label }: { label?: string }) {
-  // ... same as before
+  return (
+    <span
+      className="inline-flex items-center gap-2"
+      role="status"
+      aria-live="polite"
+    >
+      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
+      {label ? <span className="text-sm text-gray-600">{label}</span> : null}
+    </span>
+  );
 }
 
 export default function ProgressSummary(props: {
