@@ -163,7 +163,6 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -206,7 +205,6 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -249,7 +247,6 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }

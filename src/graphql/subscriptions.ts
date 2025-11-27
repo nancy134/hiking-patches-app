@@ -121,9 +121,9 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
 >;
 export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onCreateUserPatch(filter: $filter, owner: $owner) {
+  onCreateUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -154,7 +154,6 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -164,9 +163,9 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
 >;
 export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onUpdateUserPatch(filter: $filter, owner: $owner) {
+  onUpdateUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -197,7 +196,6 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -207,9 +205,9 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
 >;
 export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
   $filter: ModelSubscriptionUserPatchFilterInput
-  $owner: String
+  $userID: String
 ) {
-  onDeleteUserPatch(filter: $filter, owner: $owner) {
+  onDeleteUserPatch(filter: $filter, userID: $userID) {
     id
     patchID
     patch {
@@ -240,7 +238,6 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }

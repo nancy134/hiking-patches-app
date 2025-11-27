@@ -137,7 +137,6 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
     wishlisted
     createdAt
     updatedAt
-    owner
     __typename
   }
 }
@@ -163,7 +162,6 @@ export const listUserPatches = /* GraphQL */ `query ListUserPatches(
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -200,7 +198,6 @@ export const userPatchesByPatch = /* GraphQL */ `query UserPatchesByPatch(
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken
@@ -239,7 +236,6 @@ export const userPatchesByUserByPatch = /* GraphQL */ `query UserPatchesByUserBy
       wishlisted
       createdAt
       updatedAt
-      owner
       __typename
     }
     nextToken

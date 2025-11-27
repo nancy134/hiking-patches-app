@@ -104,7 +104,6 @@ export type UserPatch = {
   wishlisted?: boolean | null,
   createdAt: string,
   updatedAt: string,
-  owner?: string | null,
 };
 
 export type ModelPatchTrailConnection = {
@@ -205,7 +204,6 @@ export type ModelUserPatchFilterInput = {
   and?: Array< ModelUserPatchFilterInput | null > | null,
   or?: Array< ModelUserPatchFilterInput | null > | null,
   not?: ModelUserPatchFilterInput | null,
-  owner?: ModelStringInput | null,
 };
 
 export type ModelIDInput = {
@@ -421,7 +419,6 @@ export type ModelUserPatchConditionInput = {
   not?: ModelUserPatchConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  owner?: ModelStringInput | null,
 };
 
 export type DeleteUserPatchInput = {
@@ -913,7 +910,6 @@ export type ModelSubscriptionBooleanInput = {
 export type ModelSubscriptionUserPatchFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   patchID?: ModelSubscriptionIDInput | null,
-  userID?: ModelSubscriptionStringInput | null,
   dateCompleted?: ModelSubscriptionStringInput | null,
   notes?: ModelSubscriptionStringInput | null,
   difficulty?: ModelSubscriptionIntInput | null,
@@ -924,7 +920,7 @@ export type ModelSubscriptionUserPatchFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
-  owner?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionPatchRequestFilterInput = {
@@ -1596,7 +1592,6 @@ export type CreateUserPatchMutation = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
@@ -1638,7 +1633,6 @@ export type UpdateUserPatchMutation = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
@@ -1680,7 +1674,6 @@ export type DeleteUserPatchMutation = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
@@ -2536,7 +2529,6 @@ export type GetUserPatchQuery = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
@@ -2562,7 +2554,6 @@ export type ListUserPatchesQuery = {
       wishlisted?: boolean | null,
       createdAt: string,
       updatedAt: string,
-      owner?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -2592,7 +2583,6 @@ export type UserPatchesByPatchQuery = {
       wishlisted?: boolean | null,
       createdAt: string,
       updatedAt: string,
-      owner?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -2623,7 +2613,6 @@ export type UserPatchesByUserByPatchQuery = {
       wishlisted?: boolean | null,
       createdAt: string,
       updatedAt: string,
-      owner?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -3437,7 +3426,7 @@ export type OnDeletePatchSubscription = {
 
 export type OnCreateUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
-  owner?: string | null,
+  userID?: string | null,
 };
 
 export type OnCreateUserPatchSubscription = {
@@ -3473,13 +3462,12 @@ export type OnCreateUserPatchSubscription = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
 export type OnUpdateUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
-  owner?: string | null,
+  userID?: string | null,
 };
 
 export type OnUpdateUserPatchSubscription = {
@@ -3515,13 +3503,12 @@ export type OnUpdateUserPatchSubscription = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
 export type OnDeleteUserPatchSubscriptionVariables = {
   filter?: ModelSubscriptionUserPatchFilterInput | null,
-  owner?: string | null,
+  userID?: string | null,
 };
 
 export type OnDeleteUserPatchSubscription = {
@@ -3557,7 +3544,6 @@ export type OnDeleteUserPatchSubscription = {
     wishlisted?: boolean | null,
     createdAt: string,
     updatedAt: string,
-    owner?: string | null,
   } | null,
 };
 
