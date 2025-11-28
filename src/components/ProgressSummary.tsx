@@ -6,6 +6,7 @@ import { generateClient } from 'aws-amplify/api';
 import type { GraphQLResult } from '@aws-amplify/api';
 import { listPatchPurchases } from '@/graphql/queries';
 import type { ListPatchPurchasesQuery, PatchPurchase } from '@/API';
+import Link from 'next/link';
 
 const client = generateClient();
 
@@ -194,9 +195,14 @@ export default function ProgressSummary(props: {
               )}
               {!checkingPurchase && hasPurchased && (
                 <p className="mt-2 text-xs text-green-700 text-center">
-                  You’ve already purchased this patch. You can view it any time
-                  from your dashboard, or purchase another patch using the
-                  button above.
+                  You’ve already purchased this patch. You can view it any time from the{' '}
+                  <Link
+                    href="/account"
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    Account
+                  </Link>{' '}
+                  screen, or purchase another patch using the button above.
                 </p>
               )}
             </>

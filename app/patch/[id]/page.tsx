@@ -278,7 +278,7 @@ export default function PatchDetailPage() {
   if (!patch) return <p className="p-4">Loading patch...</p>;
   return (
     <>
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="w-full p-4">
       <Header />
       <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
         <div className="flex-1">
