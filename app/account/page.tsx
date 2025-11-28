@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { generateClient } from 'aws-amplify/api';
 import type { GraphQLResult } from '@aws-amplify/api';
-import { listPatchPurchases } from '@/graphql/queries';
+import { listPatchPurchases, getPatch } from '@/graphql/queries';
 import { useAuth } from '@/context/auth-context';
-import type { ListPatchPurchasesQuery, PatchPurchase } from '@/API';
+import type {
+  ListPatchPurchasesQuery,
+  PatchPurchase,
+  Patch,
+} from '@/API';
 import Header from '@/components/Header';
 
 const client = generateClient();
@@ -19,6 +23,7 @@ export default function AccountPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [purchases, setPurchases] = useState<PatchPurchase[]>([]);
   const [loadingPurchases, setLoadingPurchases] = useState(false);
+  const [patchNames, setPatchNames] = useState<Record<string, string>>({});
 
   // Redirect unauthenticated users once auth status is known
   useEffect(() => {
@@ -77,6 +82,64 @@ export default function AccountPage() {
     };
   }, [authReady, user?.userId]);
 
+  // Load patch names for purchased patch IDs
+  useEffect(() => {
+    if (!authReady || !user?.userId) return;
+    if (purchases.length === 0) return;
+
+    let cancelled = false;
+
+    const run = async () => {
+      // unique patch IDs from purchases
+      const uniquePatchIds = Array.from(
+        new Set(
+          purchases
+            .map((p) => p.patchId)
+            .filter((id): id is string => !!id)
+        )
+      );
+
+      // only fetch those we don't already know
+      const missing = uniquePatchIds.filter((id) => !(id in patchNames));
+      if (missing.length === 0) return;
+
+      const entries: [string, string][] = [];
+
+      for (const id of missing) {
+        try {
+          const res = (await client.graphql({
+            query: getPatch,
+            variables: { id },
+            authMode: 'userPool', // or 'apiKey' if Patch is public; userPool is fine here
+          })) as GraphQLResult<{ getPatch?: Patch | null }>;
+
+          const patch = res.data?.getPatch;
+          if (patch?.name) {
+            entries.push([id, patch.name]);
+          }
+        } catch (err) {
+          console.error('Error loading patch for purchase list:', err);
+        }
+      }
+
+      if (!cancelled && entries.length > 0) {
+        setPatchNames((prev) => {
+          const next = { ...prev };
+          for (const [id, name] of entries) {
+            next[id] = name;
+          }
+          return next;
+        });
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authReady, user?.userId, purchases, patchNames]);
+
   if (!authReady) {
     return (
       <div>
@@ -131,12 +194,12 @@ export default function AccountPage() {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
-                   });
+                  });
 
+                const patchId = p.patchId;
                 const patchName =
-                  (p as any).patch?.name ||
-                  (p as any).patchName ||
-                  `Patch ${p.patchId ?? ''}`;
+                  (patchId && patchNames[patchId]) ||
+                  `Patch ${patchId ?? ''}`;
 
                 const formattedAmount =
                   p.amount != null && p.currency
@@ -149,11 +212,25 @@ export default function AccountPage() {
                     className="flex items-center justify-between text-sm"
                   >
                     <div>
-                      <div className="font-medium text-gray-900">{patchName}</div>
+                      {/* Patch name linking to patch detail page */}
+                      {patchId ? (
+                        <Link
+                          href={`/patch/${patchId}`}
+                          className="font-medium text-gray-900 hover:underline"
+                        >
+                          {patchName}
+                        </Link>
+                      ) : (
+                        <div className="font-medium text-gray-900">
+                          {patchName}
+                        </div>
+                      )}
+
                       <div className="text-gray-500">
                         Purchased {created || 'recently'}
-                         {formattedAmount && ` • ${formattedAmount}`}
+                        {formattedAmount && ` • ${formattedAmount}`}
                       </div>
+
                       {p.stripeReceiptUrl && (
                         <a
                           href={p.stripeReceiptUrl}

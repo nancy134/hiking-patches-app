@@ -101,8 +101,14 @@ type Mountain @model
 
 type PatchMountain @model
   @auth(rules: [
+    # Guests / API key can read (if your API is configured for that)
     { allow: public, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+
+    # Any signed-in Cognito user can read
+    { allow: private, provider: userPools, operations: [read] },
+
+    # Admins can do everything
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, create, update, delete] }
   ]) 
 {
   id: ID!
@@ -177,8 +183,14 @@ type Trail @model
 
 type PatchTrail @model
   @auth(rules: [
+    # Guests / API key can read
     { allow: public, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+
+    # Any signed-in Cognito user can read
+    { allow: private, provider: userPools, operations: [read] },
+
+    # Admins can do everything
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, create, update, delete] }
   ]) {
   id: ID!
 
