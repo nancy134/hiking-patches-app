@@ -14,6 +14,8 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Verify your hiking-patches.com account",
+    "emailVerificationMessage": "Welcome to Hiking Patches!\n\nYour verification code is {####}.\n\nEnter this code hiking-patches.com to finish creating your account.\n\nHappy trails,\nThe Hiking Patches Team",
     "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,

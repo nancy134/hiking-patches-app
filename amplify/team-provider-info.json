@@ -71,7 +71,7 @@
         },
         "createCheckout": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/createCheckout-37312f65376c57795557-build.zip",
+          "s3Key": "amplify-builds/createCheckout-546d57575a4a45425463-build.zip",
           "cancelUrl": "http://localhost:3000/purchase/cancel",
           "successUrl": "http://localhost:3000/purchase/success?session_id={CHECKOUT_SESSION_ID}"
         },
