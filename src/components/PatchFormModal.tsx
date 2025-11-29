@@ -40,7 +40,7 @@ export default function PatchFormModal({
   const [hasPeaks, setHasPeaks] = useState<boolean>(false);
   const [hasTrails, setHasTrails] = useState<boolean>(false);
   const [isPurchasable, setIsPurchasable] = useState<boolean>(false); // NEW
-  const [status, setStatus] = useState<PatchStatus>('PUBLISHED');
+  const [status, setStatus] = useState<PatchStatus>(PatchStatus.PUBLISHED);
 
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
@@ -63,7 +63,7 @@ export default function PatchFormModal({
       setHasTrails((patch as any).hasTrails ?? false);
       setIsPurchasable((patch as any).isPurchasable ?? false); // NEW
       const s = (patch as any).status as PatchStatus | null | undefined;
-      setStatus(s ?? 'PUBLISHED');
+      setStatus(s ?? PatchStatus.PUBLISHED);
 
       // Parse completionRule (can be object or JSON string from AppSync)
       const raw = (patch as any)?.completionRule as unknown;
@@ -276,9 +276,9 @@ export default function PatchFormModal({
                 onChange={(e) => setStatus(e.target.value as PatchStatus)}
                 className="w-full p-2 border rounded"
                >
-                <option value="PUBLISHED">Published (visible on Home)</option>
-                <option value="DRAFT">Draft (Admin only)</option>
-                <option value="ARCHIVED">Archived (hidden)</option>
+                <option value={PatchStatus.PUBLISHED}>Published (visible on Home)</option>
+                <option value={PatchStatus.DRAFT}>Draft (Admin only)</option>
+                <option value={PatchStatus.ARCHIVED}>Archived (hidden)</option>
               </select>
               <p className="text-xs text-gray-500">
                 Draft patches are only visible in the Admin screens. Published patches appear on the Home page.

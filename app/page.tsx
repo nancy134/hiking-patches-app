@@ -7,7 +7,7 @@ import PatchGrid from '@/components/PatchGrid';
 import SearchBar from '@/components/SearchBar'; // ✅ add this import
 import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
-import { Patch, UserPatch } from '@/API';
+import { Patch, UserPatch, PatchStatus } from '@/API';
 import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
@@ -126,8 +126,8 @@ export default function HomePage() {
 
       if (!isAdmin) {
         next = next.filter((p) => {
-          const status = (p as any).status ?? 'PUBLISHED'; // treat missing as PUBLISHED
-          return status !== 'DRAFT';
+          const status = (p as any).status ?? PatchStatus.PUBLISHED; // treat missing as PUBLISHED
+          return status !== PatchStatus.DRAFT;
         });
       }
 
