@@ -21,7 +21,7 @@ const norm = (s: string) =>
     .replace(/\p{Diacritic}/gu, '');
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   // public data
   const [allPatches, setAllPatches] = useState<Patch[]>([]);
@@ -49,7 +49,7 @@ export default function HomePage() {
     (async () => {
       try {
         const response = await client.graphql({ query: listPatches });
-        const patches = response?.data?.listPatches?.items || [];
+        let patches = (response?.data?.listPatches?.items || []).filter(Boolean) as Patch[];
         setAllPatches(patches);
       } catch (e) {
         console.error('Error fetching patches', e);
@@ -124,6 +124,13 @@ export default function HomePage() {
         next = next.filter((p) => p.difficulty === selectedDifficulty);
       }
 
+      if (!isAdmin) {
+        next = next.filter((p) => {
+          const status = (p as any).status ?? 'PUBLISHED'; // treat missing as PUBLISHED
+          return status !== 'DRAFT';
+        });
+      }
+
       // Only apply status filters once user data is available.
       if (userDataReady && user) {
         next = next.filter((patch) => {
@@ -167,6 +174,7 @@ export default function HomePage() {
     showInProgress,
     showWishlisted,
     onlyMyPatches,
+    isAdmin,
   ]);
 
   const paginated = useMemo(() => {

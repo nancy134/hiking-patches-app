@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
-import { Patch, Difficulty } from '@/API';
+import { Patch, Difficulty, PatchStatus } from '@/API';
 import awsExports from '@/aws-exports';
 import FileUploader from '@/components/FileUploader';
 
@@ -40,6 +40,7 @@ export default function PatchFormModal({
   const [hasPeaks, setHasPeaks] = useState<boolean>(false);
   const [hasTrails, setHasTrails] = useState<boolean>(false);
   const [isPurchasable, setIsPurchasable] = useState<boolean>(false); // NEW
+  const [status, setStatus] = useState<PatchStatus>('PUBLISHED');
 
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
@@ -61,6 +62,8 @@ export default function PatchFormModal({
       setHasPeaks(patch.hasPeaks ?? false);
       setHasTrails((patch as any).hasTrails ?? false);
       setIsPurchasable((patch as any).isPurchasable ?? false); // NEW
+      const s = (patch as any).status as PatchStatus | null | undefined;
+      setStatus(s ?? 'PUBLISHED');
 
       // Parse completionRule (can be object or JSON string from AppSync)
       const raw = (patch as any)?.completionRule as unknown;
@@ -155,7 +158,8 @@ export default function PatchFormModal({
         popularity,
         hasPeaks,
         hasTrails,
-        isPurchasable, // NEW
+        isPurchasable,
+        status,
         completionRule: completionRuleToSend, // saved as AWSJSON
       };
 
@@ -192,7 +196,7 @@ export default function PatchFormModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-lg w-full max-w-4xl relative">
+      <div className="bg-white p-6 rounded shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
         <button className="absolute top-2 right-2 text-gray-500" onClick={onClose}>✖</button>
         <h2 className="text-xl font-bold mb-4">{patch ? 'Edit Patch' : 'Add New Patch'}</h2>
 
@@ -263,6 +267,23 @@ export default function PatchFormModal({
               <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
             </select>
 
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Patch Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as PatchStatus)}
+                className="w-full p-2 border rounded"
+               >
+                <option value="PUBLISHED">Published (visible on Home)</option>
+                <option value="DRAFT">Draft (Admin only)</option>
+                <option value="ARCHIVED">Archived (hidden)</option>
+              </select>
+              <p className="text-xs text-gray-500">
+                Draft patches are only visible in the Admin screens. Published patches appear on the Home page.
+              </p>
+            </div>
             <div className="flex gap-2">
               <input
                 type="text"

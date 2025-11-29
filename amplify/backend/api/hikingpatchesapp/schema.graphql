@@ -10,6 +10,12 @@ enum Difficulty {
   EXTRA_EXTRA_HARD
 }
 
+enum PatchStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 type Patch
   @model
   @auth(rules: [
@@ -36,6 +42,7 @@ type Patch
   hasTrails: Boolean
   completionRule: AWSJSON
   isPurchasable: Boolean
+  status: PatchStatus @default(value: "PUBLISHED")
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
   patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])

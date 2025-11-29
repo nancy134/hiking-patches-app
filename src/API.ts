@@ -68,6 +68,7 @@ export type Patch = {
   hasTrails?: boolean | null,
   completionRule?: string | null,
   isPurchasable?: boolean | null,
+  status?: PatchStatus | null,
   userPatches?: ModelUserPatchConnection | null,
   patchMountains?: ModelPatchMountainConnection | null,
   patchTrails?: ModelPatchTrailConnection | null,
@@ -81,6 +82,13 @@ export enum Difficulty {
   HARD = "HARD",
   EXTRA_HARD = "EXTRA_HARD",
   EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
+}
+
+
+export enum PatchStatus {
+  DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
+  ARCHIVED = "ARCHIVED",
 }
 
 
@@ -356,6 +364,7 @@ export type CreatePatchInput = {
   hasTrails?: boolean | null,
   completionRule?: string | null,
   isPurchasable?: boolean | null,
+  status?: PatchStatus | null,
 };
 
 export type ModelPatchConditionInput = {
@@ -372,6 +381,7 @@ export type ModelPatchConditionInput = {
   hasTrails?: ModelBooleanInput | null,
   completionRule?: ModelStringInput | null,
   isPurchasable?: ModelBooleanInput | null,
+  status?: ModelPatchStatusInput | null,
   and?: Array< ModelPatchConditionInput | null > | null,
   or?: Array< ModelPatchConditionInput | null > | null,
   not?: ModelPatchConditionInput | null,
@@ -382,6 +392,11 @@ export type ModelPatchConditionInput = {
 export type ModelDifficultyInput = {
   eq?: Difficulty | null,
   ne?: Difficulty | null,
+};
+
+export type ModelPatchStatusInput = {
+  eq?: PatchStatus | null,
+  ne?: PatchStatus | null,
 };
 
 export type UpdatePatchInput = {
@@ -399,6 +414,7 @@ export type UpdatePatchInput = {
   hasTrails?: boolean | null,
   completionRule?: string | null,
   isPurchasable?: boolean | null,
+  status?: PatchStatus | null,
 };
 
 export type DeletePatchInput = {
@@ -698,6 +714,7 @@ export type ModelPatchFilterInput = {
   hasTrails?: ModelBooleanInput | null,
   completionRule?: ModelStringInput | null,
   isPurchasable?: ModelBooleanInput | null,
+  status?: ModelPatchStatusInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchFilterInput | null > | null,
@@ -857,6 +874,7 @@ export type ModelSubscriptionPatchFilterInput = {
   hasTrails?: ModelSubscriptionBooleanInput | null,
   completionRule?: ModelSubscriptionStringInput | null,
   isPurchasable?: ModelSubscriptionBooleanInput | null,
+  status?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
@@ -1477,6 +1495,7 @@ export type CreatePatchMutation = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1516,6 +1535,7 @@ export type UpdatePatchMutation = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1555,6 +1575,7 @@ export type DeletePatchMutation = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1598,6 +1619,7 @@ export type CreateUserPatchMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1639,6 +1661,7 @@ export type UpdateUserPatchMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1680,6 +1703,7 @@ export type DeleteUserPatchMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1854,6 +1878,7 @@ export type CreatePatchMountainMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1902,6 +1927,7 @@ export type UpdatePatchMountainMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1950,6 +1976,7 @@ export type DeletePatchMountainMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2166,6 +2193,7 @@ export type CreatePatchTrailMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2211,6 +2239,7 @@ export type UpdatePatchTrailMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2256,6 +2285,7 @@ export type DeletePatchTrailMutation = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2470,6 +2500,7 @@ export type GetPatchQuery = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -2512,6 +2543,7 @@ export type ListPatchesQuery = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -2544,6 +2576,7 @@ export type GetUserPatchQuery = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -2759,6 +2792,7 @@ export type GetPatchMountainQuery = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3082,6 +3116,7 @@ export type GetPatchTrailQuery = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3364,6 +3399,7 @@ export type OnCreatePatchSubscription = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3402,6 +3438,7 @@ export type OnUpdatePatchSubscription = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3440,6 +3477,7 @@ export type OnDeletePatchSubscription = {
     hasTrails?: boolean | null,
     completionRule?: string | null,
     isPurchasable?: boolean | null,
+    status?: PatchStatus | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3483,6 +3521,7 @@ export type OnCreateUserPatchSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3524,6 +3563,7 @@ export type OnUpdateUserPatchSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3565,6 +3605,7 @@ export type OnDeleteUserPatchSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3732,6 +3773,7 @@ export type OnCreatePatchMountainSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3779,6 +3821,7 @@ export type OnUpdatePatchMountainSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3826,6 +3869,7 @@ export type OnDeletePatchMountainSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4038,6 +4082,7 @@ export type OnCreatePatchTrailSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4082,6 +4127,7 @@ export type OnUpdatePatchTrailSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4126,6 +4172,7 @@ export type OnDeletePatchTrailSubscription = {
       hasTrails?: boolean | null,
       completionRule?: string | null,
       isPurchasable?: boolean | null,
+      status?: PatchStatus | null,
       createdAt: string,
       updatedAt: string,
     },
