@@ -276,7 +276,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
 
   return (
     <>
-      <div className="w-full p-4">
+      <div className="w-full max-w-6xl mx-auto p-4">
         <Header />
         <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
           <div className="flex-1">
@@ -353,6 +353,9 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 patchId={patch.id}
                 userId={user.userId}
                 initialUserPatch={userPatch}
+                progressPercent={progress?.percent ?? null}      // NEW
+                hasPeaks={!!patch.hasPeaks}                      // NEW
+                hasTrails={!!patch.hasTrails}                    // NEW
                 onUpdate={(newPatch) => {
                   setUserPatch(newPatch);
                   if (newPatch?.dateCompleted) {
