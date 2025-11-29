@@ -10,6 +10,12 @@ enum Difficulty {
   EXTRA_EXTRA_HARD
 }
 
+enum PatchStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 type Patch
   @model
   @auth(rules: [
@@ -36,6 +42,7 @@ type Patch
   hasTrails: Boolean
   completionRule: AWSJSON
   isPurchasable: Boolean
+  status: PatchStatus @default(value: "PUBLISHED")
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
   patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])
@@ -101,8 +108,14 @@ type Mountain @model
 
 type PatchMountain @model
   @auth(rules: [
+    # Guests / API key can read (if your API is configured for that)
     { allow: public, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+
+    # Any signed-in Cognito user can read
+    { allow: private, provider: userPools, operations: [read] },
+
+    # Admins can do everything
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, create, update, delete] }
   ]) 
 {
   id: ID!
@@ -177,8 +190,14 @@ type Trail @model
 
 type PatchTrail @model
   @auth(rules: [
+    # Guests / API key can read
     { allow: public, operations: [read] },
-    { allow: groups, groups: ["Admin"], operations: [read, create, update, delete] }
+
+    # Any signed-in Cognito user can read
+    { allow: private, provider: userPools, operations: [read] },
+
+    # Admins can do everything
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, create, update, delete] }
   ]) {
   id: ID!
 
@@ -229,6 +248,9 @@ type PatchPurchase
   userId: ID!
   patchId: ID!
   stripeSessionId: String!
+  amount: Int        # amount in smallest currency unit (e.g. cents)
+  currency: String
+  stripeReceiptUrl: String
   createdAt: AWSDateTime!
 }
 

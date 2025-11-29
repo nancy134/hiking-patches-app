@@ -54,6 +54,7 @@ export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
     hasTrails
     completionRule
     isPurchasable
+    status
     userPatches {
       nextToken
       __typename
@@ -93,6 +94,7 @@ export const listPatches = /* GraphQL */ `query ListPatches(
       hasTrails
       completionRule
       isPurchasable
+      status
       createdAt
       updatedAt
       __typename
@@ -124,6 +126,7 @@ export const getUserPatch = /* GraphQL */ `query GetUserPatch($id: ID!) {
       hasTrails
       completionRule
       isPurchasable
+      status
       createdAt
       updatedAt
       __typename
@@ -354,6 +357,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       hasTrails
       completionRule
       isPurchasable
+      status
       createdAt
       updatedAt
       __typename
@@ -718,6 +722,7 @@ export const getPatchTrail = /* GraphQL */ `query GetPatchTrail($id: ID!) {
       hasTrails
       completionRule
       isPurchasable
+      status
       createdAt
       updatedAt
       __typename
@@ -989,6 +994,9 @@ export const getPatchPurchase = /* GraphQL */ `query GetPatchPurchase($id: ID!) 
     userId
     patchId
     stripeSessionId
+    amount
+    currency
+    stripeReceiptUrl
     createdAt
     updatedAt
     __typename
@@ -1009,6 +1017,9 @@ export const listPatchPurchases = /* GraphQL */ `query ListPatchPurchases(
       userId
       patchId
       stripeSessionId
+      amount
+      currency
+      stripeReceiptUrl
       createdAt
       updatedAt
       __typename

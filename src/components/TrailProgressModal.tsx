@@ -21,7 +21,6 @@ export default function TrailProgressModal({
   requiredMiles?: number | null;
   trailLengthMiles?: number | null;
 }) {
-  const [mode, setMode] = useState<'complete' | 'partial'>('partial');
   const [dateCompleted, setDateCompleted] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [completedStr, setCompletedStr] = useState<string>(''); // miles completed
@@ -35,8 +34,6 @@ export default function TrailProgressModal({
   useEffect(() => {
     if (!open) return;
 
-    const done = !!existing?.dateCompleted;
-    setMode(done ? 'complete' : 'partial');
     setDateCompleted(existing?.dateCompleted ?? '');
     setNotes(existing?.notes ?? '');
 
@@ -52,21 +49,14 @@ export default function TrailProgressModal({
     }
   }, [open, existing, targetMiles]);
 
-  // Snap slider + prefill date when switching to Completed
-  useEffect(() => {
-    if (mode !== 'complete') return;
-    if (targetMiles != null) {
-      setCompletedStr(String(targetMiles));
-    }
-    if (!dateCompleted) {
-      setDateCompleted(todayYMD());
-    }
-  }, [mode, targetMiles]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const completed = parseFloat(completedStr);
   const hasCompleted = Number.isFinite(completed);
   const clampedCompleted =
-    targetMiles != null && hasCompleted ? clamp(completed, 0, targetMiles) : (hasCompleted ? Math.max(0, completed) : NaN);
+    targetMiles != null && hasCompleted
+      ? clamp(completed, 0, targetMiles)
+      : hasCompleted
+      ? Math.max(0, completed)
+      : NaN;
 
   const milesRemaining = useMemo(() => {
     if (targetMiles == null || !Number.isFinite(clampedCompleted)) return NaN;
@@ -78,34 +68,66 @@ export default function TrailProgressModal({
     return Math.floor((clampedCompleted / targetMiles) * 100);
   }, [clampedCompleted, targetMiles]);
 
+  const showSlider = targetMiles != null;
+
+  // Auto-set dateCompleted when the slider hits full for the first time
+  useEffect(() => {
+    if (!showSlider || targetMiles == null) return;
+    if (!Number.isFinite(clampedCompleted)) return;
+
+    const isComplete = clampedCompleted >= targetMiles;
+    if (isComplete && !dateCompleted) {
+      setDateCompleted(todayYMD());
+    }
+  }, [clampedCompleted, showSlider, targetMiles, dateCompleted]);
+
   function submit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (mode === 'complete') {
-      if (!dateCompleted) { alert('Pick a completion date'); return; }
+    // If no target miles, treat this as a simple "completed" flow with date
+    if (!showSlider) {
+      if (!dateCompleted) {
+        alert('Pick a completion date');
+        return;
+      }
       onSave({ dateCompleted, milesRemaining: 0, notes: notes || null });
       return;
     }
 
-    // Partial path
+    // Slider / target miles path
     if (targetMiles == null) {
       alert('This trail has no target miles set. Please set a trail length or required miles first.');
       return;
     }
     if (!Number.isFinite(clampedCompleted)) {
-      alert('Enter miles completed as a number'); return;
+      alert('Enter miles completed as a number');
+      return;
     }
     if (clampedCompleted < 0 || clampedCompleted > targetMiles) {
-      alert(`Completed must be between 0 and ${targetMiles} miles.`); return;
+      alert(`Completed must be between 0 and ${targetMiles} miles.`);
+      return;
     }
 
+    const isComplete = clampedCompleted >= targetMiles;
+
+    if (isComplete) {
+      if (!dateCompleted) {
+        alert('Pick a completion date');
+        return;
+      }
+      onSave({ dateCompleted, milesRemaining: 0, notes: notes || null });
+      return;
+    }
+
+    // Partial progress
     const remainingToSave = round2(targetMiles - clampedCompleted);
     onSave({ dateCompleted: null, milesRemaining: remainingToSave, notes: notes || null });
   }
 
   if (!open) return null;
 
-  const showSlider = targetMiles != null;
+  const dateEnabled =
+    !showSlider || (targetMiles != null && Number.isFinite(clampedCompleted) && clampedCompleted >= targetMiles);
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
@@ -119,38 +141,7 @@ export default function TrailProgressModal({
         </p>
 
         <form onSubmit={submit} className="space-y-4">
-          {/* Mode toggle */}
-          <fieldset className="space-y-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="mode"
-                checked={mode === 'partial'}
-                onChange={() => setMode('partial')}
-              />
-              <span>Partial (set progress)</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="mode"
-                checked={mode === 'complete'}
-                onChange={() => setMode('complete')}
-              />
-              <span>Completed (set date)</span>
-            </label>
-          </fieldset>
-          <div className="mt-2">
-            <label className="block text-sm font-medium">Date completed</label>
-            <input
-              type="date"
-              value={dateCompleted}
-              onChange={(e) => setDateCompleted(e.target.value)}
-              disabled={mode !== 'complete'}
-              className="mt-1 w-full border rounded px-3 py-2 disabled:opacity-50"
-            />
-          </div>
-          {/* Progress control — stays visible for BOTH modes */}
+          {/* Progress control — slider at the top */}
           {showSlider ? (
             <div>
               <label className="block text-sm font-medium mb-1">
@@ -166,11 +157,8 @@ export default function TrailProgressModal({
                   value={Number.isFinite(clampedCompleted) ? clampedCompleted : 0}
                   onChange={(e) => {
                     const next = parseFloat(e.target.value);
-                    // If they move off max while in Completed mode -> flip to Partial
-                    if (mode === 'complete' && next < (targetMiles ?? 0)) {
-                      setMode('partial');
-                    }
                     setCompletedStr(e.target.value);
+                    // If they drag to full and there's no date yet, the effect will auto-set it
                   }}
                   className="flex-1"
                   aria-label="Miles completed"
@@ -183,31 +171,10 @@ export default function TrailProgressModal({
                   max={targetMiles!}
                   value={completedStr}
                   onChange={(e) => {
-                    const next = parseFloat(e.target.value);
-                    if (mode === 'complete' && Number.isFinite(next) && targetMiles != null && next < targetMiles) {
-                      setMode('partial');
-                    }
                     setCompletedStr(e.target.value);
                   }}
                   className="w-28 border rounded px-2 py-1 text-right"
                 />
-              </div>
-
-              <div className="flex gap-2 mt-2">
-                <button
-                  type="button"
-                  className="text-xs px-2 py-1 rounded border hover:bg-gray-50"
-                  onClick={() => { setMode('partial'); setCompletedStr('0'); }}
-                >
-                  Set 0
-                </button>
-                <button
-                  type="button"
-                  className="text-xs px-2 py-1 rounded border hover:bg-gray-50"
-                  onClick={() => { setMode('complete'); /* effect will snap & set date */ }}
-                >
-                  Set full
-                </button>
               </div>
 
               {/* Preview */}
@@ -227,14 +194,17 @@ export default function TrailProgressModal({
               </div>
             </div>
           ) : (
-            // No target — show a simple full bar when completed
+            // No target — simple progress info
             <div className="rounded border bg-gray-50 p-3 text-sm">
               <div className="w-full h-2 bg-gray-200 rounded mb-2">
-                <div className="h-2 bg-blue-600 rounded" style={{ width: mode === 'complete' ? '100%' : '0%' }} />
+                <div
+                  className="h-2 bg-blue-600 rounded"
+                  style={{ width: dateCompleted ? '100%' : '0%' }}
+                />
               </div>
               <div className="flex justify-between">
                 <span>Progress</span>
-                <span>{mode === 'complete' ? '100%' : '0%'}</span>
+                <span>{dateCompleted ? '100%' : '0%'}</span>
               </div>
               <p className="text-xs text-gray-600 mt-1">
                 Set trail length or required miles to enable the slider.
@@ -242,6 +212,24 @@ export default function TrailProgressModal({
             </div>
           )}
 
+          {/* Date completed */}
+          <div className="mt-2">
+            <label className="block text-sm font-medium">Date completed</label>
+            <input
+              type="date"
+              value={dateCompleted}
+              onChange={(e) => setDateCompleted(e.target.value)}
+              disabled={!dateEnabled}
+              className="mt-1 w-full border rounded px-3 py-2 disabled:opacity-50"
+            />
+            {showSlider && (
+              <p className="text-xs text-gray-500 mt-1">
+                Date is enabled when the slider is at full mileage.
+              </p>
+            )}
+          </div>
+
+          {/* Notes */}
           <div>
             <label className="block text-sm font-medium">Notes (optional)</label>
             <textarea
@@ -253,8 +241,19 @@ export default function TrailProgressModal({
           </div>
 
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-            <button type="submit" className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-2 rounded bg-gray-200 hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
