@@ -364,7 +364,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 }}
               />
             </div>
-
+            {(!!patch.hasPeaks || !!patch.hasTrails) && (
             <div className="bg-white p-4 rounded shadow mt-6">
               <ProgressSummary
                 loading={loadingProgress}
@@ -377,7 +377,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 patchId={patch.id}
               />
             </div>
-
+            )}
             {patch.hasPeaks && (
               <div className="bg-white p-4 rounded shadow mt-6">
                 <PatchMountains

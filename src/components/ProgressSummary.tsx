@@ -156,7 +156,7 @@ export default function ProgressSummary(props: {
       {/* progress bar */}
       <div className="w-full bg-gray-100 rounded h-3 overflow-hidden">
         <div
-          className="bg-slate-400 h-3 transition-all duration-300"
+          className="bg-slate-500 h-3 transition-all duration-300"
           style={{ width: `${progress}%` }}
           aria-valuenow={progress}
           aria-valuemin={0}

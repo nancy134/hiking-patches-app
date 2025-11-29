@@ -93,7 +93,7 @@ export default function PatchProgress({
 
     if (status === 'completed' && lockCompleted) {
       setMessage(
-        'To mark this patch as completed, first finish the required mountains and trails above.'
+        'To mark this patch as completed, first finish the required mountains and trails below.'
       );
       return;
     }
@@ -236,7 +236,7 @@ export default function PatchProgress({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Patch Progress</h2>
+      <h2 className="text-xl font-semibold">Patch Status</h2>
 
       {/* Wishlist */}
       <label className="inline-flex items-center gap-2">
@@ -281,7 +281,7 @@ export default function PatchProgress({
                 onClick={() => {
                   if (disabled) {
                     setMessage(
-                      'To mark this patch as completed, first finish the required mountains and trails above.'
+                      'To mark this patch as completed, first finish the required mountains and trails below.'
                     );
                     return;
                   }
@@ -349,7 +349,7 @@ export default function PatchProgress({
               : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          Save
+          Update Status 
         </button>
 
         {hasExisting && (
@@ -357,7 +357,7 @@ export default function PatchProgress({
             onClick={handleClear}
             className="px-3 py-1.5 rounded text-sm font-medium text-white bg-red-500 hover:bg-red-600"
           >
-            Clear
+            Clear Status
           </button>
         )}
       </div>
