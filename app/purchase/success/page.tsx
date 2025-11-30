@@ -29,11 +29,6 @@ export default async function SuccessPage({ searchParams }: Props) {
         </p>
       )}
 
-      <div className="mt-6 rounded-lg bg-green-50 p-4 text-sm text-green-800">
-        We’ll enable your access automatically via our secure payment webhook.
-        This usually happens within a few seconds. You can safely close this page.
-      </div>
-
       <div className="mt-8 flex items-center gap-3">
         {patchId ? (
           <Link
@@ -52,7 +47,7 @@ export default async function SuccessPage({ searchParams }: Props) {
         )}
 
         <Link
-          href="/support"
+          href="/about"
           className="text-sm text-gray-600 underline-offset-2 hover:underline"
         >
           Need help?

@@ -8,7 +8,7 @@ exports.handler = async (event) => {
     const body = event.body ? JSON.parse(event.body) : {};
     const { userId, priceId, patchId, quantity = 1 } = body;
 
-    const successUrl = `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}&patchId=${encodeURIComponent(patchId)}`;
+    const successUrl = `${process.env.SUCCESS_URL}&patchId=${encodeURIComponent(patchId)}`;
     const cancelUrl  = `${process.env.CANCEL_URL}?patchId=${encodeURIComponent(patchId)}`;
 
     const session = await stripe.checkout.sessions.create({
