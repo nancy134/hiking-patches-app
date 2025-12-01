@@ -2,13 +2,14 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 
 type Props = {
-  searchParams?: {
+  searchParams: Promise<{
     patchId?: string;
-  };
+  }>;
 };
 
-export default function CancelPage({ searchParams }: Props) {
-  const patchId = searchParams?.patchId ?? '';
+export default async function CancelPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const patchId = params.patchId ?? '';
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
