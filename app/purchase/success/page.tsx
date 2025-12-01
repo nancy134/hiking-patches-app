@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 type Props = {
-  searchParams: Promise<{
+  searchParams?: {
     session_id?: string;
     patchId?: string;
-  }>;
+  };
 };
 
 export default async function SuccessPage({ searchParams }: Props) {
@@ -13,47 +14,41 @@ export default async function SuccessPage({ searchParams }: Props) {
   const patchId = params.patchId ?? '';
 
   return (
-    <main className="mx-auto max-w-xl px-6 py-16">
-      <h1 className="text-2xl font-semibold">Payment complete 🎉</h1>
-      <p className="mt-3 text-gray-700">
-        Thanks for your purchase! Your payment has been processed.
-      </p>
+    <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <Header />
 
-      {sessionId ? (
-        <p className="mt-2 text-sm text-gray-500">
-          Checkout Session ID: <span className="font-mono">{sessionId}</span>
+      <main className="max-w-xl">
+        <h1 className="text-3xl font-bold">Payment complete 🎉</h1>
+        <p className="mt-3 text-gray-700">
+          Thanks for your purchase! Your payment has been processed.
         </p>
-      ) : (
-        <p className="mt-2 text-sm text-gray-500">
-          No session id found in the URL.
-        </p>
-      )}
 
-      <div className="mt-8 flex items-center gap-3">
-        {patchId ? (
-          <Link
-            href={`/patch/${patchId}`}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-          >
-            Continue to Patch
-          </Link>
-        ) : (
-          <Link
-            href="/"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-          >
-            Go to Dashboard
-          </Link>
-        )}
+        <div className="mt-8 flex items-center gap-3">
+          {patchId ? (
+            <Link
+              href={`/patch/${patchId}`}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Back to Patch
+            </Link>
+          ) : (
+            <Link
+              href="/"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Go to Dashboard
+            </Link>
+          )}
 
-        <Link
-          href="/about"
-          className="text-sm text-gray-600 underline-offset-2 hover:underline"
-        >
-          Need help?
-        </Link>
-      </div>
-    </main>
+          <Link
+            href="/about"
+            className="text-sm text-gray-600 underline-offset-2 hover:underline"
+          >
+            Need help?
+          </Link>
+        </div>
+      </main>
+    </div>
   );
 }
 
