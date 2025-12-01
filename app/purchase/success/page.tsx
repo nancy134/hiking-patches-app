@@ -10,8 +10,8 @@ type Props = {
 
 export default async function SuccessPage({ searchParams }: Props) {
   const params = await searchParams;
-  const sessionId = params.session_id ?? '';
-  const patchId = params.patchId ?? '';
+  const sessionId = params?.session_id ?? '';
+  const patchId = params?.patchId ?? '';
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
