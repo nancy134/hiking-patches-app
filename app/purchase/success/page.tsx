@@ -2,16 +2,16 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 
 type Props = {
-  searchParams?: {
+  searchParams: Promise<{
     session_id?: string;
     patchId?: string;
-  };
+  }>;
 };
 
 export default async function SuccessPage({ searchParams }: Props) {
   const params = await searchParams;
-  const sessionId = params?.session_id ?? '';
-  const patchId = params?.patchId ?? '';
+  const sessionId = params.session_id ?? '';
+  const patchId = params.patchId ?? '';
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
@@ -22,6 +22,17 @@ export default async function SuccessPage({ searchParams }: Props) {
         <p className="mt-3 text-gray-700">
           Thanks for your purchase! Your payment has been processed.
         </p>
+
+        {sessionId ? (
+          <p className="mt-2 text-sm text-gray-500">
+            Checkout Session ID:{' '}
+            <span className="font-mono break-all">{sessionId}</span>
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-gray-500">
+            No session id found in the URL.
+          </p>
+        )}
 
         <div className="mt-8 flex items-center gap-3">
           {patchId ? (
