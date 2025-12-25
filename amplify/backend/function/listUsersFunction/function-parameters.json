@@ -2,6 +2,11 @@
   "lambdaLayers": [],
   "environmentVariableList": [],
   "permissions": {
+    "api": {
+      "hikingpatchesapp": [
+        "Query"
+      ]
+    },
     "auth": {
       "hikingpatchesapp368a1661": [
         "read"

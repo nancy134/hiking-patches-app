@@ -16,6 +16,18 @@
     "s3Key": {
       "Type": "String"
     },
+    "apihikingpatchesappGraphQLAPIIdOutput": {
+      "Type": "String",
+      "Default": "apihikingpatchesappGraphQLAPIIdOutput"
+    },
+    "apihikingpatchesappGraphQLAPIEndpointOutput": {
+      "Type": "String",
+      "Default": "apihikingpatchesappGraphQLAPIEndpointOutput"
+    },
+    "apihikingpatchesappGraphQLAPIKeyOutput": {
+      "Type": "String",
+      "Default": "apihikingpatchesappGraphQLAPIKeyOutput"
+    },
     "authhikingpatchesapp368a1661UserPoolId": {
       "Type": "String",
       "Default": "authhikingpatchesapp368a1661UserPoolId"
@@ -73,6 +85,15 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "API_HIKINGPATCHESAPP_GRAPHQLAPIIDOUTPUT": {
+              "Ref": "apihikingpatchesappGraphQLAPIIdOutput"
+            },
+            "API_HIKINGPATCHESAPP_GRAPHQLAPIENDPOINTOUTPUT": {
+              "Ref": "apihikingpatchesappGraphQLAPIEndpointOutput"
+            },
+            "API_HIKINGPATCHESAPP_GRAPHQLAPIKEYOUTPUT": {
+              "Ref": "apihikingpatchesappGraphQLAPIKeyOutput"
             },
             "AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID": {
               "Ref": "authhikingpatchesapp368a1661UserPoolId"
@@ -187,6 +208,34 @@
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "appsync:GraphQL"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:appsync:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":apis/",
+                      {
+                        "Ref": "apihikingpatchesappGraphQLAPIIdOutput"
+                      },
+                      "/types/Query/*"
+                    ]
+                  ]
+                }
+              ]
+            },
             {
               "Effect": "Allow",
               "Action": [
