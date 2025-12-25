@@ -54,8 +54,8 @@
       },
       "api": {
         "hikingpatchesapp": {},
-        "listusers": {},
-        "checkoutApi": {}
+        "checkoutApi": {},
+        "listusers": {}
       },
       "storage": {
         "patchImages": {}
@@ -63,7 +63,7 @@
       "function": {
         "listUsersFunction": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/listUsersFunction-666c2b31462b46453739-build.zip"
+          "s3Key": "amplify-builds/listUsersFunction-414e42644d6a3947725a-build.zip"
         },
         "getPatchProgress": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",

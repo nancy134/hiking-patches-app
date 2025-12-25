@@ -10,6 +10,16 @@
           "read"
         ]
       }
+    },
+    "/user-entry-counts": {
+      "name": "/user-entry-counts",
+      "lambdaFunction": "listUsersFunction",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "read"
+        ]
+      }
     }
   }
 }

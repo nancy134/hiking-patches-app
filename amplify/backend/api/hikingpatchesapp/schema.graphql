@@ -56,6 +56,7 @@ type UserPatch
 
     # (Optional) Admins can see all:
     { allow: groups, groups: ["Admin"], provider: userPools, operations: [read, update, delete] }
+    { allow: private, provider: iam, operations: [read] }
   ]) {
   id: ID!
 
