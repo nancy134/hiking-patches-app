@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
-import { Patch, Difficulty, PatchStatus } from '@/API';
+import { Patch, Difficulty, PatchStatus, Season } from '@/API';
 import awsExports from '@/aws-exports';
 import FileUploader from '@/components/FileUploader';
 
@@ -41,6 +41,7 @@ export default function PatchFormModal({
   const [hasTrails, setHasTrails] = useState<boolean>(false);
   const [isPurchasable, setIsPurchasable] = useState<boolean>(false); // NEW
   const [status, setStatus] = useState<PatchStatus>(PatchStatus.PUBLISHED);
+  const [seasons, setSeasons] = useState<Season[]>([]);
 
   // --- Completion Rule editor state ---
   const [ruleType, setRuleType] = useState<RuleType>('default');
@@ -64,6 +65,7 @@ export default function PatchFormModal({
       setIsPurchasable((patch as any).isPurchasable ?? false); // NEW
       const s = (patch as any).status as PatchStatus | null | undefined;
       setStatus(s ?? PatchStatus.PUBLISHED);
+      setSeasons(((patch as any).seasons ?? []).filter(Boolean) as Season[]);
 
       // Parse completionRule (can be object or JSON string from AppSync)
       const raw = (patch as any)?.completionRule as unknown;
@@ -99,6 +101,27 @@ export default function PatchFormModal({
         }
         setWinterOnly(!!obj.winterOnly);
       }
+    } else {
+      setName('');
+      setDescription('');
+      setHowToGet('');
+      setImageFile(null);
+      setRegions([]);
+      setDifficulty('');
+      setSeasons([]);
+      setLatitude(null);
+      setLongitude(null);
+      setPopularity(null);
+      setHasPeaks(false);
+      setHasTrails(false);
+      setIsPurchasable(false);
+      setStatus(PatchStatus.PUBLISHED);
+
+      // completionRule editor reset
+      setRuleType('default');
+      setAnyNCount('');
+      setTrailMilesTarget('');
+      setWinterOnly(false);
     }
   }, [patch]);
 
@@ -160,6 +183,7 @@ export default function PatchFormModal({
         hasTrails,
         isPurchasable,
         status,
+        seasons: seasons.length ? seasons : undefined,
         completionRule: completionRuleToSend, // saved as AWSJSON
       };
 
@@ -266,7 +290,29 @@ export default function PatchFormModal({
               <option value="EXTRA_HARD">Extra Hard</option>
               <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
             </select>
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">
+               Season
+              </label>
 
+              <select
+                multiple
+                value={seasons}
+                onChange={(e) =>
+                  setSeasons(Array.from(e.target.selectedOptions, (opt) => opt.value as Season))
+                }
+                className="w-full p-2 border rounded h-32"
+              >
+                <option value={Season.FALL}>Fall</option>
+                <option value={Season.WINTER}>Winter</option>
+                <option value={Season.SPRING}>Spring</option>
+                <option value={Season.SUMMER}>Summer</option>
+              </select>
+
+              <p className="text-xs text-gray-500">
+                Leave blank for <strong>Any season</strong>. You can select multiple.
+              </p>
+            </div>
             <div className="space-y-1">
               <label className="block text-sm font-medium text-gray-700">
                 Patch Status
@@ -415,7 +461,7 @@ export default function PatchFormModal({
               <div>
                 <div className="text-xs text-gray-500 mb-1">Preview (saved as AWSJSON):</div>
                 <pre className="bg-gray-50 border rounded p-2 text-xs overflow-x-auto">
-{completionRulePreview}
+                  {completionRulePreview}
                 </pre>
               </div>
             </div>
