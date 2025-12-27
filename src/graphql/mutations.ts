@@ -28,6 +28,7 @@ export const createPatch = /* GraphQL */ `mutation CreatePatch(
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -69,6 +70,7 @@ export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -110,6 +112,7 @@ export const deletePatch = /* GraphQL */ `mutation DeletePatch(
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -154,6 +157,7 @@ export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -197,6 +201,7 @@ export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -240,6 +245,7 @@ export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -422,6 +428,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -472,6 +479,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -522,6 +530,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -746,6 +755,7 @@ export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -793,6 +803,7 @@ export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -840,6 +851,7 @@ export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename

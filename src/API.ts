@@ -69,6 +69,7 @@ export type Patch = {
   completionRule?: string | null,
   isPurchasable?: boolean | null,
   status?: PatchStatus | null,
+  seasons?: Array< Season | null > | null,
   userPatches?: ModelUserPatchConnection | null,
   patchMountains?: ModelPatchMountainConnection | null,
   patchTrails?: ModelPatchTrailConnection | null,
@@ -89,6 +90,14 @@ export enum PatchStatus {
   DRAFT = "DRAFT",
   PUBLISHED = "PUBLISHED",
   ARCHIVED = "ARCHIVED",
+}
+
+
+export enum Season {
+  FALL = "FALL",
+  WINTER = "WINTER",
+  SPRING = "SPRING",
+  SUMMER = "SUMMER",
 }
 
 
@@ -365,6 +374,7 @@ export type CreatePatchInput = {
   completionRule?: string | null,
   isPurchasable?: boolean | null,
   status?: PatchStatus | null,
+  seasons?: Array< Season | null > | null,
 };
 
 export type ModelPatchConditionInput = {
@@ -382,6 +392,7 @@ export type ModelPatchConditionInput = {
   completionRule?: ModelStringInput | null,
   isPurchasable?: ModelBooleanInput | null,
   status?: ModelPatchStatusInput | null,
+  seasons?: ModelSeasonListInput | null,
   and?: Array< ModelPatchConditionInput | null > | null,
   or?: Array< ModelPatchConditionInput | null > | null,
   not?: ModelPatchConditionInput | null,
@@ -397,6 +408,13 @@ export type ModelDifficultyInput = {
 export type ModelPatchStatusInput = {
   eq?: PatchStatus | null,
   ne?: PatchStatus | null,
+};
+
+export type ModelSeasonListInput = {
+  eq?: Array< Season | null > | null,
+  ne?: Array< Season | null > | null,
+  contains?: Season | null,
+  notContains?: Season | null,
 };
 
 export type UpdatePatchInput = {
@@ -415,6 +433,7 @@ export type UpdatePatchInput = {
   completionRule?: string | null,
   isPurchasable?: boolean | null,
   status?: PatchStatus | null,
+  seasons?: Array< Season | null > | null,
 };
 
 export type DeletePatchInput = {
@@ -715,6 +734,7 @@ export type ModelPatchFilterInput = {
   completionRule?: ModelStringInput | null,
   isPurchasable?: ModelBooleanInput | null,
   status?: ModelPatchStatusInput | null,
+  seasons?: ModelSeasonListInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchFilterInput | null > | null,
@@ -875,6 +895,7 @@ export type ModelSubscriptionPatchFilterInput = {
   completionRule?: ModelSubscriptionStringInput | null,
   isPurchasable?: ModelSubscriptionBooleanInput | null,
   status?: ModelSubscriptionStringInput | null,
+  seasons?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
@@ -1496,6 +1517,7 @@ export type CreatePatchMutation = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1536,6 +1558,7 @@ export type UpdatePatchMutation = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1576,6 +1599,7 @@ export type DeletePatchMutation = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -1620,6 +1644,7 @@ export type CreateUserPatchMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1662,6 +1687,7 @@ export type UpdateUserPatchMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1704,6 +1730,7 @@ export type DeleteUserPatchMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -1879,6 +1906,7 @@ export type CreatePatchMountainMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1928,6 +1956,7 @@ export type UpdatePatchMountainMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -1977,6 +2006,7 @@ export type DeletePatchMountainMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2194,6 +2224,7 @@ export type CreatePatchTrailMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2240,6 +2271,7 @@ export type UpdatePatchTrailMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2286,6 +2318,7 @@ export type DeletePatchTrailMutation = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -2501,6 +2534,7 @@ export type GetPatchQuery = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -2544,6 +2578,7 @@ export type ListPatchesQuery = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -2577,6 +2612,7 @@ export type GetUserPatchQuery = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -2793,6 +2829,7 @@ export type GetPatchMountainQuery = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3117,6 +3154,7 @@ export type GetPatchTrailQuery = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3400,6 +3438,7 @@ export type OnCreatePatchSubscription = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3439,6 +3478,7 @@ export type OnUpdatePatchSubscription = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3478,6 +3518,7 @@ export type OnDeletePatchSubscription = {
     completionRule?: string | null,
     isPurchasable?: boolean | null,
     status?: PatchStatus | null,
+    seasons?: Array< Season | null > | null,
     userPatches?:  {
       __typename: "ModelUserPatchConnection",
       nextToken?: string | null,
@@ -3522,6 +3563,7 @@ export type OnCreateUserPatchSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3564,6 +3606,7 @@ export type OnUpdateUserPatchSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3606,6 +3649,7 @@ export type OnDeleteUserPatchSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -3774,6 +3818,7 @@ export type OnCreatePatchMountainSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3822,6 +3867,7 @@ export type OnUpdatePatchMountainSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -3870,6 +3916,7 @@ export type OnDeletePatchMountainSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4083,6 +4130,7 @@ export type OnCreatePatchTrailSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4128,6 +4176,7 @@ export type OnUpdatePatchTrailSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },
@@ -4173,6 +4222,7 @@ export type OnDeletePatchTrailSubscription = {
       completionRule?: string | null,
       isPurchasable?: boolean | null,
       status?: PatchStatus | null,
+      seasons?: Array< Season | null > | null,
       createdAt: string,
       updatedAt: string,
     },

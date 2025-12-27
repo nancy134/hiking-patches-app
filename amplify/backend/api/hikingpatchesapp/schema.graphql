@@ -16,6 +16,13 @@ enum PatchStatus {
   ARCHIVED
 }
 
+enum Season {
+  FALL
+  WINTER
+  SPRING
+  SUMMER
+}
+
 type Patch
   @model
   @auth(rules: [
@@ -43,6 +50,7 @@ type Patch
   completionRule: AWSJSON
   isPurchasable: Boolean
   status: PatchStatus @default(value: "PUBLISHED")
+  seasons: [Season]
   userPatches: [UserPatch] @hasMany(indexName: "byPatch", fields: ["id"])
   patchMountains: [PatchMountain] @hasMany(indexName: "byPatch", fields: ["id"])
   patchTrails: [PatchTrail] @hasMany(indexName: "byPatch", fields: ["id"])

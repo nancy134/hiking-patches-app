@@ -7,7 +7,7 @@ import PatchGrid from '@/components/PatchGrid';
 import SearchBar from '@/components/SearchBar';
 import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
-import { Patch, UserPatch, PatchStatus } from '@/API';
+import { Patch, UserPatch, PatchStatus, Season } from '@/API';
 import { useAuth } from '@/context/auth-context';
 
 const client = generateClient();
@@ -44,6 +44,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
+  const [winterOnly, setWinterOnly] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1);
 
   // user data
@@ -143,6 +144,12 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
         next = next.filter((p) => p.difficulty === selectedDifficulty);
       }
 
+      if (winterOnly) {
+        next = next.filter((p) => {
+          const seasons = (p as any).seasons as Season[] | null | undefined;
+          return seasons?.includes(Season.WINTER);
+        });
+      }
       if (!isAdmin) {
         next = next.filter((p) => {
           const status = (p as any).status ?? PatchStatus.PUBLISHED; // treat missing as PUBLISHED
@@ -186,6 +193,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
     searchTerm,
     selectedRegion,
     selectedDifficulty,
+    winterOnly,
     userDataReady,
     user,
     userPatchMap,
@@ -235,46 +243,36 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
     <div className="p-4">
       <Header />
 
-      {/* Top text differs by variant */}
-      {isMyView ? (
-        <>
-          <h1 className="text-2xl font-bold mb-2">My Patches</h1>
-          <p className="text-gray-700 mb-4">Patches you’ve started, completed, or wishlisted.</p>
-        </>
-      ) : (
-        <>
-          <div className="mb-2 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded shadow">
-            <h2 className="text-xl font-semibold mb-2">Welcome to Hiking-Patches.com</h2>
-            <p className="text-gray-700">
-              This site is a place for hiking enthusiasts to discover new patches to pursue and
-              celebrate the ones they’ve earned. Whether you’re chasing summits or exploring scenic
-              trails, there’s always a new patch waiting.
-            </p>
-          </div>
+{/* Top toolbar: Search + Filters + Pagination */}
+<div className="my-4 flex flex-wrap items-center gap-3">
+  {/* Left side: Search + Filters */}
+  <div className="flex flex-1 flex-wrap items-center gap-3">
+    {/* Search always visible */}
+    <div className="flex items-center gap-2">
+      <label htmlFor="patch-search" className="text-sm font-semibold">
+        Search:
+      </label>
+      <SearchBar
+        value={searchTerm}
+        onChange={handleSearch}
+        className="w-48 sm:w-64 md:w-72"
+      />
+    </div>
 
-          <div className="text-right text-gray-700 text-sm mt-1 leading-tight">
-            Don’t see a patch?{' '}
-            <a href="/request-patch" className="text-blue-600 underline hover:text-blue-800">
-              Contact us
-            </a>{' '}
-            and we’ll add it!
-          </div>
-        </>
-      )}
+    {/* Filters panel */}
+    <details className="group">
+      <summary className="cursor-pointer select-none rounded border px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+        <span className="inline-flex items-center gap-2">
+          Filters
+          <span className="text-xs font-normal text-gray-500 group-open:hidden">(show)</span>
+          <span className="text-xs font-normal text-gray-500 hidden group-open:inline">
+            (hide)
+          </span>
+        </span>
+      </summary>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center my-4">
-        <div className="flex items-center gap-2">
-          <label htmlFor="patch-search" className="text-sm font-semibold">
-            Search:
-          </label>
-          <SearchBar
-            value={searchTerm}
-            onChange={handleSearch}
-            className="w-48 sm:w-64 md:w-72"
-          />
-        </div>
-
+      <div className="mt-3 flex flex-wrap gap-4 items-center rounded border border-gray-200 p-3">
+        {/* State */}
         <div>
           <label className="mr-2 font-semibold">State:</label>
           <select
@@ -293,6 +291,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
           </select>
         </div>
 
+        {/* Difficulty */}
         <div>
           <label className="mr-2 font-semibold">Difficulty:</label>
           <select
@@ -309,7 +308,17 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
           </select>
         </div>
 
-        {/* Status filters: disabled until user data is ready */}
+        {/* Winter */}
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={winterOnly}
+            onChange={(e) => setWinterOnly(e.target.checked)}
+          />
+          <span className="font-semibold">Winter</span>
+        </label>
+
+        {/* Status filters */}
         {user && (
           <fieldset
             className="flex flex-wrap items-center gap-3 rounded border border-gray-200 px-3 py-2"
@@ -322,13 +331,8 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
               </span>
             </legend>
 
-            {/* On My Patches we force "only my patches" so we hide this toggle */}
             {!isMyView && (
-              <label
-                className={`ml-auto flex items-center gap-2 ${
-                  !userDataReady ? 'opacity-60' : ''
-                }`}
-              >
+              <label className={`ml-auto flex items-center gap-2 ${!userDataReady ? 'opacity-60' : ''}`}>
                 <input
                   type="checkbox"
                   checked={onlyMyPatches}
@@ -339,11 +343,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
               </label>
             )}
 
-            <label
-              className={`flex items-center gap-1 ${
-                !userDataReady ? 'opacity-60' : ''
-              }`}
-            >
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showCompleted}
@@ -353,11 +353,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
               <span>Completed</span>
             </label>
 
-            <label
-              className={`flex items-center gap-1 ${
-                !userDataReady ? 'opacity-60' : ''
-              }`}
-            >
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showInProgress}
@@ -367,11 +363,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
               <span>In Progress</span>
             </label>
 
-            <label
-              className={`flex items-center gap-1 ${
-                !userDataReady ? 'opacity-60' : ''
-              }`}
-            >
+            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
               <input
                 type="checkbox"
                 checked={showWishlisted}
@@ -380,52 +372,61 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
               />
               <span>Wishlisted</span>
             </label>
-
-            {showReset && (
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCompleted(true);
-                  setShowInProgress(true);
-                  setShowNotStarted(true);
-                  if (!isMyView) {
-                    setOnlyMyPatches(false);
-                  } else {
-                    setOnlyMyPatches(true); // My Patches stays "only mine"
-                  }
-                }}
-                disabled={!userDataReady}
-                className="ml-1 text-xs text-blue-600 underline disabled:opacity-50"
-              >
-                Reset
-              </button>
-            )}
           </fieldset>
         )}
-      </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-2 mb-2">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="px-3 py-1">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="mx-2 px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+        {/* Reset (always available) */}
+        <button
+          type="button"
+          onClick={() => {
+            setSearchTerm('');
+            setSelectedRegion('');
+            setSelectedDifficulty('');
+            setWinterOnly(false);
+
+            setShowCompleted(true);
+            setShowInProgress(true);
+            setShowNotStarted(true);
+            setShowWishlisted(true);
+
+            if (!isMyView) setOnlyMyPatches(false);
+            else setOnlyMyPatches(true);
+
+            setCurrentPage(1);
+          }}
+          className="text-xs text-blue-600 underline"
+        >
+          Reset
+        </button>
+      </div>
+    </details>
+  </div>
+
+  {/* Right side: Pagination */}
+  {totalPages > 1 && (
+    <div className="flex items-center gap-2 shrink-0 ml-auto">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
+      >
+        Prev
+      </button>
+
+      <span className="text-sm text-gray-700 whitespace-nowrap">
+        Page {currentPage} of {totalPages}
+      </span>
+
+      <button
+        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        disabled={currentPage === totalPages}
+        className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
+      >
+        Next
+      </button>
+    </div>
+  )}
+</div>
 
       {/* Empty states (for My Patches) */}
       {isMyView && user && userDataReady && filteredPatches.length === 0 && (

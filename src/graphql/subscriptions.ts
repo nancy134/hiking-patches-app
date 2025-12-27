@@ -25,6 +25,7 @@ export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: 
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -63,6 +64,7 @@ export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: 
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -101,6 +103,7 @@ export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: 
     completionRule
     isPurchasable
     status
+    seasons
     userPatches {
       nextToken
       __typename
@@ -145,6 +148,7 @@ export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -188,6 +192,7 @@ export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -231,6 +236,7 @@ export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -400,6 +406,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -449,6 +456,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -498,6 +506,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -712,6 +721,7 @@ export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -758,6 +768,7 @@ export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
@@ -804,6 +815,7 @@ export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail
       completionRule
       isPurchasable
       status
+      seasons
       createdAt
       updatedAt
       __typename
