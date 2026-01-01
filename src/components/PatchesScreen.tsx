@@ -281,6 +281,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
             className="p-2 border rounded min-w-[160px]"
           >
             <option value="">All Regions</option>
+            <option value="Any Location">Any Location</option>
             <option value="Connecticut">Connecticut</option>
             <option value="Florida">Florida</option>
             <option value="Maine">Maine</option>
