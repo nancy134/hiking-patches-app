@@ -9,6 +9,7 @@ import { generateClient } from 'aws-amplify/api';
 import { listPatches, listUserPatches } from '@/graphql/queries';
 import { Patch, UserPatch, PatchStatus, Season } from '@/API';
 import { useAuth } from '@/context/auth-context';
+import FiltersDialog from '@/components/FiltersDialog';
 
 const client = generateClient();
 const ITEMS_PER_PAGE = 16;
@@ -54,6 +55,7 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
   const [wishlistSet, setWishlistSet] = useState<Set<string>>(new Set());
 
   // status filters
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [showCompleted, setShowCompleted] = useState(true);
   const [showInProgress, setShowInProgress] = useState(true);
   const [showNotStarted, setShowNotStarted] = useState(true);
@@ -271,184 +273,104 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
     <div className="p-4">
       <Header />
 
-{/* Top toolbar: Search + Filters + Pagination */}
-<div className="my-4 flex flex-wrap items-center gap-3">
-  {/* Left side: Search + Filters */}
-  <div className="flex flex-1 flex-wrap items-center gap-3">
-    {/* Search always visible */}
-    <div className="flex items-center gap-2">
-      <label htmlFor="patch-search" className="text-sm font-semibold">
-        Search:
-      </label>
-      <SearchBar
-        value={searchTerm}
-        onChange={handleSearch}
-        className="w-48 sm:w-64 md:w-72"
-      />
-    </div>
-    {/* Clear Filters (always visible + prominent) */}
-    <button
-      type="button"
-      onClick={clearAll}
-      disabled={!hasActiveFilters}
-      className="
-        inline-flex items-center justify-center
-        rounded-md border border-red-300
-        bg-red-50 px-3 py-2 text-sm font-semibold text-red-700
-        hover:bg-red-100
-        disabled:opacity-40 disabled:cursor-not-allowed
-      "
-      aria-disabled={!hasActiveFilters}
-    >
-      Clear filters
-    </button>
-
-    {/* Filters panel */}
-    <details className="group">
-      <summary className="cursor-pointer select-none rounded border px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-        <span className="inline-flex items-center gap-2">
-          Filters
-          <span className="text-xs font-normal text-gray-500 group-open:hidden">(show)</span>
-          <span className="text-xs font-normal text-gray-500 hidden group-open:inline">
-            (hide)
-          </span>
-        </span>
-      </summary>
-
-      <div className="mt-3 flex flex-wrap gap-4 items-center rounded border border-gray-200 p-3">
-        {/* State */}
-        <div>
-          <label className="mr-2 font-semibold">State:</label>
-          <select
-            value={selectedRegion}
-            onChange={handleRegionChange}
-            className="p-2 border rounded min-w-[160px]"
+      {/* Top toolbar: Search + Filters + Pagination */}
+      <div className="my-4 flex flex-wrap items-center gap-3">
+        {/* Left side: Search + Filters */}
+        <div className="flex flex-1 flex-wrap items-center gap-3">
+          {/* Search always visible */}
+          <div className="flex items-center gap-2">
+            <label htmlFor="patch-search" className="text-sm font-semibold">
+              Search:
+            </label>
+            <SearchBar
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-48 sm:w-64 md:w-72"
+            />
+          </div>
+          {/* Clear Filters (always visible + prominent) */}
+          <button
+            type="button"
+            onClick={clearAll}
+            disabled={!hasActiveFilters}
+            className="
+              inline-flex items-center justify-center
+              rounded-md border border-red-300
+              bg-red-50 px-3 py-2 text-sm font-semibold text-red-700
+              hover:bg-red-100
+              disabled:opacity-40 disabled:cursor-not-allowed
+            "
+            aria-disabled={!hasActiveFilters}
           >
-            <option value="">All Regions</option>
-            <option value="Any Location">Any Location</option>
-            <option value="Connecticut">Connecticut</option>
-            <option value="Florida">Florida</option>
-            <option value="Maine">Maine</option>
-            <option value="Massachusetts">Massachusetts</option>
-            <option value="New Hampshire">New Hampshire</option>
-            <option value="New York">New York</option>
-            <option value="Vermont">Vermont</option>
-          </select>
-        </div>
+            Clear filters
+          </button>
 
-        {/* Difficulty */}
-        <div>
-          <label className="mr-2 font-semibold">Difficulty:</label>
-          <select
-            value={selectedDifficulty}
-            onChange={handleDifficultyChange}
-            className="p-2 border rounded min-w-[160px]"
+          {/* Filters panel */}
+          <button
+            type="button"
+            onClick={() => setFiltersOpen(true)}
+            className="inline-flex items-center gap-2 rounded border px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
-            <option value="">All Difficulties</option>
-            <option value="EASY">Easy</option>
-            <option value="MODERATE">Moderate</option>
-            <option value="HARD">Hard</option>
-            <option value="EXTRA_HARD">Extra Hard</option>
-            <option value="EXTRA_EXTRA_HARD">Extra Extra Hard</option>
-          </select>
-        </div>
-
-        {/* Winter */}
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={winterOnly}
-            onChange={(e) => setWinterOnly(e.target.checked)}
-          />
-          <span className="font-semibold">Winter</span>
-        </label>
-
-        {/* Status filters */}
-        {user && (
-          <fieldset
-            className="flex flex-wrap items-center gap-3 rounded border border-gray-200 px-3 py-2"
-            aria-busy={!userDataReady}
-          >
-            <legend className="px-1 text-sm font-semibold text-gray-700">
-              <span className="inline-flex items-center gap-2">
-                Filter by my status
-                {!userDataReady && <DotSpinner />}
+            Filters
+            {hasActiveFilters && (
+              <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white">
+                Active
               </span>
-            </legend>
-
-            {!isMyView && (
-              <label className={`ml-auto flex items-center gap-2 ${!userDataReady ? 'opacity-60' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={onlyMyPatches}
-                  onChange={(e) => setOnlyMyPatches(e.target.checked)}
-                  disabled={!userDataReady}
-                />
-                <span>Only show my patches</span>
-              </label>
             )}
+          </button>
 
-            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
-              <input
-                type="checkbox"
-                checked={showCompleted}
-                onChange={(e) => setShowCompleted(e.target.checked)}
-                disabled={!userDataReady}
-              />
-              <span>Completed</span>
-            </label>
+          <FiltersDialog
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+            selectedRegion={selectedRegion}
+            setSelectedRegion={setSelectedRegion}
+            selectedDifficulty={selectedDifficulty}
+            setSelectedDifficulty={setSelectedDifficulty}
+            winterOnly={winterOnly}
+            setWinterOnly={setWinterOnly}
+            user={user}
+            isMyView={isMyView}
+            userDataReady={userDataReady}
+            onlyMyPatches={onlyMyPatches}
+            setOnlyMyPatches={setOnlyMyPatches}
+            showCompleted={showCompleted}
+            setShowCompleted={setShowCompleted}
+            showInProgress={showInProgress}
+            setShowInProgress={setShowInProgress}
+            showWishlisted={showWishlisted}
+            setShowWishlisted={setShowWishlisted}
+            hasActiveFilters={hasActiveFilters}
+            onClearAll={clearAll}
+            DotSpinner={DotSpinner}
+          />
 
-            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
-              <input
-                type="checkbox"
-                checked={showInProgress}
-                onChange={(e) => setShowInProgress(e.target.checked)}
-                disabled={!userDataReady}
-              />
-              <span>In Progress</span>
-            </label>
+        </div>
 
-            <label className={`flex items-center gap-1 ${!userDataReady ? 'opacity-60' : ''}`}>
-              <input
-                type="checkbox"
-                checked={showWishlisted}
-                onChange={(e) => setShowWishlisted(e.target.checked)}
-                disabled={!userDataReady}
-              />
-              <span>Wishlisted</span>
-            </label>
-          </fieldset>
+        {/* Right side: Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
+            >
+              Prev
+            </button>
+
+            <span className="text-sm text-gray-700 whitespace-nowrap">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
+            >
+              Next
+            </button>
+          </div>
         )}
-
       </div>
-    </details>
-  </div>
-
-  {/* Right side: Pagination */}
-  {totalPages > 1 && (
-    <div className="flex items-center gap-2 shrink-0 ml-auto">
-      <button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-        className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
-      >
-        Prev
-      </button>
-
-      <span className="text-sm text-gray-700 whitespace-nowrap">
-        Page {currentPage} of {totalPages}
-      </span>
-
-      <button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="px-3 py-2 border rounded disabled:opacity-50 text-sm"
-      >
-        Next
-      </button>
-    </div>
-  )}
-</div>
 
       {/* Empty states (for My Patches) */}
       {isMyView && user && userDataReady && filteredPatches.length === 0 && (
