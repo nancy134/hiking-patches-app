@@ -239,6 +239,34 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
   const showReset =
     showCompleted !== true || showInProgress !== true || showNotStarted !== true || (!isMyView && onlyMyPatches);
 
+  const clearAll = () => {
+    setSearchTerm('');
+    setSelectedRegion('');
+    setSelectedDifficulty('');
+    setWinterOnly(false);
+
+    setShowCompleted(true);
+    setShowInProgress(true);
+    setShowNotStarted(true);
+    setShowWishlisted(true);
+
+    if (!isMyView) setOnlyMyPatches(false);
+    else setOnlyMyPatches(true);
+
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters =
+    !!searchTerm.trim() ||
+    !!selectedRegion ||
+    !!selectedDifficulty ||
+    winterOnly ||
+    showCompleted !== true ||
+    showInProgress !== true ||
+    showNotStarted !== true ||
+    showWishlisted !== true ||
+    (!isMyView && onlyMyPatches);
+
   return (
     <div className="p-4">
       <Header />
@@ -258,6 +286,22 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
         className="w-48 sm:w-64 md:w-72"
       />
     </div>
+    {/* Clear Filters (always visible + prominent) */}
+    <button
+      type="button"
+      onClick={clearAll}
+      disabled={!hasActiveFilters}
+      className="
+        inline-flex items-center justify-center
+        rounded-md border border-red-300
+        bg-red-50 px-3 py-2 text-sm font-semibold text-red-700
+        hover:bg-red-100
+        disabled:opacity-40 disabled:cursor-not-allowed
+      "
+      aria-disabled={!hasActiveFilters}
+    >
+      Clear filters
+    </button>
 
     {/* Filters panel */}
     <details className="group">
@@ -376,29 +420,6 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
           </fieldset>
         )}
 
-        {/* Reset (always available) */}
-        <button
-          type="button"
-          onClick={() => {
-            setSearchTerm('');
-            setSelectedRegion('');
-            setSelectedDifficulty('');
-            setWinterOnly(false);
-
-            setShowCompleted(true);
-            setShowInProgress(true);
-            setShowNotStarted(true);
-            setShowWishlisted(true);
-
-            if (!isMyView) setOnlyMyPatches(false);
-            else setOnlyMyPatches(true);
-
-            setCurrentPage(1);
-          }}
-          className="text-xs text-blue-600 underline"
-        >
-          Reset
-        </button>
       </div>
     </details>
   </div>
