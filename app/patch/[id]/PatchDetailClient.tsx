@@ -3,23 +3,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import {
-  listUserPatches,
-  listUserMountains,
-} from '@/graphql/queries';
-import {
-  Patch,
-  UserPatch,
-  UserMountain,
-} from '@/API';
+import { listUserPatches, listUserMountains } from '@/graphql/queries';
+import { Patch, UserPatch, UserMountain } from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/auth-context';
 import type { GraphQLResult } from '@aws-amplify/api';
-import {
-  UpdateUserPatchMutation,
-  CreateUserPatchMutation,
-} from '@/API';
+import { UpdateUserPatchMutation, CreateUserPatchMutation } from '@/API';
 import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
@@ -124,16 +114,16 @@ export default function PatchDetailClient({ id }: { id: string }) {
           },
           authMode: 'userPool',
         });
-        const match = response.data?.listUserPatches?.items?.[0] as UserPatch | undefined;
+        const match = response.data?.listUserPatches?.items?.[0] as
+          | UserPatch
+          | undefined;
         if (match) {
           setUserPatch(match);
           if (match.dateCompleted) setDateCompleted(match.dateCompleted);
           else setDateCompleted(null);
           setDifficulty(match.difficulty?.toString() || '');
           setNotes(match.notes || '');
-          setIsInProgress(
-            match.inProgress !== undefined ? match.inProgress : null
-          );
+          setIsInProgress(match.inProgress !== undefined ? match.inProgress : null);
         }
       } catch (err) {
         console.error('Error fetching userPatch:', err);
@@ -179,16 +169,14 @@ export default function PatchDetailClient({ id }: { id: string }) {
           authMode: 'userPool',
         });
         const c_userMountainMap: Record<string, UserMountain[]> = {};
-        response.data?.listUserMountains?.items?.forEach(
-          (um: UserMountain | null) => {
-            if (um?.mountainID) {
-              if (!c_userMountainMap[um.mountainID]) {
-                c_userMountainMap[um.mountainID] = [];
-              }
-              c_userMountainMap[um.mountainID].push(um);
+        response.data?.listUserMountains?.items?.forEach((um: UserMountain | null) => {
+          if (um?.mountainID) {
+            if (!c_userMountainMap[um.mountainID]) {
+              c_userMountainMap[um.mountainID] = [];
             }
+            c_userMountainMap[um.mountainID].push(um);
           }
-        );
+        });
         setUserMountainMap(c_userMountainMap);
       } catch (err) {
         console.error('Error fetching user mountains:', err);
@@ -231,9 +219,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
         query: mutation,
         variables: { input },
         authMode: 'userPool',
-      })) as GraphQLResult<
-        UpdateUserPatchMutation | CreateUserPatchMutation
-      >;
+      })) as GraphQLResult<UpdateUserPatchMutation | CreateUserPatchMutation>;
 
       let updatedUserPatch;
 
@@ -241,8 +227,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
         const updateResponse = response as GraphQLResult<UpdateUserPatchMutation>;
         updatedUserPatch = updateResponse.data?.updateUserPatch;
       } else {
-        const createResponse =
-          response as GraphQLResult<CreateUserPatchMutation>;
+        const createResponse = response as GraphQLResult<CreateUserPatchMutation>;
         updatedUserPatch = createResponse.data?.createUserPatch;
       }
 
@@ -278,17 +263,39 @@ export default function PatchDetailClient({ id }: { id: string }) {
     <>
       <div className="w-full max-w-6xl mx-auto p-4">
         <Header />
+
         <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
           <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{patch.name}</h1>
             <p className="text-lg mb-2">{patch.description}</p>
+
             {Array.isArray(patch.regions) && patch.regions.length > 0 && (
               <p className="text-gray-700">
-                <strong>Regions:</strong>{' '}
-                {patch.regions.filter(Boolean).join(', ')}
+                <strong>Regions:</strong> {patch.regions.filter(Boolean).join(', ')}
               </p>
             )}
+
+            {/* ✅ PatchProgress summary chips sit here (not in a card) */}
+            {user && (
+              <div className="mt-3">
+                <PatchProgress
+                  patchId={patch.id}
+                  userId={user.userId}
+                  initialUserPatch={userPatch}
+                  progressPercent={progress?.percent ?? null}
+                  hasPeaks={!!patch.hasPeaks}
+                  hasTrails={!!patch.hasTrails}
+                  onUpdate={(newPatch) => {
+                    setUserPatch(newPatch);
+                    if (newPatch?.dateCompleted) {
+                      setDateCompleted(newPatch.dateCompleted);
+                    }
+                  }}
+                />
+              </div>
+            )}
           </div>
+
           {patch.imageUrl && (
             <img
               src={patch.imageUrl}
@@ -297,11 +304,10 @@ export default function PatchDetailClient({ id }: { id: string }) {
             />
           )}
         </div>
+
         {patch.howToGet && (
           <div className="mt-6 bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-2">
-              How to Get This Patch
-            </h2>
+            <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
             <div className="prose max-w-none">
               <ReactMarkdown
                 components={{
@@ -348,36 +354,21 @@ export default function PatchDetailClient({ id }: { id: string }) {
 
         {user ? (
           <>
-            <div className="bg-white p-4 rounded shadow mt-6">
-              <PatchProgress
-                patchId={patch.id}
-                userId={user.userId}
-                initialUserPatch={userPatch}
-                progressPercent={progress?.percent ?? null}      // NEW
-                hasPeaks={!!patch.hasPeaks}                      // NEW
-                hasTrails={!!patch.hasTrails}                    // NEW
-                onUpdate={(newPatch) => {
-                  setUserPatch(newPatch);
-                  if (newPatch?.dateCompleted) {
-                    setDateCompleted(newPatch.dateCompleted);
-                  }
-                }}
-              />
-            </div>
             {(!!patch.hasPeaks || !!patch.hasTrails) && (
-            <div className="bg-white p-4 rounded shadow mt-6">
-              <ProgressSummary
-                loading={loadingProgress}
-                completed={progress?.completed ?? null}
-                denom={progress?.denom ?? null}
-                percent={progress?.percent ?? null}
-                note={progress?.note ?? null}
-                unit={progressUnit}
-                isPurchasable={patch.isPurchasable}
-                patchId={patch.id}
-              />
-            </div>
+              <div className="bg-white p-4 rounded shadow mt-6">
+                <ProgressSummary
+                  loading={loadingProgress}
+                  completed={progress?.completed ?? null}
+                  denom={progress?.denom ?? null}
+                  percent={progress?.percent ?? null}
+                  note={progress?.note ?? null}
+                  unit={progressUnit}
+                  isPurchasable={patch.isPurchasable}
+                  patchId={patch.id}
+                />
+              </div>
             )}
+
             {patch.hasPeaks && (
               <div className="bg-white p-4 rounded shadow mt-6">
                 <PatchMountains
@@ -387,6 +378,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 />
               </div>
             )}
+
             {patch.hasTrails && (
               <div className="bg-white p-4 rounded shadow mt-6">
                 <PatchTrails
@@ -411,6 +403,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 <PatchMountains patchId={patch.id} />
               </div>
             )}
+
             {patch.hasTrails && (
               <div className="bg-white p-4 mt-6 rounded shadow">
                 <PatchTrails patchId={patch.id} />
