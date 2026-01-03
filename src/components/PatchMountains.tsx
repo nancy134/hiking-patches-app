@@ -2,11 +2,14 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { listUserMountains } from '@/graphql/queries';
-import { ListPatchMountainsQuery, ListUserMountainsQuery, PatchMountain, UserMountain } from '@/API';
+import { ListUserMountainsQuery, UserMountain } from '@/API';
 import { listPatchMountainsWithMountain } from '@/graphql/custom-queries';
 import MountainAscentModal from '@/components/MountainAscentModal';
 import { generateClient } from 'aws-amplify/api';
-import { deleteUserMountainMinimal, createUserMountainMinimal } from '@/graphql/custom-mutations';
+import {
+  deleteUserMountainMinimal,
+  createUserMountainMinimal,
+} from '@/graphql/custom-mutations';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
@@ -25,9 +28,17 @@ function Spinner({
   label,
   as: Tag = 'span',
   className = '',
-}: { label?: string; as?: 'span' | 'div'; className?: string }) {
+}: {
+  label?: string;
+  as?: 'span' | 'div';
+  className?: string;
+}) {
   return (
-    <Tag className={`inline-flex items-center gap-2 ${className}`} role="status" aria-live="polite">
+    <Tag
+      className={`inline-flex items-center gap-2 ${className}`}
+      role="status"
+      aria-live="polite"
+    >
       <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
       {label ? <span className="text-sm text-gray-600">{label}</span> : null}
     </Tag>
@@ -71,19 +82,29 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function PatchMountains({ patchId, userId }: PatchMountainProps) {
+export default function PatchMountains({
+  patchId,
+  userId,
+  onProgressShouldRefresh,
+}: PatchMountainProps) {
   // Derive the item type returned by *your* query (which can include nulls)
   type Query = LPWQuery;
-  type Item = NonNullable<NonNullable<Query['listPatchMountains']>['items']>[number];
+  type Item = NonNullable<
+    NonNullable<Query['listPatchMountains']>['items']
+  >[number];
   // Non-null item
   type ItemNN = NonNullable<Item>;
   // Non-null item with a non-null mountain
-  type ItemWithMountain = ItemNN & { mountain: NonNullable<ItemNN['mountain']> };
+  type ItemWithMountain = ItemNN & {
+    mountain: NonNullable<ItemNN['mountain']>;
+  };
 
   // State should match what you render (you use `pm.mountain!`), not the model type
   const [patchMountains, setPatchMountains] = useState<ItemWithMountain[]>([]);
   const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
-  const [modalMountain, setModalMountain] = useState<ItemWithMountain | null>(null);
+  const [modalMountain, setModalMountain] = useState<ItemWithMountain | null>(
+    null
+  );
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<'all' | 'done' | 'todo'>('all');
   const [stateFilter, setStateFilter] = useState<string>('all');
@@ -136,8 +157,12 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
         );
 
         // 3) optional dedupe and sort
-        const deduped = Array.from(new Map(withMountain.map((pm) => [pm.id, pm])).values());
-        const sorted = deduped.sort((a, b) => a.mountain.name.localeCompare(b.mountain.name));
+        const deduped = Array.from(
+          new Map(withMountain.map((pm) => [pm.id, pm])).values()
+        );
+        const sorted = deduped.sort((a, b) =>
+          a.mountain.name.localeCompare(b.mountain.name)
+        );
 
         setPatchMountains(sorted);
       } catch (e: any) {
@@ -188,11 +213,19 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   }, [userId]);
 
   // helper: completion for a mountain
-  const isCompleted = (pm: ItemWithMountain) => (userMountainMap[pm.mountain.id] ?? []).length > 0;
+  const isCompleted = (pm: ItemWithMountain) =>
+    (userMountainMap[pm.mountain.id] ?? []).length > 0;
 
   // distinct states for dropdown
   const uniqueStates = useMemo(
-    () => Array.from(new Set(patchMountains.map((pm) => pm.mountain.state).filter(Boolean) as string[])).sort(),
+    () =>
+      Array.from(
+        new Set(
+          patchMountains
+            .map((pm) => pm.mountain.state)
+            .filter(Boolean) as string[]
+        )
+      ).sort(),
     [patchMountains]
   );
 
@@ -203,12 +236,16 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
     const filtered = patchMountains.filter((pm) => {
       const m = pm.mountain;
       const matchesQ =
-        qNorm === '' || [m.name, m.city ?? '', m.state ?? ''].some((v) => v.toLowerCase().includes(qNorm));
+        qNorm === '' ||
+        [m.name, m.city ?? '', m.state ?? ''].some((v) =>
+          v.toLowerCase().includes(qNorm)
+        );
 
       const matchesState = stateFilter === 'all' || m.state === stateFilter;
 
       const done = isCompleted(pm);
-      const matchesStatus = status === 'all' ? true : status === 'done' ? done : !done;
+      const matchesStatus =
+        status === 'all' ? true : status === 'done' ? done : !done;
 
       return matchesQ && matchesState && matchesStatus;
     });
@@ -230,21 +267,23 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
     return sorted;
   }, [patchMountains, q, status, stateFilter, userMountainMap, sortBy, sortDir]);
 
-  const handleEdit = (pm: PatchMountain) => {
-    setModalMountain(pm as any);
-  };
-
   const handleSave = async (newDates: string[]) => {
-    setModalMountain(null);
+    // close modal immediately for snappy UX
     const mountainId = (modalMountain as any)?.mountain?.id as string | undefined;
+    setModalMountain(null);
+
     if (!mountainId || !userId) return;
 
     const existingUMs = userMountainMap[mountainId] || [];
 
-    const existingDates = new Set(existingUMs.map((um) => um.dateClimbed.split('T')[0]));
+    const existingDates = new Set(
+      existingUMs.map((um) => um.dateClimbed.split('T')[0])
+    );
     const newDatesSet = new Set(newDates);
 
-    const datesToDelete = existingUMs.filter((um) => !newDatesSet.has(um.dateClimbed.split('T')[0]));
+    const datesToDelete = existingUMs.filter(
+      (um) => !newDatesSet.has(um.dateClimbed.split('T')[0])
+    );
     const datesToAdd = newDates.filter((date) => !existingDates.has(date));
 
     // Delete removed ascents
@@ -271,9 +310,10 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
       });
     }
 
-    // Refresh
+    // Refresh local map
     try {
       setLoadingUser(true);
+
       const userResponse = (await client.graphql({
         query: listUserMountains,
         variables: { filter: { userID: { eq: userId } } },
@@ -291,6 +331,13 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
     } finally {
       setLoadingUser(false);
     }
+
+    // ✅ IMPORTANT: tell parent to refresh ProgressSummary / progress bar
+    try {
+      onProgressShouldRefresh?.();
+    } catch (e) {
+      console.error('Failed to refresh patch progress summary:', e);
+    }
   };
 
   const controlsDisabled = loadingPatch;
@@ -298,7 +345,9 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
   return (
     <div aria-busy={loadingPatch ? 'true' : 'false'}>
       {/* subtle top loading bar when the main list is loading */}
-      {loadingPatch && <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent animate-[pulse_1.2s_ease-in-out_infinite]" />}
+      {loadingPatch && (
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent animate-[pulse_1.2s_ease-in-out_infinite]" />
+      )}
 
       <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
 
@@ -365,7 +414,9 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
             Loading mountains…
           </span>
         ) : (
-          <>Showing {visibleMountains.length} of {patchMountains.length}</>
+          <>
+            Showing {visibleMountains.length} of {patchMountains.length}
+          </>
         )}
       </div>
 
@@ -391,7 +442,9 @@ export default function PatchMountains({ patchId, userId }: PatchMountainProps) 
 
               return (
                 <tr key={mountain.id} className="border-t">
-                  <td className="p-2 text-gray-500 w-10 text-right">{idx + 1}</td>
+                  <td className="p-2 text-gray-500 w-10 text-right">
+                    {idx + 1}
+                  </td>
                   <td className="p-2">
                     <span className="inline-flex items-center">
                       {mountain.name}

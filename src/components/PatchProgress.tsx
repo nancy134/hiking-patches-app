@@ -334,22 +334,32 @@ export default function PatchProgress({
             {pct}% complete
           </span>
         )}
-
-          <button
-            type="button"
-            onClick={() => {
-              setMessage('');
-              setIsEditing((v) => !v);
-            }}
-            className="
-              inline-flex items-center whitespace-nowrap
-              rounded-full border border-gray-200 bg-white
-              px-2.5 py-1 text-xs font-semibold text-gray-700
-              hover:bg-gray-50
-            "
-          >
-            {isEditing ? 'Hide' : 'Edit'}
-          </button>
+        <button
+         type="button"
+          onClick={() => {
+            setMessage('');
+            setIsEditing((v) => !v);
+          }}
+          className="
+            inline-flex items-center gap-1 whitespace-nowrap
+            rounded-full border border-blue-300
+            bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800
+            hover:bg-blue-100
+            focus:outline-none focus:ring-2 focus:ring-blue-300
+          "
+        >
+          {isEditing ? (
+            <>
+              <span aria-hidden="true">▲</span>
+              Hide
+            </>
+          ) : (
+            <>
+              <span aria-hidden="true">✎</span>
+              Edit
+            </>
+          )}
+        </button>
       </div>
 
       {/* Editor (collapsible) - compact single-row layout */}
