@@ -89,7 +89,8 @@ export default function FiltersDialog({
       />
 
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-2xl rounded-lg bg-white shadow-lg">
+      <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white shadow-lg sm:w-[95vw] lg:w-[900px]">
+
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="text-base font-semibold text-gray-900">Filters</div>
@@ -158,16 +159,16 @@ export default function FiltersDialog({
                 className="w-full flex flex-wrap items-center gap-3 rounded border border-gray-200 px-3 py-2"
                 aria-busy={!userDataReady}
               >
-                <legend className="px-1 text-sm font-semibold text-gray-700">
+               <legend className="px-1 text-sm font-semibold text-gray-700">
                   <span className="inline-flex items-center gap-2">
                     Filter by my status
                     {!userDataReady && <DotSpinner />}
                   </span>
                 </legend>
-
+ 
                 {!isMyView && (
                   <label
-                    className={`ml-auto flex items-center gap-2 ${
+                    className={`flex items-center gap-2 ${
                       !userDataReady ? 'opacity-60' : ''
                     }`}
                   >
