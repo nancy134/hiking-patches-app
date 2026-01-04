@@ -243,6 +243,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
   const {
     progress,
     loading: loadingProgress,
+    refreshing: refreshingProgress,
     refresh: refreshProgress,
   } = usePatchProgressSummary(patch?.id ?? null, user?.userId ?? null);
 
@@ -358,6 +359,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
               <div className="bg-white p-4 rounded shadow mt-6">
                 <ProgressSummary
                   loading={loadingProgress}
+                  refreshing={refreshingProgress}
                   completed={progress?.completed ?? null}
                   denom={progress?.denom ?? null}
                   percent={progress?.percent ?? null}
