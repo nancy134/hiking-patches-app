@@ -1,9 +1,37 @@
 // app/page.tsx
+import type { Metadata } from "next";
 import PatchesScreen from "@/components/PatchesScreen";
+
+export const metadata: Metadata = {
+  title: "Find & Track Hiking Patches",
+  description:
+    "Search hiking patches by state, difficulty, and season. Wishlist patches, track progress, and record completions as you hike.",
+};
+
+export default function HomePage() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.hiking-patches.com";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Hiking Patches",
+    url: siteUrl,
+    description:
+      "Search hiking patches and track your progress as you complete them.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
 
 export default function HomePage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero / Banner */}
       <section className="relative overflow-hidden rounded-xl">
         {/* Background image */}
