@@ -162,18 +162,22 @@ async function handleListUsers() {
   console.log("handleListUsers()");
   const userPoolId = process.env.AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID;
 
-  const users = await cognito
-    .listUsers({
-      UserPoolId: userPoolId,
-      Limit: 25,
-    })
-    .promise();
+  let allUsers = [];
+  let paginationToken = undefined;
 
-  console.log("users:");
-  console.log(users);
+  do {
+    const params = { UserPoolId: userPoolId, Limit: 60 };
+    if (paginationToken) params.PaginationToken = paginationToken;
+
+    const result = await cognito.listUsers(params).promise();
+    allUsers = allUsers.concat(result.Users);
+    paginationToken = result.PaginationToken;
+  } while (paginationToken);
+
+  console.log(`handleListUsers() returning ${allUsers.length} users`);
   return {
     statusCode: 200,
-    body: JSON.stringify(users.Users),
+    body: JSON.stringify(allUsers),
     headers: { 'Content-Type': 'application/json' },
   };
 }

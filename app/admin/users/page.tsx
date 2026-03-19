@@ -18,10 +18,13 @@ type UserCounts = {
   trails: number;
 };
 
+const PAGE_SIZE = 20;
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [countsByUser, setCountsByUser] = useState<Record<string, UserCounts>>({});
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchUsersAndCounts = async () => {
@@ -89,52 +92,74 @@ export default function AdminUsersPage() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="overflow-auto">
-          <table className="min-w-full table-auto border border-gray-300 text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border px-4 py-2 text-left">Email</th>
-                <th className="border px-4 py-2 text-left">Id</th>
-                <th className="border px-4 py-2 text-left">Created</th>
-                <th className="border px-4 py-2 text-left">Mountains</th>
-                <th className="border px-4 py-2 text-left">Patches</th>
-                <th className="border px-4 py-2 text-left">Trails</th>
-              </tr>
-            </thead>
+        <>
+          <p className="text-sm text-gray-500 mb-2">{users.length} users total</p>
+          <div className="overflow-auto">
+            <table className="min-w-full table-auto border border-gray-300 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border px-4 py-2 text-left">Email</th>
+                  <th className="border px-4 py-2 text-left">Id</th>
+                  <th className="border px-4 py-2 text-left">Created</th>
+                  <th className="border px-4 py-2 text-left">Mountains</th>
+                  <th className="border px-4 py-2 text-left">Patches</th>
+                  <th className="border px-4 py-2 text-left">Trails</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {users.map((user) => {
-                const email =
-                  user.Attributes.find((attr) => attr.Name === 'email')?.Value;
+              <tbody>
+                {users.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((user) => {
+                  const email =
+                    user.Attributes.find((attr) => attr.Name === 'email')?.Value;
 
-                const c = countsByUser[user.Username];
+                  const c = countsByUser[user.Username];
 
-                return (
-                  <tr key={user.Username} className="border-t">
-                    <td className="border px-4 py-2">
-                      {email || (
-                        <span className="text-gray-400 italic">No email</span>
-                      )}
-                    </td>
-                    <td className="border px-4 py-2 font-medium">{user.Username}</td>
-                    <td className="border px-4 py-2">{user.UserCreateDate}</td>
+                  return (
+                    <tr key={user.Username} className="border-t">
+                      <td className="border px-4 py-2">
+                        {email || (
+                          <span className="text-gray-400 italic">No email</span>
+                        )}
+                      </td>
+                      <td className="border px-4 py-2 font-medium">{user.Username}</td>
+                      <td className="border px-4 py-2">{user.UserCreateDate}</td>
 
-                    <td className="border px-4 py-2">
-                      {c ? renderLink(c.mountains, `/admin/users/${user.Username}/mountains`) : null}
-                    </td>
-                    <td className="border px-4 py-2">
-                      {c ? renderLink(c.patches, `/admin/users/${user.Username}/patches`) : null}
-                    </td>
-                    <td className="border px-4 py-2">
-                      {c ? renderLink(c.trails, `/admin/users/${user.Username}/trails`) : null}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
+                      <td className="border px-4 py-2">
+                        {c ? renderLink(c.mountains, `/admin/users/${user.Username}/mountains`) : null}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {c ? renderLink(c.patches, `/admin/users/${user.Username}/patches`) : null}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {c ? renderLink(c.trails, `/admin/users/${user.Username}/trails`) : null}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-          </table>
-        </div>
+          {users.length > PAGE_SIZE && (
+            <div className="flex items-center gap-4 mt-4 text-sm">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1 border rounded disabled:opacity-40"
+              >
+                Prev
+              </button>
+              <span>Page {page} of {Math.ceil(users.length / PAGE_SIZE)}</span>
+              <button
+                onClick={() => setPage((p) => Math.min(Math.ceil(users.length / PAGE_SIZE), p + 1))}
+                disabled={page === Math.ceil(users.length / PAGE_SIZE)}
+                className="px-3 py-1 border rounded disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
