@@ -63,7 +63,7 @@
       "function": {
         "listUsersFunction": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",
-          "s3Key": "amplify-builds/listUsersFunction-414e42644d6a3947725a-build.zip"
+          "s3Key": "amplify-builds/listUsersFunction-4d33794d6969652f4c72-build.zip"
         },
         "getPatchProgress": {
           "deploymentBucketName": "amplify-hikingpatchesapp-dev-880ac-deployment",

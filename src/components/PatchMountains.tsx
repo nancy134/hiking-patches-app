@@ -13,6 +13,7 @@ import {
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
+import Link from 'next/link';
 
 const client = generateClient();
 
@@ -446,10 +447,16 @@ export default function PatchMountains({
                     {idx + 1}
                   </td>
                   <td className="p-2">
-                    <span className="inline-flex items-center">
-                      {mountain.name}
-                      {!!(pm as any).delisted && <Badge>Delisted</Badge>}
-                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <Link
+                        href={`/mountain/${mountain.id}?patchId=${patchId}`}
+                        className="text-blue-600 hover:underline"
+                       >
+                         {mountain.name}
+                     </Link>
+
+                     {!!(pm as any).delisted && <Badge>Delisted</Badge>}
+                   </span>
                   </td>
                   <td className="p-2">{mountain.elevation}</td>
                   <td className="p-2">{mountain.state}</td>
@@ -490,6 +497,7 @@ export default function PatchMountains({
           userMountain={userMountainMap[modalMountain.mountain!.id] || []}
           onClose={() => setModalMountain(null)}
           onSave={handleSave}
+          mountainName={modalMountain.mountain?.name ?? ''}
         />
       )}
     </div>

@@ -257,3 +257,19 @@ export const getTrailPublic = /* GraphQL */ `query GetTrailPublic($id: ID!) {
   }
 }
 `;
+
+export const getMountainPublic = /* GraphQL */ `
+  query GetMountainPublic($id: ID!) {
+    getMountain(id: $id) {
+      id
+      name
+      elevation
+      latitude
+      longitude
+      city
+      state
+      createdAt
+      updatedAt
+    }
+  }
+`;
