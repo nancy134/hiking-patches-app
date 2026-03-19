@@ -20,6 +20,13 @@
           "read"
         ]
       }
+    },
+    "/popular-patches": {
+      "name": "/popular-patches",
+      "lambdaFunction": "listUsersFunction",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }
