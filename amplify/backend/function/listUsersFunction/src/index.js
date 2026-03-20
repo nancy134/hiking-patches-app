@@ -101,6 +101,103 @@ async function graphQL(query, variables, { forceIAM = false } = {}) {
 }
 
 /** -------------------------
+ *  GraphQL queries for popular patches
+ *  ------------------------- */
+
+const GQL_listUserPatchesTracking = `
+  query ListUserPatches($filter: ModelUserPatchFilterInput, $limit: Int, $nextToken: String) {
+    listUserPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items { patchID inProgress wishlisted }
+      nextToken
+    }
+  }
+`;
+
+const GQL_getPatchPublic = `
+  query GetPatch($id: ID!) {
+    getPatch(id: $id) {
+      id name description imageUrl regions difficulty status
+    }
+  }
+`;
+
+/** -------------------------
+ *  Popular patches handler
+ *  ------------------------- */
+
+async function handlePopularPatches() {
+  console.log('[popular-patches] handler started');
+  console.log('[popular-patches] AppSync endpoint:', getAppSyncEndpoint());
+  console.log('[popular-patches] API key present:', !!getAppSyncApiKey());
+
+  // Fetch all UserPatch records where inProgress or wishlisted, using IAM
+  const counts = new Map();
+  let nextToken = null;
+  let pageCount = 0;
+  let totalItems = 0;
+
+  do {
+    console.log(`[popular-patches] fetching page ${pageCount + 1}, nextToken: ${nextToken}`);
+    const data = await graphQL(
+      GQL_listUserPatchesTracking,
+      {
+        filter: { or: [{ inProgress: { eq: true } }, { wishlisted: { eq: true } }] },
+        limit: 1000,
+        nextToken,
+      },
+      { forceIAM: true }
+    );
+
+    console.log(`[popular-patches] raw page data:`, JSON.stringify(data).slice(0, 500));
+    const items = data?.listUserPatches?.items ?? [];
+    totalItems += items.length;
+    console.log(`[popular-patches] page ${pageCount + 1} returned ${items.length} items`);
+
+    for (const item of items) {
+      if (!item?.patchID) continue;
+      const existing = counts.get(item.patchID) ?? { inProgress: 0, wishlisted: 0, total: 0 };
+      if (item.inProgress) existing.inProgress += 1;
+      if (item.wishlisted) existing.wishlisted += 1;
+      existing.total = existing.inProgress + existing.wishlisted;
+      counts.set(item.patchID, existing);
+    }
+
+    nextToken = data?.listUserPatches?.nextToken ?? null;
+    pageCount++;
+  } while (nextToken);
+
+  console.log(`[popular-patches] total items across all pages: ${totalItems}`);
+  console.log(`[popular-patches] unique patches with tracking: ${counts.size}`);
+
+  // Take top 10 by total
+  const top10 = [...counts.entries()]
+    .sort((a, b) => b[1].total - a[1].total)
+    .slice(0, 10);
+
+  console.log('[popular-patches] top10 patchIDs:', top10.map(([id, c]) => `${id}(${c.total})`));
+
+  // Fetch patch details for each concurrently
+  const results = await Promise.all(
+    top10.map(async ([patchID, patchCounts]) => {
+      const data = await graphQL(GQL_getPatchPublic, { id: patchID }, { forceIAM: true });
+      const patch = data?.getPatch;
+      console.log(`[popular-patches] getPatch ${patchID}:`, patch ? `status=${patch.status}` : 'null');
+      if (!patch || (patch.status !== 'PUBLISHED' && patch.status !== null)) return null;
+      return { patch, counts: patchCounts };
+    })
+  );
+
+  const filtered = results.filter(Boolean);
+  console.log(`[popular-patches] returning ${filtered.length} results`);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(filtered),
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+  };
+}
+
+/** -------------------------
  *  GraphQL queries for counts
  *  ------------------------- */
 
@@ -251,6 +348,10 @@ exports.handler = async (event) => {
       method === 'POST' &&
       (path.endsWith('/user-entry-counts') || resource.endsWith('/user-entry-counts'));
 
+    const isPopularPatches =
+      method === 'GET' &&
+      (path.endsWith('/popular-patches') || resource.endsWith('/popular-patches'));
+
     console.log("isListUsers: "+isListUsers);
     if (isListUsers) {
       return await handleListUsers();
@@ -258,6 +359,10 @@ exports.handler = async (event) => {
 
     if (isUserEntryCounts) {
       return await handleUserEntryCounts(event);
+    }
+
+    if (isPopularPatches) {
+      return await handlePopularPatches();
     }
 
     return {
