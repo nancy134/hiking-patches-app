@@ -1,8 +1,5 @@
 // app/api/user-entry-counts/route.ts
-import AWS from 'aws-sdk';
-
-const lambda = new AWS.Lambda({ region: 'us-east-1' });
-const FUNCTION_NAME = 'listUsersFunction-dev';
+import awsExports from '@/aws-exports';
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -15,6 +12,11 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
+  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
+  if (!apiInfo) {
+    return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
+  }
+
   try {
     const { userIds } = await request.json();
 
@@ -22,26 +24,24 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: 'userIds must be an array' }), { status: 400 });
     }
 
-    const event = {
-      httpMethod: 'POST',
-      path: '/user-entry-counts',
-      resource: '/user-entry-counts',
+    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/user-entry-counts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ userIds }),
-    };
-
-    const result = await lambda.invoke({
-      FunctionName: FUNCTION_NAME,
-      Payload: JSON.stringify(event),
-    }).promise();
-
-    const lambdaResponse = JSON.parse(result.Payload as string);
-    return new Response(lambdaResponse.body, {
-      status: lambdaResponse.statusCode || 200,
-      headers: { 'Content-Type': 'application/json' },
     });
+
+    if (!res.ok) {
+      throw new Error(`Lambda call failed: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return new Response(JSON.stringify(data), { status: 200 });
   } catch (error) {
-    console.error('[user-entry-counts] Lambda invoke error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to get counts' }), { status: 500 });
+    console.error('Error calling Lambda:', error);
+    return new Response(JSON.stringify({ error: 'Failed to call Lambda' }), { status: 500 });
   }
 }
 

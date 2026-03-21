@@ -1,8 +1,5 @@
 // app/api/list-users/route.ts
-import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
 import awsExports from '@/aws-exports';
-
-const cognitoClient = new CognitoIdentityProviderClient({ region: awsExports.aws_cognito_region });
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -15,30 +12,26 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized: missing token' }), { status: 401 });
   }
 
+  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
+  if (!apiInfo) {
+    return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
+  }
+
   try {
-    let allUsers: object[] = [];
-    let paginationToken: string | undefined;
-
-    do {
-      const command = new ListUsersCommand({
-        UserPoolId: awsExports.aws_user_pools_id,
-        Limit: 60,
-        PaginationToken: paginationToken,
-      });
-      const result = await cognitoClient.send(command);
-      allUsers = allUsers.concat(result.Users ?? []);
-      paginationToken = result.PaginationToken;
-    } while (paginationToken);
-
-    console.log(`[list-users] returning ${allUsers.length} users`);
-    return new Response(JSON.stringify(allUsers), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/list-users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
+
+    const text = await res.text();
+    return new Response(text, { status: res.status });
   } catch (error: any) {
-    console.error('[list-users] Cognito error:', error?.message || error);
+    console.error('[list-users] fetch failed:', error?.message || error);
     return new Response(
-      JSON.stringify({ error: 'Failed to list users', details: error?.message || String(error) }),
+      JSON.stringify({ error: 'Failed to call Lambda', details: error?.message || String(error) }),
       { status: 500 }
     );
   }
