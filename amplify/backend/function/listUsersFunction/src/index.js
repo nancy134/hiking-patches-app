@@ -17,6 +17,30 @@ const { SignatureV4 } = require('@aws-sdk/signature-v4');
 const { Sha256 } = require('@aws-crypto/sha256-js');
 const { HttpRequest } = require('@aws-sdk/protocol-http');
 const { defaultProvider } = require('@aws-sdk/credential-provider-node');
+const { CognitoJwtVerifier } = require('aws-jwt-verify');
+
+/** -------------------------
+ *  Admin JWT validation
+ *  ------------------------- */
+
+const jwtVerifier = CognitoJwtVerifier.create({
+  userPoolId: process.env.AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID,
+  tokenUse: 'id',
+  clientId: null,
+});
+
+async function requireAdmin(event) {
+  const authHeader = event.headers?.Authorization ?? event.headers?.authorization ?? '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (!token) return false;
+  try {
+    const payload = await jwtVerifier.verify(token);
+    const groups = payload['cognito:groups'] ?? [];
+    return groups.includes('Admin');
+  } catch {
+    return false;
+  }
+}
 
 /** -------------------------
  *  AppSync helpers (same style as your resolver Lambda)
@@ -255,8 +279,11 @@ async function countAllPages(query, variablesBase, connectionName) {
  *  Route handlers
  *  ------------------------- */
 
-async function handleListUsers() {
+async function handleListUsers(event) {
   console.log("handleListUsers()");
+  if (!await requireAdmin(event)) {
+    return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }), headers: { 'Content-Type': 'application/json' } };
+  }
   const userPoolId = process.env.AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID;
 
   let allUsers = [];
@@ -280,6 +307,9 @@ async function handleListUsers() {
 }
 
 async function handleUserEntryCounts(event) {
+  if (!await requireAdmin(event)) {
+    return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }), headers: { 'Content-Type': 'application/json' } };
+  }
   const body = typeof event.body === 'string' ? JSON.parse(event.body || '{}') : (event.body || {});
   const userIds = body.userIds;
 
@@ -354,7 +384,7 @@ exports.handler = async (event) => {
 
     console.log("isListUsers: "+isListUsers);
     if (isListUsers) {
-      return await handleListUsers();
+      return await handleListUsers(event);
     }
 
     if (isUserEntryCounts) {

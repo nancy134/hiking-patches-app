@@ -5,20 +5,14 @@
       "name": "/list-users",
       "lambdaFunction": "listUsersFunction",
       "permissions": {
-        "setting": "private",
-        "auth": [
-          "read"
-        ]
+        "setting": "open"
       }
     },
     "/user-entry-counts": {
       "name": "/user-entry-counts",
       "lambdaFunction": "listUsersFunction",
       "permissions": {
-        "setting": "private",
-        "auth": [
-          "read"
-        ]
+        "setting": "open"
       }
     },
     "/popular-patches": {

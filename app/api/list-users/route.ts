@@ -12,40 +12,26 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized: missing token' }), { status: 401 });
   }
 
-  const apiInfo = awsExports.aws_cloud_logic_custom.find(api => api.name === 'listusers');
+  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
   if (!apiInfo) {
     return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
   }
 
-  const url = apiInfo.endpoint + '/list-users';
-  console.log('[list-users] calling:', url);
-  console.log('[list-users] token length:', token.length);
-
   try {
-    const res = await fetch(url, {
+    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/list-users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ token }),
     });
-    console.log("fetch returned");
-    const text = await res.text(); // IMPORTANT: read raw text so we can see errors
-    console.log('[list-users] status:', res.status);
-    console.log('[list-users] response text:', text);
 
+    const text = await res.text();
     return new Response(text, { status: res.status });
   } catch (error: any) {
-    console.log("list-users caught error");
     console.error('[list-users] fetch failed:', error?.message || error);
-    console.error('[list-users] full error:', error);
-
     return new Response(
-      JSON.stringify({
-        error: 'Failed to call Lambda',
-        details: error?.message || String(error),
-      }),
+      JSON.stringify({ error: 'Failed to call Lambda', details: error?.message || String(error) }),
       { status: 500 }
     );
   }
