@@ -10,4 +10,9 @@ test.describe("Authentication", () => {
     await page.goto("/my-patches");
     await expect(page).toHaveURL(/\/auth\?redirect=\/my-patches/);
   });
+
+  test("account redirects to auth with redirect param when not signed in", async ({ page }) => {
+    await page.goto("/account");
+    await expect(page).toHaveURL(/\/auth\?redirect=\/account/);
+  });
 });
