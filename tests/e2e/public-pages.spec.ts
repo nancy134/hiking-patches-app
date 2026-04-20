@@ -16,9 +16,10 @@ test.describe("Public pages", () => {
     await expect(page.locator("h1")).toBeVisible();
   });
 
-  test("popular patches page loads", async ({ page }) => {
+  test("popular patches page loads and shows at least one patch", async ({ page }) => {
     await page.goto("/popular");
     await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator("ol li").first()).toBeVisible({ timeout: 10000 });
   });
 
   test("request patch page loads", async ({ page }) => {

@@ -28,7 +28,7 @@ export default function AccountPage() {
   // Redirect unauthenticated users once auth status is known
   useEffect(() => {
     if (authReady && !user) {
-      router.push('/');
+      router.push('/auth?redirect=/account');
     }
   }, [authReady, user, router]);
 

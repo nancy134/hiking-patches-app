@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Authenticator } from '@aws-amplify/ui-react';
 import { useAuth } from '@/context/auth-context';
 
 import '@aws-amplify/ui-react/styles.css';
 
-export default function AuthPage() {
+function AuthContent() {
   const { user, authReady } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,5 +30,13 @@ export default function AuthPage() {
         </main>
       )}
     </Authenticator>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense>
+      <AuthContent />
+    </Suspense>
   );
 }
