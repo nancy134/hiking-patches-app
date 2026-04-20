@@ -19,6 +19,28 @@ test.describe("Home page", () => {
     }
   });
 
+  test("clearing search restores full patch list", async ({ page }) => {
+    await expect(page.locator('[data-testid="patch-card"]').first()).toBeVisible({ timeout: 10000 });
+    const totalBefore = await page.locator('[data-testid="patch-card"]').count();
+
+    const search = page.getByLabel("Search patches");
+    await search.fill("Belknap");
+    await expect(page.locator('[data-testid="patch-card"]')).not.toHaveCount(totalBefore);
+
+    await search.clear();
+    await expect(page.locator('[data-testid="patch-card"]')).toHaveCount(totalBefore);
+  });
+
+  test("pagination advances to page 2 with different cards", async ({ page }) => {
+    await expect(page.locator('[data-testid="patch-card"]').first()).toBeVisible({ timeout: 10000 });
+    const firstPageHeadings = await page.locator('[data-testid="patch-card"] h2').allTextContents();
+
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+
+    const secondPageHeadings = await page.locator('[data-testid="patch-card"] h2').allTextContents();
+    expect(secondPageHeadings).not.toEqual(firstPageHeadings);
+  });
+
   test("region filter shows only Maine patches", async ({ page }) => {
     await expect(page.locator('[data-testid="patch-card"]').first()).toBeVisible({ timeout: 10000 });
     const totalBefore = await page.locator('[data-testid="patch-card"]').count();
