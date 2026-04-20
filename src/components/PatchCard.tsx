@@ -36,7 +36,7 @@ export function PatchCard({ patch, status = '', wishInit = false, onWishlistChan
   );
 
   return (
-    <Link href={`/patch/${patch.id}`} className="block">
+    <Link href={`/patch/${patch.id}`} className="block" data-testid="patch-card">
       <PatchDisplay
         imageUrl={patch.imageUrl}
         name={patch.name as string}
