@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/api';
 import { userPatchesByPatch, getPatchProgressSummary } from '@/graphql/queries';
+import Header from '@/components/Header';
+import { useAuth } from '@/context/auth-context';
 
 const getPatchName = /* GraphQL */ `
   query GetPatchName($id: ID!) {
@@ -15,8 +17,6 @@ const getPatchName = /* GraphQL */ `
     }
   }
 `;
-import Header from '@/components/Header';
-import { useAuth } from '@/context/auth-context';
 
 type CognitoUser = {
   Username: string;
@@ -31,6 +31,7 @@ type ProgressRow = {
   denom: number;
   note: string | null;
   dateCompleted: string | null;
+  inProgress: boolean | null;
 };
 
 const client = generateClient();
@@ -70,7 +71,7 @@ export default function PatchProgressPage() {
       do {
         const result: any = await client.graphql({
           query: userPatchesByPatch,
-          variables: { patchID: patchId, filter: { inProgress: { eq: true } }, limit: 100, nextToken },
+          variables: { patchID: patchId, limit: 100, nextToken },
           authMode: 'userPool',
         });
         allUserPatches.push(...result.data.userPatchesByPatch.items);
@@ -98,6 +99,7 @@ export default function PatchProgressPage() {
             denom: progress?.denom ?? 0,
             note: progress?.note ?? null,
             dateCompleted: up.dateCompleted ?? null,
+            inProgress: up.inProgress ?? null,
           };
         })
         .sort((a, b) => b.percent - a.percent);
@@ -155,6 +157,8 @@ export default function PatchProgressPage() {
               <th className="border px-4 py-2 text-left">Progress</th>
               <th className="border px-4 py-2 text-left">Detail</th>
               <th className="border px-4 py-2 text-left">Status</th>
+              <th className="border px-4 py-2 text-left">Date Completed</th>
+              <th className="border px-4 py-2 text-left">In Progress</th>
             </tr>
           </thead>
           <tbody>
@@ -179,6 +183,12 @@ export default function PatchProgressPage() {
                   ) : null}
                 </td>
                 <td className="border px-4 py-2">{statusLabel(row)}</td>
+                <td className="border px-4 py-2 text-sm text-gray-600">
+                  {row.dateCompleted ?? '—'}
+                </td>
+                <td className="border px-4 py-2 text-sm text-gray-600">
+                  {row.inProgress === null ? '—' : row.inProgress ? 'true' : 'false'}
+                </td>
               </tr>
             ))}
           </tbody>
