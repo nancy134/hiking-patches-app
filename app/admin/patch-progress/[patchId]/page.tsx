@@ -32,6 +32,7 @@ type ProgressRow = {
   note: string | null;
   dateCompleted: string | null;
   inProgress: boolean | null;
+  wishlisted: boolean | null;
 };
 
 const client = generateClient();
@@ -100,6 +101,7 @@ export default function PatchProgressPage() {
             note: progress?.note ?? null,
             dateCompleted: up.dateCompleted ?? null,
             inProgress: up.inProgress ?? null,
+            wishlisted: up.wishlisted ?? null,
           };
         })
         .sort((a, b) => b.percent - a.percent);
@@ -159,6 +161,7 @@ export default function PatchProgressPage() {
               <th className="border px-4 py-2 text-left">Status</th>
               <th className="border px-4 py-2 text-left">Date Completed</th>
               <th className="border px-4 py-2 text-left">In Progress</th>
+              <th className="border px-4 py-2 text-left">Wishlisted</th>
             </tr>
           </thead>
           <tbody>
@@ -188,6 +191,9 @@ export default function PatchProgressPage() {
                 </td>
                 <td className="border px-4 py-2 text-sm text-gray-600">
                   {row.inProgress === null ? '—' : row.inProgress ? 'true' : 'false'}
+                </td>
+                <td className="border px-4 py-2 text-sm text-gray-600">
+                  {row.wishlisted === null ? '—' : row.wishlisted ? 'true' : 'false'}
                 </td>
               </tr>
             ))}
