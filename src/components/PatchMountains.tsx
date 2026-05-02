@@ -10,6 +10,7 @@ import {
   deleteUserMountainMinimal,
   createUserMountainMinimal,
 } from '@/graphql/custom-mutations';
+import { ensureUserPatchInProgress } from '@/lib/ensureUserPatchInProgress';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
@@ -309,6 +310,10 @@ export default function PatchMountains({
         },
         authMode: 'userPool',
       });
+    }
+
+    if (datesToAdd.length > 0) {
+      await ensureUserPatchInProgress(userId, patchId).catch(console.error);
     }
 
     // Refresh local map

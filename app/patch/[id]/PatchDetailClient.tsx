@@ -1,7 +1,7 @@
 // app/patch/[id]/PatchDetailClient.tsx
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { listUserPatches, listUserMountains } from '@/graphql/queries';
 import { Patch, UserPatch, UserMountain } from '@/API';
@@ -100,37 +100,40 @@ export default function PatchDetailClient({ id }: { id: string }) {
     if (id) fetchPatch();
   }, [id]);
 
-  useEffect(() => {
-    const fetchUserPatch = async () => {
-      if (!user?.userId || !id) return;
-      try {
-        const response = await client.graphql({
-          query: listUserPatches,
-          variables: {
-            filter: {
-              userID: { eq: user.userId },
-              patchID: { eq: id },
-            },
+  const fetchUserPatch = useCallback(async () => {
+    if (!user?.userId || !id) return;
+    try {
+      const response = await client.graphql({
+        query: listUserPatches,
+        variables: {
+          filter: {
+            userID: { eq: user.userId },
+            patchID: { eq: id },
           },
-          authMode: 'userPool',
-        });
-        const match = response.data?.listUserPatches?.items?.[0] as
-          | UserPatch
-          | undefined;
-        if (match) {
-          setUserPatch(match);
-          if (match.dateCompleted) setDateCompleted(match.dateCompleted);
-          else setDateCompleted(null);
-          setDifficulty(match.difficulty?.toString() || '');
-          setNotes(match.notes || '');
-          setIsInProgress(match.inProgress !== undefined ? match.inProgress : null);
-        }
-      } catch (err) {
-        console.error('Error fetching userPatch:', err);
+        },
+        authMode: 'userPool',
+      });
+      const match = response.data?.listUserPatches?.items?.[0] as
+        | UserPatch
+        | undefined;
+      if (match) {
+        setUserPatch(match);
+        if (match.dateCompleted) setDateCompleted(match.dateCompleted);
+        else setDateCompleted(null);
+        setDifficulty(match.difficulty?.toString() || '');
+        setNotes(match.notes || '');
+        setIsInProgress(match.inProgress !== undefined ? match.inProgress : null);
+      } else {
+        setUserPatch(null);
       }
-    };
-    fetchUserPatch();
+    } catch (err) {
+      console.error('Error fetching userPatch:', err);
+    }
   }, [user, id]);
+
+  useEffect(() => {
+    fetchUserPatch();
+  }, [fetchUserPatch]);
 
   const handleDateChange = (mountainId: string, value: string) => {
     setDates((prev) => ({ ...prev, [mountainId]: value }));
@@ -376,7 +379,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 <PatchMountains
                   patchId={patch.id}
                   userId={user.userId}
-                  onProgressShouldRefresh={refreshProgress}
+                  onProgressShouldRefresh={() => { refreshProgress(); fetchUserPatch(); }}
                 />
               </div>
             )}
@@ -386,7 +389,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
                 <PatchTrails
                   patchId={patch.id}
                   userId={user.userId}
-                  onProgressShouldRefresh={refreshProgress}
+                  onProgressShouldRefresh={() => { refreshProgress(); fetchUserPatch(); }}
                 />
               </div>
             )}
