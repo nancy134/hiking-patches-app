@@ -178,6 +178,27 @@ export default function PatchMountains({
     fetchData();
   }, [patchId]);
 
+  const fetchAllUserMountains = async (uid: string): Promise<UserMountainMap> => {
+    const map: UserMountainMap = {};
+    let token: string | undefined;
+    do {
+      const r = (await client.graphql({
+        query: listUserMountains,
+        variables: { filter: { userID: { eq: uid } }, limit: 100, ...(token ? { nextToken: token } : {}) },
+        authMode: 'userPool',
+      })) as { data: ListUserMountainsQuery };
+      const page = r.data?.listUserMountains;
+      page?.items?.forEach((um) => {
+        if (um?.mountainID) {
+          if (!map[um.mountainID]) map[um.mountainID] = [];
+          map[um.mountainID]!.push(um);
+        }
+      });
+      token = page?.nextToken ?? undefined;
+    } while (token);
+    return map;
+  };
+
   useEffect(() => {
     const fetchUserMountains = async () => {
       if (!userId) {
@@ -188,21 +209,7 @@ export default function PatchMountains({
       setLoadingUser(true);
       setError(null);
       try {
-        const userResponse = (await client.graphql({
-          query: listUserMountains,
-          variables: { filter: { userID: { eq: userId } } },
-          authMode: 'userPool',
-        })) as { data: ListUserMountainsQuery };
-
-        const map: UserMountainMap = {};
-        userResponse.data?.listUserMountains?.items?.forEach((um) => {
-          if (um?.mountainID) {
-            if (!map[um.mountainID]) map[um.mountainID] = [];
-            map[um.mountainID]!.push(um);
-          }
-        });
-
-        setUserMountainMap(map);
+        setUserMountainMap(await fetchAllUserMountains(userId));
       } catch (e: any) {
         console.error(e);
         setError('Failed to load your ascents.');
@@ -319,21 +326,7 @@ export default function PatchMountains({
     // Refresh local map
     try {
       setLoadingUser(true);
-
-      const userResponse = (await client.graphql({
-        query: listUserMountains,
-        variables: { filter: { userID: { eq: userId } } },
-        authMode: 'userPool',
-      })) as { data: ListUserMountainsQuery };
-
-      const map: UserMountainMap = {};
-      userResponse.data?.listUserMountains?.items?.forEach((um) => {
-        if (um?.mountainID) {
-          if (!map[um.mountainID]) map[um.mountainID] = [];
-          map[um.mountainID]!.push(um);
-        }
-      });
-      setUserMountainMap(map);
+      setUserMountainMap(await fetchAllUserMountains(userId));
     } finally {
       setLoadingUser(false);
     }
