@@ -88,24 +88,31 @@ export default function PatchTrails({
     })();
   }, [patchId]);
 
+  const fetchAllUserTrails = async (uid: string): Promise<UserTrailMap> => {
+    const map: UserTrailMap = {};
+    let token: string | undefined;
+    do {
+      const r = (await client.graphql({
+        query: listUserTrails,
+        variables: { userID: uid, limit: 100, ...(token ? { nextToken: token } : {}) },
+        authMode: 'userPool',
+      })) as { data: ListUserTrailsQuery };
+      const page = (r.data as any)?.listUserTrails;
+      page?.items?.forEach((ut: UserTrail | null) => {
+        if (ut?.trailID) map[ut.trailID] = ut;
+      });
+      token = page?.nextToken ?? undefined;
+    } while (token);
+    return map;
+  };
+
   // fetch user trails
   useEffect(() => {
     (async () => {
       if (!userId) { setUserMap({}); setLoadingUser(false); return; }
       setLoadingUser(true);
       try {
-        const r = (await client.graphql({
-          query: listUserTrails,
-          variables: { userID: userId }, // if your query is filter-based, adjust to { filter: { userID: { eq: userId } } }
-          authMode: 'userPool',
-        })) as { data: ListUserTrailsQuery };
-
-        const map: UserTrailMap = {};
-        (r.data as any)?.listUserTrails?.items?.forEach((ut: UserTrail | null) => {
-          if (ut?.trailID) map[ut.trailID] = ut;
-        });
-
-        setUserMap(map);
+        setUserMap(await fetchAllUserTrails(userId));
       } finally {
         setLoadingUser(false);
       }
@@ -163,17 +170,7 @@ export default function PatchTrails({
       }
     } finally {
       try {
-        const r = (await client.graphql({
-          query: listUserTrails,
-          variables: { userID: userId },
-          authMode: 'userPool',
-        })) as { data: ListUserTrailsQuery };
-
-        const map: UserTrailMap = {};
-        (r.data as any)?.listUserTrails?.items?.forEach((ut: UserTrail | null) => {
-          if (ut?.trailID) map[ut.trailID] = ut;
-        });
-        setUserMap(map);
+        setUserMap(await fetchAllUserTrails(userId));
       } finally {
         setModalRow(null);
         onProgressShouldRefresh?.();
