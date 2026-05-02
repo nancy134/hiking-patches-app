@@ -6,6 +6,7 @@ import type { GraphQLResult } from '@aws-amplify/api';
 
 import { listPatchTrailsWithTrail } from '@/graphql/custom-queries';
 import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal } from '@/graphql/custom-mutations';
+import { ensureUserPatchInProgress } from '@/lib/ensureUserPatchInProgress';
 import { listUserTrails } from '@/graphql/queries';
 import Link from 'next/link';
 import type {
@@ -141,6 +142,7 @@ export default function PatchTrails({
           variables: { input: fields },
           authMode: 'userPool',
         });
+        await ensureUserPatchInProgress(userId, patchId).catch(console.error);
       } else if (clearingDateCompleted) {
         await client.graphql({
           query: deleteUserTrailMinimal,

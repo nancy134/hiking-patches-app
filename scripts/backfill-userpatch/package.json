@@ -1,0 +1,15 @@
+{
+  "name": "backfill-userpatch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "One-time migration: create UserPatch records for users with UserMountain/UserTrail activity",
+  "main": "index.js",
+  "scripts": {
+    "dry-run": "node index.js",
+    "execute": "node index.js --execute"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "uuid": "^9.0.0"
+  }
+}
