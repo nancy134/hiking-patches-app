@@ -6,7 +6,8 @@ import Header from '@/components/Header';
 import PatchGrid from '@/components/PatchGrid';
 import SearchBar from '@/components/SearchBar';
 import { generateClient } from 'aws-amplify/api';
-import { listPatches, listUserPatches } from '@/graphql/queries';
+import { listPatches } from '@/graphql/queries';
+import { userPatchesByUser } from '@/graphql/custom-queries';
 import { Patch, UserPatch, PatchStatus, Season } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import FiltersDialog from '@/components/FiltersDialog';
@@ -85,15 +86,21 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
         return;
       }
       try {
-        const r = await client.graphql({
-          query: listUserPatches,
-          variables: { filter: { userID: { eq: user.userId } } },
-          authMode: 'userPool',
-        });
+        const all: UserPatch[] = [];
+        let nextToken: string | null = null;
+        do {
+          const r: any = await client.graphql({
+            query: userPatchesByUser,
+            variables: { userID: user.userId, limit: 200, ...(nextToken ? { nextToken } : {}) },
+            authMode: 'userPool',
+          });
+          const page = r.data?.userPatchesByUserByPatch;
+          all.push(...((page?.items ?? []).filter(Boolean) as UserPatch[]));
+          nextToken = page?.nextToken ?? null;
+        } while (nextToken);
+
         if (!cancelled) {
-          const items: UserPatch[] = (r.data?.listUserPatches?.items || []).filter(Boolean);
-          // Only keep meaningful entries
-          const meaningful = items.filter((p) => p.dateCompleted || p.inProgress || p.wishlisted);
+          const meaningful = all.filter((p) => p.dateCompleted || p.inProgress || p.wishlisted);
           setUserPatches(meaningful);
           setWishlistSet(new Set(meaningful.filter((p) => p.wishlisted).map((p) => p.patchID)));
           setUserDataReady(true);

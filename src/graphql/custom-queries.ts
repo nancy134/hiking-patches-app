@@ -180,6 +180,18 @@ export const customUpdateUserPatch = `
   }
 `;
 
+export const userPatchesByUser = /* GraphQL */ `
+  query UserPatchesByUser($userID: String!, $limit: Int, $nextToken: String) {
+    userPatchesByUserByPatch(userID: $userID, limit: $limit, nextToken: $nextToken) {
+      items {
+        id patchID userID wishlisted inProgress dateCompleted
+        notes difficulty imageUrl createdAt updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+
 export const userPatchesByUserByPatchLite = /* GraphQL */ `
   query UserPatchesByUserByPatchLite($userID: String!, $patchID: ID!, $limit: Int) {
     userPatchesByUserByPatch(userID: $userID, patchID: { eq: $patchID }, limit: $limit) {
