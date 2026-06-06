@@ -3,14 +3,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { listUserPatches, listUserMountains } from '@/graphql/queries';
+import { listUserMountains } from '@/graphql/queries';
 import { Patch, UserPatch, UserMountain } from '@/API';
 import Header from '@/components/Header';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/auth-context';
 import type { GraphQLResult } from '@aws-amplify/api';
 import { UpdateUserPatchMutation, CreateUserPatchMutation } from '@/API';
-import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
+import { getPatchWithMountainsPaged, userPatchesByUserByPatchFull } from '@/graphql/custom-queries';
 import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
 import PatchTrails from '@/components/PatchTrails';
@@ -104,18 +104,18 @@ export default function PatchDetailClient({ id }: { id: string }) {
     if (!user?.userId || !id) return;
     try {
       const response = await client.graphql({
-        query: listUserPatches,
-        variables: {
-          filter: {
-            userID: { eq: user.userId },
-            patchID: { eq: id },
-          },
-        },
+        query: userPatchesByUserByPatchFull,
+        variables: { userID: user.userId, patchID: id, limit: 10 },
         authMode: 'userPool',
       });
-      const match = response.data?.listUserPatches?.items?.[0] as
-        | UserPatch
-        | undefined;
+      const items: UserPatch[] =
+        (response as any).data?.userPatchesByUserByPatch?.items ?? [];
+      // If duplicates exist, prefer the record with the most meaningful status
+      const match = items.sort((a, b) => {
+        const score = (p: UserPatch) =>
+          p.dateCompleted ? 2 : p.inProgress ? 1 : 0;
+        return score(b) - score(a);
+      })[0] as UserPatch | undefined;
       if (match) {
         setUserPatch(match);
         if (match.dateCompleted) setDateCompleted(match.dateCompleted);

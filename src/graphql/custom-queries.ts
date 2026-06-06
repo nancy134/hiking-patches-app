@@ -189,6 +189,18 @@ export const userPatchesByUserByPatchLite = /* GraphQL */ `
   }
 `;
 
+export const userPatchesByUserByPatchFull = /* GraphQL */ `
+  query UserPatchesByUserByPatchFull($userID: String!, $patchID: ID!, $limit: Int) {
+    userPatchesByUserByPatch(userID: $userID, patchID: { eq: $patchID }, limit: $limit) {
+      items {
+        id patchID userID wishlisted inProgress dateCompleted
+        notes difficulty imageUrl createdAt updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+
 export const listPatchTrailsWithPatch = /* GraphQL */ `
   query ListPatchTrailsWithPatch($limit: Int, $nextToken: String, $filter: ModelPatchTrailFilterInput) {
     listPatchTrails(limit: $limit, nextToken: $nextToken, filter: $filter) {
