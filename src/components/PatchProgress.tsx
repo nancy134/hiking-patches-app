@@ -13,6 +13,7 @@ import type {
 import {
   customCreateUserPatch,
   customUpdateUserPatch,
+  userPatchesByUserByPatchLite,
 } from '@/graphql/custom-queries';
 
 const client = generateClient();
@@ -140,6 +141,23 @@ export default function PatchProgress({
       return;
     }
 
+    // When initialUserPatch is null (stale from a race with ensureUserPatchInProgress),
+    // do a fresh GSI lookup so we update rather than create a duplicate record.
+    let authoritative = initialUserPatch;
+    if (!authoritative) {
+      try {
+        const lookup = await client.graphql({
+          query: userPatchesByUserByPatchLite,
+          variables: { userID: userId, patchID: patchId, limit: 1 },
+          authMode: 'userPool',
+        });
+        authoritative =
+          (lookup as any).data?.userPatchesByUserByPatch?.items?.[0] ?? null;
+      } catch (e) {
+        console.error('Pre-save lookup failed:', e);
+      }
+    }
+
     const input: any = {
       patchID: patchId,
       userID: userId,
@@ -157,11 +175,9 @@ export default function PatchProgress({
       input.inProgress = null;
     }
 
-    const mutation = initialUserPatch
-      ? customUpdateUserPatch
-      : customCreateUserPatch;
+    const mutation = authoritative ? customUpdateUserPatch : customCreateUserPatch;
 
-    if (initialUserPatch) input.id = initialUserPatch.id;
+    if (authoritative) input.id = authoritative.id;
 
     try {
       const response = (await client.graphql({
@@ -170,7 +186,7 @@ export default function PatchProgress({
         authMode: 'userPool',
       })) as GraphQLResult<CreateUserPatchMutation | UpdateUserPatchMutation>;
 
-      const updated = initialUserPatch
+      const updated = authoritative
         ? (response.data as UpdateUserPatchMutation)?.updateUserPatch
         : (response.data as CreateUserPatchMutation)?.createUserPatch;
 

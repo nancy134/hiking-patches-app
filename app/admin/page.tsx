@@ -28,6 +28,11 @@ export default function AdminDashboard() {
       description: "Create, edit, update and delete trails",
       href: "/admin/trails"
     },
+    {
+      title: "Data Cleanup",
+      description: "Find and remove duplicate UserPatch records.",
+      href: "/admin/cleanup"
+    },
   ];
 
   return (
