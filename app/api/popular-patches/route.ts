@@ -1,14 +1,13 @@
 // app/api/popular-patches/route.ts
-import awsExports from '@/aws-exports';
+const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function GET() {
-  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
-  if (!apiInfo) {
+  if (!LIST_USERS_BASE) {
     return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
   }
 
   try {
-    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/popular-patches', {
+    const res = await fetch(LIST_USERS_BASE + 'popular-patches', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

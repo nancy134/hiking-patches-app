@@ -5,12 +5,10 @@ import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
 import { Patch, Difficulty, PatchStatus, Season } from '@/API';
-import awsExports from '@/aws-exports';
+import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import FileUploader from '@/components/FileUploader';
 
 const client = generateClient();
-const bucket = awsExports.aws_user_files_s3_bucket;
-const region = awsExports.aws_user_files_s3_bucket_region;
 
 type RuleType =
   | 'default'

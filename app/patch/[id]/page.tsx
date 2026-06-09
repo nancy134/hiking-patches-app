@@ -1,11 +1,7 @@
 // app/patch/[id]/page.tsx
 import type { Metadata } from 'next';
 import PatchDetailClient from './PatchDetailClient';
-import awsmobile from '@/aws-exports';
-
-// Pull AppSync info from aws-exports
-const APPSYNC_URL = awsmobile.aws_appsync_graphqlEndpoint;
-const APPSYNC_API_KEY = awsmobile.aws_appsync_apiKey;
+import { appSyncUrl as APPSYNC_URL, appSyncApiKey as APPSYNC_API_KEY } from '@/lib/config';
 
 // Minimal query just for metadata
 const GET_PATCH_FOR_META = /* GraphQL */ `

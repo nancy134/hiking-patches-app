@@ -3,10 +3,10 @@ import {
   aws_apigateway as apigw,
   aws_iam as iam,
   aws_lambda as lambda,
+  aws_s3 as s3,
   CfnOutput,
   Stack,
 } from 'aws-cdk-lib';
-import { migrateUser } from './functions/migrate-user/resource';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { storage } from './storage/resource';
@@ -23,29 +23,30 @@ const backend = defineBackend({
   stripeWebhook,
   listUsers,
   getPatchProgress,
-  migrateUser,
 });
 
-const stack = Stack.of(backend.auth.resources.userPool);
+// ─── S3: allow public read on public/* (matches Gen1 behavior) ───────────────
+// backend.storage.resources.bucket is IBucket (interface) — node.defaultChild
+// and addToResourcePolicy are no-ops on it. Go through cfnResources.cfnBucket
+// to get the real L1 construct, then walk up to the L2 Bucket for policy work.
 
-// ─── Cognito password policy: match Gen1 (8-char min, no special char req) ──
+const { cfnBucket } = backend.storage.resources.cfnResources;
+const storageBucket = cfnBucket.node.scope as s3.Bucket;
 
-const cfnUserPool = backend.auth.resources.cfnResources.cfnUserPool;
-cfnUserPool.policies = {
-  passwordPolicy: {
-    minimumLength: 8,
-    requireLowercase: false,
-    requireUppercase: false,
-    requireNumbers: false,
-    requireSymbols: false,
-  },
+cfnBucket.publicAccessBlockConfiguration = {
+  blockPublicAcls: false,
+  ignorePublicAcls: false,
+  blockPublicPolicy: false,
+  restrictPublicBuckets: false,
 };
+storageBucket.addToResourcePolicy(new iam.PolicyStatement({
+  actions: ['s3:GetObject'],
+  principals: [new iam.AnyPrincipal()],
+  resources: [`${storageBucket.bucketArn}/public/*`],
+}));
 
-// ─── User pool ID available to functions that need it ────────────────────────
-
-const newUserPoolId = backend.auth.resources.userPool.userPoolId;
-const newUserPoolArn = backend.auth.resources.userPool.userPoolArn;
-const oldUserPoolArn = `arn:aws:cognito-idp:us-east-1:${stack.account}:userpool/us-east-1_7sOys7dV8`;
+// data stack: hosts functions that reference AppSync + all API Gateways (keeps Lambda integrations intra-stack)
+const stack = Stack.of(backend.data.resources.graphqlApi);
 
 // ─── AppSync URL + API key injected into HTTP-facing functions ───────────────
 
@@ -54,9 +55,7 @@ const apiKey = backend.data.resources.cfnResources.cfnApiKey?.attrApiKey ?? '';
 
 const listUsersFn = backend.listUsers.resources.lambda as lambda.Function;
 const stripeWebhookFn = backend.stripeWebhook.resources.lambda as lambda.Function;
-const migrateUserFn = backend.migrateUser.resources.lambda as lambda.Function;
 
-listUsersFn.addEnvironment('USER_POOL_ID', newUserPoolId);
 listUsersFn.addEnvironment('APPSYNC_URL', graphqlUrl);
 listUsersFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 
@@ -68,21 +67,18 @@ stripeWebhookFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 listUsersFn.addToRolePolicy(
   new iam.PolicyStatement({
     actions: ['cognito-idp:ListUsers'],
-    resources: [newUserPoolArn],
+    resources: [`arn:aws:cognito-idp:${stack.region}:${stack.account}:userpool/*`],
   })
 );
 
-// migrateUser needs to authenticate against the OLD pool and re-apply groups in the NEW pool
-migrateUserFn.addToRolePolicy(
+const tablePrefix = `amplify-hikingpatchesapp-nancypiedra`;
+listUsersFn.addToRolePolicy(
   new iam.PolicyStatement({
-    actions: ['cognito-idp:AdminInitiateAuth', 'cognito-idp:AdminListGroupsForUser'],
-    resources: [oldUserPoolArn],
-  })
-);
-migrateUserFn.addToRolePolicy(
-  new iam.PolicyStatement({
-    actions: ['cognito-idp:AdminAddUserToGroup'],
-    resources: [newUserPoolArn],
+    actions: ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:GetItem'],
+    resources: [
+      `arn:aws:dynamodb:${stack.region}:${stack.account}:table/${tablePrefix}*`,
+      `arn:aws:dynamodb:${stack.region}:${stack.account}:table/${tablePrefix}*/index/*`,
+    ],
   })
 );
 
@@ -98,13 +94,6 @@ const checkoutApi = new apigw.RestApi(stack, 'CheckoutApi', {
 
 const checkoutResource = checkoutApi.root.addResource('checkout');
 checkoutResource.addMethod('POST', new apigw.LambdaIntegration(backend.createCheckout.resources.lambda));
-checkoutResource.addMethod('OPTIONS', new apigw.MockIntegration({
-  integrationResponses: [{ statusCode: '200' }],
-  passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
-  requestTemplates: { 'application/json': '{"statusCode": 200}' },
-}), {
-  methodResponses: [{ statusCode: '200' }],
-});
 
 const webhookResource = checkoutApi.root.addResource('stripe').addResource('webhook');
 webhookResource.addMethod('POST', new apigw.LambdaIntegration(backend.stripeWebhook.resources.lambda));

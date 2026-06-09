@@ -1,11 +1,4 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
-import { getPatchProgress } from '../functions/get-patch-progress/resource';
-import { listUsers } from '../functions/list-users/resource';
-
-// allow.resource() is a valid runtime feature but is typed as absent on
-// BaseAllowModifier in data-schema v1.21. Cast through any to use it.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const resourceAllow = (allow: unknown, fn: unknown) => (allow as any).resource(fn);
 
 const schema = a.schema({
   // ─── Enums ────────────────────────────────────────────────────────────────
@@ -13,33 +6,6 @@ const schema = a.schema({
   Difficulty: a.enum(['EASY', 'MODERATE', 'HARD', 'EXTRA_HARD', 'EXTRA_EXTRA_HARD']),
   PatchStatus: a.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   Season: a.enum(['FALL', 'WINTER', 'SPRING', 'SUMMER']),
-
-  // ─── Custom type returned by Lambda-backed queries ─────────────────────────
-
-  PatchProgress: a.customType({
-    patchId: a.id().required(),
-    userId: a.id().required(),
-    completed: a.float().required(),
-    denom: a.float().required(),
-    percent: a.integer().required(),
-    note: a.string(),
-  }),
-
-  // ─── Lambda-backed custom queries ──────────────────────────────────────────
-
-  getPatchProgressSummary: a
-    .query()
-    .arguments({ patchId: a.id().required(), userId: a.id().required() })
-    .returns(a.ref('PatchProgress'))
-    .handler(a.handler.function(getPatchProgress))
-    .authorization((allow) => [allow.authenticated()]),
-
-  listPatchProgress: a
-    .query()
-    .arguments({ patchIds: a.id().required().array(), userId: a.id().required() })
-    .returns(a.ref('PatchProgress').array().required())
-    .handler(a.handler.function(getPatchProgress))
-    .authorization((allow) => [allow.authenticated()]),
 
   // ─── Models ────────────────────────────────────────────────────────────────
 
@@ -66,9 +32,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated().to(['read']),
-      allow.group('Admin'),
-      resourceAllow(allow, listUsers).to(['read']),
+      allow.authenticated(),
     ]),
 
   UserPatch: a
@@ -89,8 +53,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.ownerDefinedIn('userID'),
-      allow.group('Admin').to(['read', 'update', 'delete']),
-      resourceAllow(allow, listUsers).to(['read']),
+      allow.authenticated().to(['read', 'update', 'delete']),
     ]),
 
   PatchRequest: a
@@ -100,7 +63,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['create']),
-      allow.group('Admin').to(['read']),
+      allow.authenticated().to(['read']),
     ]),
 
   Mountain: a
@@ -116,7 +79,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.group('Admin'),
+      allow.authenticated(),
     ]),
 
   PatchMountain: a
@@ -133,9 +96,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated().to(['read']),
-      allow.group('Admin'),
-      resourceAllow(allow, getPatchProgress).to(['read']),
+      allow.authenticated(),
     ]),
 
   UserMountain: a
@@ -154,9 +115,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.owner(),
-      allow.group('Admin').to(['read', 'delete', 'update']),
-      resourceAllow(allow, getPatchProgress).to(['read']),
-      resourceAllow(allow, listUsers).to(['read']),
+      allow.authenticated().to(['read', 'delete', 'update']),
     ]),
 
   Trail: a
@@ -169,7 +128,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.group('Admin'),
+      allow.authenticated(),
     ]),
 
   PatchTrail: a
@@ -186,9 +145,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated().to(['read']),
-      allow.group('Admin'),
-      resourceAllow(allow, getPatchProgress).to(['read']),
+      allow.authenticated(),
     ]),
 
   UserTrail: a
@@ -208,9 +165,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.ownerDefinedIn('userID'),
-      allow.group('Admin').to(['read', 'delete', 'update']),
-      resourceAllow(allow, getPatchProgress).to(['read']),
-      resourceAllow(allow, listUsers).to(['read']),
+      allow.authenticated().to(['read', 'delete', 'update']),
     ]),
 
   PatchPurchase: a

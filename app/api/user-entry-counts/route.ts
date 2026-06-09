@@ -1,5 +1,5 @@
 // app/api/user-entry-counts/route.ts
-import awsExports from '@/aws-exports';
+const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -12,8 +12,7 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
-  if (!apiInfo) {
+  if (!LIST_USERS_BASE) {
     return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
   }
 
@@ -24,7 +23,7 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: 'userIds must be an array' }), { status: 400 });
     }
 
-    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/user-entry-counts', {
+    const res = await fetch(LIST_USERS_BASE + 'user-entry-counts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
