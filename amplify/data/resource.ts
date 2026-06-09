@@ -32,7 +32,8 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated(),
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   UserPatch: a
@@ -53,7 +54,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.ownerDefinedIn('userID'),
-      allow.authenticated().to(['read', 'update', 'delete']),
+      allow.group('Admin').to(['read', 'update', 'delete']),
     ]),
 
   PatchRequest: a
@@ -63,7 +64,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['create']),
-      allow.authenticated().to(['read']),
+      allow.group('Admin').to(['read']),
     ]),
 
   Mountain: a
@@ -79,7 +80,8 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated(),
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   PatchMountain: a
@@ -96,7 +98,8 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated(),
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   UserMountain: a
@@ -115,7 +118,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.owner(),
-      allow.authenticated().to(['read', 'delete', 'update']),
+      allow.group('Admin').to(['read', 'delete', 'update']),
     ]),
 
   Trail: a
@@ -128,7 +131,8 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated(),
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   PatchTrail: a
@@ -145,7 +149,8 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.publicApiKey().to(['read']),
-      allow.authenticated(),
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   UserTrail: a
@@ -165,7 +170,7 @@ const schema = a.schema({
     ])
     .authorization((allow) => [
       allow.ownerDefinedIn('userID'),
-      allow.authenticated().to(['read', 'delete', 'update']),
+      allow.group('Admin').to(['read', 'delete', 'update']),
     ]),
 
   PatchPurchase: a
