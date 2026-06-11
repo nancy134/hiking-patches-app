@@ -1541,7 +1541,103 @@
           ]
         }
       },
-      "nonModels": {}
+      "nonModels": {
+        "PatchProgress": {
+          "name": "PatchProgress",
+          "fields": {
+            "patchId": {
+              "name": "patchId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "userId": {
+              "name": "userId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "completed": {
+              "name": "completed",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": true,
+              "attributes": []
+            },
+            "denom": {
+              "name": "denom",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": true,
+              "attributes": []
+            },
+            "percent": {
+              "name": "percent",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": true,
+              "attributes": []
+            },
+            "note": {
+              "name": "note",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        }
+      },
+      "queries": {
+        "getPatchProgressSummary": {
+          "name": "getPatchProgressSummary",
+          "isArray": false,
+          "type": {
+            "nonModel": "PatchProgress"
+          },
+          "isRequired": false,
+          "arguments": {
+            "patchId": {
+              "name": "patchId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true
+            },
+            "userId": {
+              "name": "userId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true
+            }
+          }
+        },
+        "listPatchProgress": {
+          "name": "listPatchProgress",
+          "isArray": true,
+          "type": {
+            "nonModel": "PatchProgress"
+          },
+          "isRequired": true,
+          "isArrayNullable": false,
+          "arguments": {
+            "patchIds": {
+              "name": "patchIds",
+              "isArray": true,
+              "type": "ID",
+              "isRequired": true,
+              "isArrayNullable": false
+            },
+            "userId": {
+              "name": "userId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true
+            }
+          }
+        }
+      }
     }
   },
   "storage": {

@@ -55,12 +55,17 @@ const apiKey = backend.data.resources.cfnResources.cfnApiKey?.attrApiKey ?? '';
 
 const listUsersFn = backend.listUsers.resources.lambda as lambda.Function;
 const stripeWebhookFn = backend.stripeWebhook.resources.lambda as lambda.Function;
+const getPatchProgressFn = backend.getPatchProgress.resources.lambda as lambda.Function;
 
 listUsersFn.addEnvironment('APPSYNC_URL', graphqlUrl);
 listUsersFn.addEnvironment('APPSYNC_API_KEY', apiKey);
+listUsersFn.addEnvironment('USER_POOL_ID', backend.auth.resources.userPool.userPoolId);
 
 stripeWebhookFn.addEnvironment('APPSYNC_URL', graphqlUrl);
 stripeWebhookFn.addEnvironment('APPSYNC_API_KEY', apiKey);
+
+getPatchProgressFn.addEnvironment('APPSYNC_URL', graphqlUrl);
+getPatchProgressFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 
 // ─── IAM grants ──────────────────────────────────────────────────────────────
 

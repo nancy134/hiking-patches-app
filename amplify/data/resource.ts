@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { getPatchProgress } from '../functions/get-patch-progress/resource';
 
 const schema = a.schema({
   // ─── Enums ────────────────────────────────────────────────────────────────
@@ -6,6 +7,17 @@ const schema = a.schema({
   Difficulty: a.enum(['EASY', 'MODERATE', 'HARD', 'EXTRA_HARD', 'EXTRA_EXTRA_HARD']),
   PatchStatus: a.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   Season: a.enum(['FALL', 'WINTER', 'SPRING', 'SUMMER']),
+
+  // ─── Custom types & queries ─────────────────────────────────────────────────
+
+  PatchProgress: a.customType({
+    patchId: a.id().required(),
+    userId: a.id().required(),
+    completed: a.float().required(),
+    denom: a.float().required(),
+    percent: a.integer().required(),
+    note: a.string(),
+  }),
 
   // ─── Models ────────────────────────────────────────────────────────────────
 
@@ -186,7 +198,27 @@ const schema = a.schema({
       allow.ownerDefinedIn('userId'),
       allow.publicApiKey().to(['create', 'read']),
     ]),
-});
+
+  getPatchProgressSummary: a
+    .query()
+    .arguments({
+      patchId: a.id().required(),
+      userId: a.id().required(),
+    })
+    .returns(a.ref('PatchProgress'))
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(getPatchProgress)),
+
+  listPatchProgress: a
+    .query()
+    .arguments({
+      patchIds: a.id().required().array().required(),
+      userId: a.id().required(),
+    })
+    .returns(a.ref('PatchProgress').required().array().required())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(getPatchProgress)),
+}).authorization((allow) => [allow.resource(getPatchProgress).to(['query'])]);
 
 export type Schema = ClientSchema<typeof schema>;
 
