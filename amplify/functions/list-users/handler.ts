@@ -1,7 +1,3 @@
-// TODO (Phase 4): update env-var references — replace the Gen1 long-form var
-//   AUTH_HIKINGPATCHESAPP368A1661_USERPOOLID with the new user pool ID injected
-//   from backend.ts via backend.listUsers.resources.lambda.addEnvironment().
-
 import type { APIGatewayProxyHandler } from 'aws-lambda';
 import {
   CognitoIdentityProviderClient,

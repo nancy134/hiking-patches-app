@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { getPatchProgress } from '../functions/get-patch-progress/resource';
+import { listUsers } from '../functions/list-users/resource';
 
 const schema = a.schema({
   // ─── Enums ────────────────────────────────────────────────────────────────
@@ -218,7 +219,10 @@ const schema = a.schema({
     .returns(a.ref('PatchProgress').required().array().required())
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(getPatchProgress)),
-}).authorization((allow) => [allow.resource(getPatchProgress).to(['query'])]);
+}).authorization((allow) => [
+  allow.resource(getPatchProgress).to(['query']),
+  allow.resource(listUsers).to(['query']),
+]);
 
 export type Schema = ClientSchema<typeof schema>;
 

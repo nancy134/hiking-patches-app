@@ -72,18 +72,7 @@ getPatchProgressFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 listUsersFn.addToRolePolicy(
   new iam.PolicyStatement({
     actions: ['cognito-idp:ListUsers'],
-    resources: [`arn:aws:cognito-idp:${stack.region}:${stack.account}:userpool/*`],
-  })
-);
-
-const tablePrefix = `amplify-hikingpatchesapp-nancypiedra`;
-listUsersFn.addToRolePolicy(
-  new iam.PolicyStatement({
-    actions: ['dynamodb:Query', 'dynamodb:Scan', 'dynamodb:GetItem'],
-    resources: [
-      `arn:aws:dynamodb:${stack.region}:${stack.account}:table/${tablePrefix}*`,
-      `arn:aws:dynamodb:${stack.region}:${stack.account}:table/${tablePrefix}*/index/*`,
-    ],
+    resources: [`arn:aws:cognito-idp:${stack.region}:${stack.account}:userpool/${backend.auth.resources.userPool.userPoolId}`],
   })
 );
 
