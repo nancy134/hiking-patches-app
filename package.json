@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:staging": "NEXT_PUBLIC_AMPLIFY_ENV=staging NEXT_PUBLIC_CHECKOUT_API=https://akjan490ui.execute-api.us-east-1.amazonaws.com/prod/checkout LIST_USERS_API_URL=https://3j603z1w62.execute-api.us-east-1.amazonaws.com/prod/ next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
