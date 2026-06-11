@@ -1,0 +1,9 @@
+{
+  "name": "gen1-to-gen2-migrate",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0"
+  }
+}
