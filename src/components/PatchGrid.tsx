@@ -1,11 +1,10 @@
 // src/components/PatchGrid.tsx
-import { Patch } from '@/API';
-import { PatchCard } from '@/components/PatchCard';
+import { PatchCard, PatchCardData } from '@/components/PatchCard';
 
 type UserPatchLite = { dateCompleted: string | null; inProgress: boolean; wishlisted?: boolean };
 
 type PatchGridProps = {
-  patches: Patch[];
+  patches: PatchCardData[];
   userPatchMap?: Map<string, UserPatchLite>;
   userDataReady?: boolean;
   wishlistSet?: Set<string>; 

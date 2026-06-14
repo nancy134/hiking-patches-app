@@ -718,6 +718,21 @@ export type PatchProgress = {
   note?: string | null,
 };
 
+export type RelatedPatch = {
+  __typename: "RelatedPatch",
+  id: string,
+  name: string,
+  description?: string | null,
+  imageUrl?: string | null,
+  regions?: Array< string | null > | null,
+  difficulty?: Difficulty | null,
+  hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
+  popularity?: number | null,
+  isPurchasable?: boolean | null,
+  matchScore: number,
+};
+
 export type ModelPatchFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -2509,6 +2524,28 @@ export type ListPatchProgressQuery = {
     denom: number,
     percent: number,
     note?: string | null,
+  } >,
+};
+
+export type GetRelatedPatchesQueryVariables = {
+  patchId: string,
+  limit?: number | null,
+};
+
+export type GetRelatedPatchesQuery = {
+  getRelatedPatches:  Array< {
+    __typename: "RelatedPatch",
+    id: string,
+    name: string,
+    description?: string | null,
+    imageUrl?: string | null,
+    regions?: Array< string | null > | null,
+    difficulty?: Difficulty | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    popularity?: number | null,
+    isPurchasable?: boolean | null,
+    matchScore: number,
   } >,
 };
 
