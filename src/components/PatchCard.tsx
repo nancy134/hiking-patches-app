@@ -4,8 +4,13 @@ import { PatchDisplay } from './PatchDisplay';
 import UserProgressOverlay from '@/components/UserProgressOverlay';
 import WishHeartButton from '@/components/WishHeartButton';
 
+export type PatchCardData = Pick<
+  Patch,
+  'id' | 'name' | 'description' | 'regions' | 'difficulty' | 'imageUrl' | 'hasPeaks' | 'hasTrails'
+>;
+
 type Props = {
-  patch: Patch;
+  patch: PatchCardData;
   status?: '' | 'In Progress' | 'Completed';
   wishInit?: boolean;
   onWishlistChange?: (patchId: string, next: boolean) => void;
@@ -13,8 +18,7 @@ type Props = {
 
 export function PatchCard({ patch, status = '', wishInit = false, onWishlistChange }: Props) {
   // Show overlay if the patch tracks EITHER peaks or trails
-  const hasProgress =
-    Boolean((patch as any).hasPeaks) || Boolean((patch as any).hasTrails);
+  const hasProgress = Boolean(patch.hasPeaks) || Boolean(patch.hasTrails);
 
   const topRight = (
     <div className="inline-flex items-center gap-2">

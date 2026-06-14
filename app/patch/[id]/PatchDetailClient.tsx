@@ -15,7 +15,9 @@ import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
 import PatchTrails from '@/components/PatchTrails';
 import ProgressSummary from '@/components/ProgressSummary';
+import PatchGrid from '@/components/PatchGrid';
 import { usePatchProgressSummary } from '@/hooks/usePatchProgressSummary';
+import { useRelatedPatches } from '@/hooks/useRelatedPatches';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -250,6 +252,8 @@ export default function PatchDetailClient({ id }: { id: string }) {
     refresh: refreshProgress,
   } = usePatchProgressSummary(patch?.id ?? null, user?.userId ?? null);
 
+  const { patches: relatedPatches, loading: loadingRelated } = useRelatedPatches(patch?.id ?? null);
+
   const progressUnit = useMemo<'miles' | null>(() => {
     const raw: unknown = (patch as any)?.completionRule;
     if (!raw) return null;
@@ -415,6 +419,13 @@ export default function PatchDetailClient({ id }: { id: string }) {
               </div>
             )}
           </>
+        )}
+
+        {!loadingRelated && relatedPatches.length > 0 && (
+          <div className="bg-white p-4 rounded shadow mt-6">
+            <h2 className="text-lg font-semibold mb-3">Related Patches</h2>
+            <PatchGrid patches={relatedPatches} />
+          </div>
         )}
       </div>
     </>
