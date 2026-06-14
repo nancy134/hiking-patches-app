@@ -14,6 +14,7 @@ import { createCheckout } from './functions/create-checkout/resource';
 import { stripeWebhook } from './functions/stripe-webhook/resource';
 import { listUsers } from './functions/list-users/resource';
 import { getPatchProgress } from './functions/get-patch-progress/resource';
+import { getRelatedPatches } from './functions/get-related-patches/resource';
 
 const backend = defineBackend({
   auth,
@@ -23,6 +24,7 @@ const backend = defineBackend({
   stripeWebhook,
   listUsers,
   getPatchProgress,
+  getRelatedPatches,
 });
 
 // ─── S3: allow public read on public/* (matches Gen1 behavior) ───────────────
@@ -66,6 +68,10 @@ stripeWebhookFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 
 getPatchProgressFn.addEnvironment('APPSYNC_URL', graphqlUrl);
 getPatchProgressFn.addEnvironment('APPSYNC_API_KEY', apiKey);
+
+const getRelatedPatchesFn = backend.getRelatedPatches.resources.lambda as lambda.Function;
+getRelatedPatchesFn.addEnvironment('APPSYNC_URL', graphqlUrl);
+getRelatedPatchesFn.addEnvironment('APPSYNC_API_KEY', apiKey);
 
 // ─── IAM grants ──────────────────────────────────────────────────────────────
 

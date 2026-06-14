@@ -38,6 +38,26 @@ export const listPatchProgress = /* GraphQL */ `query ListPatchProgress($patchId
   APITypes.ListPatchProgressQueryVariables,
   APITypes.ListPatchProgressQuery
 >;
+export const getRelatedPatches = /* GraphQL */ `query GetRelatedPatches($limit: Int, $patchId: ID!) {
+  getRelatedPatches(limit: $limit, patchId: $patchId) {
+    description
+    difficulty
+    hasPeaks
+    hasTrails
+    id
+    imageUrl
+    isPurchasable
+    matchScore
+    name
+    popularity
+    regions
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetRelatedPatchesQueryVariables,
+  APITypes.GetRelatedPatchesQuery
+>;
 export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
   getPatch(id: $id) {
     id

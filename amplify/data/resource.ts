@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { getPatchProgress } from '../functions/get-patch-progress/resource';
 import { listUsers } from '../functions/list-users/resource';
+import { getRelatedPatches } from '../functions/get-related-patches/resource';
 
 const schema = a.schema({
   // ─── Enums ────────────────────────────────────────────────────────────────
@@ -18,6 +19,20 @@ const schema = a.schema({
     denom: a.float().required(),
     percent: a.integer().required(),
     note: a.string(),
+  }),
+
+  RelatedPatch: a.customType({
+    id: a.id().required(),
+    name: a.string().required(),
+    description: a.string(),
+    imageUrl: a.string(),
+    regions: a.string().array(),
+    difficulty: a.ref('Difficulty'),
+    hasPeaks: a.boolean(),
+    hasTrails: a.boolean(),
+    popularity: a.integer(),
+    isPurchasable: a.boolean(),
+    matchScore: a.integer().required(),
   }),
 
   // ─── Models ────────────────────────────────────────────────────────────────
@@ -219,6 +234,16 @@ const schema = a.schema({
     .returns(a.ref('PatchProgress').required().array().required())
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(getPatchProgress)),
+
+  getRelatedPatches: a
+    .query()
+    .arguments({
+      patchId: a.id().required(),
+      limit: a.integer(),
+    })
+    .returns(a.ref('RelatedPatch').required().array().required())
+    .authorization((allow) => [allow.publicApiKey(), allow.authenticated()])
+    .handler(a.handler.function(getRelatedPatches)),
 }).authorization((allow) => [
   allow.resource(getPatchProgress).to(['query']),
   allow.resource(listUsers).to(['query']),
