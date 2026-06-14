@@ -1,5 +1,5 @@
 // app/api/list-users/route.ts
-import awsExports from '@/aws-exports';
+const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -12,13 +12,12 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized: missing token' }), { status: 401 });
   }
 
-  const apiInfo = awsExports.aws_cloud_logic_custom.find((api: { name: string }) => api.name === 'listusers');
-  if (!apiInfo) {
+  if (!LIST_USERS_BASE) {
     return new Response(JSON.stringify({ error: 'API endpoint not configured' }), { status: 500 });
   }
 
   try {
-    const res = await fetch((apiInfo as { endpoint: string }).endpoint + '/list-users', {
+    const res = await fetch(LIST_USERS_BASE + 'list-users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

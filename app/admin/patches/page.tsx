@@ -11,14 +11,11 @@ import {
 } from '@/graphql/mutations';
 import { listPatches } from '@/graphql/queries';
 import Header from '@/components/Header';
-import awsExports from '@/aws-exports';
+import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import { Patch, Difficulty } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import PatchFormModal from '@/components/PatchFormModal';
 import Link from 'next/link';
-
-const bucket = awsExports.aws_user_files_s3_bucket;
-const region = awsExports.aws_user_files_s3_bucket_region;
 const client = generateClient();
 
 export default function AdminPage() {
