@@ -18,6 +18,8 @@ import Link from 'next/link';
 
 const client = generateClient();
 
+const VISIBLE_LIMIT = 5;
+
 type UserMountainMap = Record<string, UserMountain[] | undefined>;
 
 interface PatchMountainProps {
@@ -112,6 +114,7 @@ export default function PatchMountains({
   const [stateFilter, setStateFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'elev'>('elev');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [showAll, setShowAll] = useState(false);
 
   // NEW: loading flags
   const [loadingPatch, setLoadingPatch] = useState<boolean>(true);
@@ -276,6 +279,15 @@ export default function PatchMountains({
     return sorted;
   }, [patchMountains, q, status, stateFilter, userMountainMap, sortBy, sortDir]);
 
+  // Collapse back to the short list whenever the filters/sort change
+  useEffect(() => {
+    setShowAll(false);
+  }, [q, status, stateFilter, sortBy, sortDir]);
+
+  const displayedMountains = showAll
+    ? visibleMountains
+    : visibleMountains.slice(0, VISIBLE_LIMIT);
+
   const handleSave = async (newDates: string[]) => {
     // close modal immediately for snappy UX
     const mountainId = (modalMountain as any)?.mountain?.id as string | undefined;
@@ -435,7 +447,7 @@ export default function PatchMountains({
           <TableSkeleton rows={8} />
         ) : (
           <tbody>
-            {visibleMountains.map((pm, idx) => {
+            {displayedMountains.map((pm, idx) => {
               const mountain = pm.mountain!;
               const userMountains = userMountainMap[mountain.id] || [];
 
@@ -488,6 +500,17 @@ export default function PatchMountains({
           </tbody>
         )}
       </table>
+
+      {!loadingPatch && visibleMountains.length > VISIBLE_LIMIT && (
+        <div className="mt-3 text-center">
+          <button
+            onClick={() => setShowAll((v) => !v)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            {showAll ? 'Show Less' : `Show More (${visibleMountains.length - VISIBLE_LIMIT} more)`}
+          </button>
+        </div>
+      )}
 
       {modalMountain && (
         <MountainAscentModal
