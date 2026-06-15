@@ -97,6 +97,7 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
           <img
             src={imageUrl}
             alt={name}
+            crossOrigin="anonymous"
             className="max-w-full max-h-full object-contain rounded"
           />
         </div>
