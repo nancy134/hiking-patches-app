@@ -11,6 +11,8 @@ import { userPatchesByUser } from '@/graphql/custom-queries';
 import { Patch, UserPatch, PatchStatus, Season } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import FiltersDialog from '@/components/FiltersDialog';
+import PatchBoardModal from '@/components/PatchBoardModal';
+import { PatchBoardItem } from '@/lib/patchBoardImage';
 
 const client = generateClient();
 const ITEMS_PER_PAGE = 16;
@@ -54,6 +56,9 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
   const [userDataReady, setUserDataReady] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [wishlistSet, setWishlistSet] = useState<Set<string>>(new Set());
+
+  // patch board (downloadable "patches on a table" image)
+  const [patchBoardOpen, setPatchBoardOpen] = useState(false);
 
   // status filters
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -130,6 +135,43 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
     }
     return m;
   }, [userPatches]);
+
+  // Fast lookup of public patch data by id (name, image) for the patch board
+  const patchById = useMemo(() => {
+    const m = new Map<string, Patch>();
+    for (const p of allPatches) m.set(p.id, p);
+    return m;
+  }, [allPatches]);
+
+  const myCompletedPatches = useMemo<PatchBoardItem[]>(() => {
+    return userPatches
+      .filter((up) => !!up.dateCompleted)
+      .sort((a, b) => (b.dateCompleted as string).localeCompare(a.dateCompleted as string))
+      .map((up) => {
+        const patch = patchById.get(up.patchID);
+        return {
+          id: up.patchID,
+          name: patch?.name ?? 'Patch',
+          imageUrl: up.imageUrl || patch?.imageUrl,
+          status: 'Completed' as const,
+          dateCompleted: up.dateCompleted,
+        };
+      });
+  }, [userPatches, patchById]);
+
+  const myInProgressPatches = useMemo<PatchBoardItem[]>(() => {
+    return userPatches
+      .filter((up) => up.inProgress && !up.dateCompleted)
+      .map((up) => {
+        const patch = patchById.get(up.patchID);
+        return {
+          id: up.patchID,
+          name: patch?.name ?? 'Patch',
+          imageUrl: up.imageUrl || patch?.imageUrl,
+          status: 'In Progress' as const,
+        };
+      });
+  }, [userPatches, patchById]);
 
   // ------------- public-first filtering/sorting -------------
   useEffect(() => {
@@ -326,6 +368,23 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
             )}
           </button>
 
+          {/* Patch board: downloadable "patches on a table" image */}
+          {isMyView && user && userDataReady && (
+            <button
+              type="button"
+              onClick={() => setPatchBoardOpen(true)}
+              disabled={myCompletedPatches.length === 0}
+              title={
+                myCompletedPatches.length === 0
+                  ? 'Complete a patch first to create your patch photo!'
+                  : undefined
+              }
+              className="inline-flex items-center gap-2 rounded border px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Create Patch Photo
+            </button>
+          )}
+
           <FiltersDialog
             open={filtersOpen}
             onClose={() => setFiltersOpen(false)}
@@ -396,6 +455,15 @@ export default function PatchesScreen({ variant }: PatchesScreenProps) {
         wishlistSet={wishlistSet}
         onWishlistChange={handleWishlistChange}
       />
+
+      {isMyView && user && (
+        <PatchBoardModal
+          open={patchBoardOpen}
+          onClose={() => setPatchBoardOpen(false)}
+          completedItems={myCompletedPatches}
+          inProgressItems={myInProgressPatches}
+        />
+      )}
     </div>
   );
 }
