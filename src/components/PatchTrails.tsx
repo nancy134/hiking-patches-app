@@ -21,6 +21,8 @@ import TrailProgressModal from '@/components/TrailProgressModal';
 
 const client = generateClient();
 
+const VISIBLE_LIMIT = 5;
+
 type Item = NonNullable<NonNullable<ListPatchTrailsWithTrailQuery['listPatchTrails']>['items']>[number];
 type ItemNN = NonNullable<Item>;
 type ItemWithTrail = ItemNN & { trail: NonNullable<ItemNN['trail']> };
@@ -120,11 +122,27 @@ export default function PatchTrails({
   }, [userId]);
 
   const [q, setQ] = useState('');
+  const [status, setStatus] = useState<'all' | 'done' | 'todo'>('all');
+  const [showAll, setShowAll] = useState(false);
+
   const visible = useMemo(() => {
     const qn = q.trim().toLowerCase();
-    if (!qn) return rows;
-    return rows.filter(r => (r.trail.name ?? '').toLowerCase().includes(qn));
-  }, [rows, q]);
+    return rows.filter((r) => {
+      const matchesQ = !qn || (r.trail.name ?? '').toLowerCase().includes(qn);
+
+      const done = !!userMap[r.trail.id]?.dateCompleted;
+      const matchesStatus = status === 'all' ? true : status === 'done' ? done : !done;
+
+      return matchesQ && matchesStatus;
+    });
+  }, [rows, q, status, userMap]);
+
+  // Collapse back to the short list whenever the filters change
+  useEffect(() => {
+    setShowAll(false);
+  }, [q, status]);
+
+  const displayed = showAll ? visible : visible.slice(0, VISIBLE_LIMIT);
 
   async function saveTrailProgress(
     row: ItemWithTrail,
@@ -187,7 +205,7 @@ export default function PatchTrails({
       <div className="flex items-center justify-between mb-1">
         {loadingUser && !loadingPatch && <Spinner label="Syncing your trail progress…" />}
       </div>
-      <div className="flex gap-2 items-center mb-3">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
         <input
           type="search"
           value={q}
@@ -196,6 +214,30 @@ export default function PatchTrails({
           className="w-full sm:w-64 border rounded px-3 py-1.5 text-sm disabled:opacity-50"
           disabled={loadingPatch}
         />
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as any)}
+          className="border rounded px-3 py-1.5 text-sm disabled:opacity-50"
+          disabled={loadingPatch}
+        >
+          <option value="all">All</option>
+          <option value="todo">Not completed</option>
+          <option value="done">Completed</option>
+        </select>
+
+        {(q || status !== 'all') && (
+          <button
+            className="ml-auto sm:ml-0 text-sm underline disabled:opacity-50"
+            onClick={() => {
+              setQ('');
+              setStatus('all');
+            }}
+            disabled={loadingPatch}
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       <div className="mb-2 text-xs text-gray-500" aria-live="polite">
@@ -224,7 +266,7 @@ export default function PatchTrails({
             </tr>
           </thead>
           <tbody>
-            {visible.map((pt, idx) => {
+            {displayed.map((pt, idx) => {
               const t = pt.trail!;
               const ut = userMap[t.id];
 
@@ -300,6 +342,17 @@ export default function PatchTrails({
           </tbody>
         </table>
       </div>
+
+      {!loadingPatch && visible.length > VISIBLE_LIMIT && (
+        <div className="mt-3 text-center">
+          <button
+            onClick={() => setShowAll((v) => !v)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            {showAll ? 'Show Less' : `Show More (${visible.length - VISIBLE_LIMIT} more)`}
+          </button>
+        </div>
+      )}
 
       <TrailProgressModal
         open={!!modalRow}
