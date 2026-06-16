@@ -179,7 +179,15 @@ export default function AdminPage() {
 
               <td className="border px-4 py-2">{patch.description}</td>
               <td className="border px-4 py-2">
-                <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
+                <div
+                  className="inline-flex items-center justify-center rounded p-1"
+                  style={{
+                    backgroundImage: 'repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%)',
+                    backgroundSize: '16px 16px',
+                  }}
+                >
+                  <img src={patch.imageUrl ?? ''} alt={patch.name ?? 'Patch image'} className="h-16" />
+                </div>
               </td>
               <td className="border px-4 py-2">{(patch.regions ?? []).join(', ')}</td>
               <td className="border px-4 py-2">{patch.difficulty}</td>
