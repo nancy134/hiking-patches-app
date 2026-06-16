@@ -63,7 +63,9 @@ function loadImage(src?: string | null): Promise<HTMLImageElement | null> {
     img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
-    img.src = src;
+    // Cache-bust so the browser always makes a fresh network request with the
+    // Origin header, bypassing any cached response that was fetched without it.
+    img.src = src.includes('?') ? `${src}&_cb=1` : `${src}?_cb=1`;
   });
 }
 
