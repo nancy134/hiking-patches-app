@@ -53,3 +53,32 @@ export const deleteUserTrailMinimal = /* GraphQL */ `
     }
   }
 `;
+
+// ─── Patch ownership ─────────────────────────────────────────────────────────
+
+// A user submits an ownership request for a patch.
+export const createPatchOwnerRequestCustom = /* GraphQL */ `
+  mutation CreatePatchOwnerRequest($input: CreatePatchOwnerRequestInput!) {
+    createPatchOwnerRequest(input: $input) {
+      id patchID patchName userID userEmail message status createdAt
+    }
+  }
+`;
+
+// Admin approves a request → records the user as an owner of the patch.
+export const createPatchOwnerCustom = /* GraphQL */ `
+  mutation CreatePatchOwner($input: CreatePatchOwnerInput!) {
+    createPatchOwner(input: $input) {
+      id patchID userID userEmail patchName
+    }
+  }
+`;
+
+// Admin approves or rejects a request.
+export const updatePatchOwnerRequestStatus = /* GraphQL */ `
+  mutation UpdatePatchOwnerRequest($input: UpdatePatchOwnerRequestInput!) {
+    updatePatchOwnerRequest(input: $input) {
+      id status
+    }
+  }
+`;

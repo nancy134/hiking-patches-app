@@ -14,6 +14,11 @@ export default function AdminDashboard() {
       href: '/admin/requests',
     },
     {
+      title: 'Ownership Requests',
+      description: 'Approve or reject patch ownership claims.',
+      href: '/admin/ownership-requests',
+    },
+    {
       title: 'Users',
       description: 'See list of users',
       href: '/admin/users',

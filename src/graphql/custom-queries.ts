@@ -297,3 +297,47 @@ export const getMountainPublic = /* GraphQL */ `
     }
   }
 `;
+
+// ─── Patch ownership ─────────────────────────────────────────────────────────
+
+// All owners for a patch — used on the patch detail page to derive `isOwner`.
+export const patchOwnersByPatch = /* GraphQL */ `
+  query PatchOwnersByPatch($patchID: ID!, $limit: Int, $nextToken: String) {
+    patchOwnersByPatch(patchID: $patchID, limit: $limit, nextToken: $nextToken) {
+      items { id userID userEmail patchName }
+      nextToken
+    }
+  }
+`;
+
+// The signed-in user's own ownership requests (owner-auth auto-filters to the
+// caller), narrowed to one patch — used to avoid re-showing the "Are you the
+// owner?" prompt after they've already applied.
+export const listMyOwnerRequestsForPatch = /* GraphQL */ `
+  query ListMyOwnerRequestsForPatch($filter: ModelPatchOwnerRequestFilterInput, $limit: Int) {
+    listPatchOwnerRequests(filter: $filter, limit: $limit) {
+      items { id patchID status }
+    }
+  }
+`;
+
+// Admin view: all ownership requests with full detail.
+export const listAllOwnerRequests = /* GraphQL */ `
+  query ListAllOwnerRequests($limit: Int, $nextToken: String) {
+    listPatchOwnerRequests(limit: $limit, nextToken: $nextToken) {
+      items { id patchID patchName userID userEmail message status createdAt }
+      nextToken
+    }
+  }
+`;
+
+// Admin view: all owner records (lightweight) — used to badge patches that
+// have at least one owner.
+export const listAllPatchOwners = /* GraphQL */ `
+  query ListAllPatchOwners($limit: Int, $nextToken: String) {
+    listPatchOwners(limit: $limit, nextToken: $nextToken) {
+      items { id patchID }
+      nextToken
+    }
+  }
+`;

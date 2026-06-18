@@ -9,6 +9,7 @@ const schema = a.schema({
   Difficulty: a.enum(['EASY', 'MODERATE', 'HARD', 'EXTRA_HARD', 'EXTRA_EXTRA_HARD']),
   PatchStatus: a.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   Season: a.enum(['FALL', 'WINTER', 'SPRING', 'SUMMER']),
+  OwnershipRequestStatus: a.enum(['PENDING', 'APPROVED', 'REJECTED']),
 
   // ─── Custom types & queries ─────────────────────────────────────────────────
 
@@ -93,6 +94,42 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.publicApiKey().to(['create']),
       allow.group('Admin').to(['read']),
+    ]),
+
+  // Links an approved owner (Cognito user) to a patch. Multiple owners per
+  // patch are allowed, so ownership is tracked here rather than via an
+  // @owner field on Patch. Created by admins when they approve a request.
+  PatchOwner: a
+    .model({
+      patchID: a.id().required(),
+      userID: a.string().required(),
+      userEmail: a.string().required(),
+      patchName: a.string().required(),
+    })
+    .secondaryIndexes((index) => [
+      index('patchID').name('byPatch').queryField('patchOwnersByPatch'),
+      index('userID').name('byUser').queryField('patchOwnersByUser'),
+    ])
+    .authorization((allow) => [
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
+    ]),
+
+  // A user's request to be listed as an owner of a patch. The requester can
+  // create and read their own requests (to check status); admins review and
+  // update the status.
+  PatchOwnerRequest: a
+    .model({
+      patchID: a.id().required(),
+      patchName: a.string().required(),
+      userID: a.string().required(),
+      userEmail: a.string().required(),
+      message: a.string(),
+      status: a.ref('OwnershipRequestStatus').required(),
+    })
+    .authorization((allow) => [
+      allow.ownerDefinedIn('userID').to(['create', 'read']),
+      allow.group('Admin').to(['read', 'update', 'delete']),
     ]),
 
   Mountain: a
@@ -246,7 +283,9 @@ const schema = a.schema({
     .handler(a.handler.function(getRelatedPatches)),
 }).authorization((allow) => [
   allow.resource(getPatchProgress).to(['query']),
-  allow.resource(listUsers).to(['query']),
+  // listUsers also handles owner-gated patch edits, so it needs mutate access
+  // (to call updatePatch after verifying ownership server-side).
+  allow.resource(listUsers).to(['query', 'mutate']),
 ]);
 
 export type Schema = ClientSchema<typeof schema>;

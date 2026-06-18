@@ -15,11 +15,13 @@ import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import { Patch, Difficulty } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import PatchFormModal from '@/components/PatchFormModal';
+import { listAllPatchOwners } from '@/graphql/custom-queries';
 import Link from 'next/link';
 const client = generateClient();
 
 export default function AdminPage() {
   const [patches, setPatches] = useState<Patch[]>([]);
+  const [ownedPatchIds, setOwnedPatchIds] = useState<Set<string>>(new Set());
   const [editingPatch, setEditingPatch] = useState<Partial<Patch> | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,11 +52,41 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchPatches();
+    fetchOwnedPatchIds();
   }, []);
 
   const fetchPatches = async () => {
     const response = await client.graphql({ query: listPatches });
     setPatches(response.data.listPatches.items);
+  };
+
+  const fetchOwnedPatchIds = async () => {
+    try {
+      const ids = new Set<string>();
+      let nextToken: string | null = null;
+      do {
+        const res = (await client.graphql({
+          query: listAllPatchOwners,
+          variables: { limit: 1000, nextToken },
+          authMode: 'userPool',
+        })) as {
+          data?: {
+            listPatchOwners?: {
+              items?: Array<{ patchID?: string }>;
+              nextToken?: string | null;
+            };
+          };
+        };
+        const conn = res.data?.listPatchOwners;
+        for (const o of conn?.items ?? []) {
+          if (o?.patchID) ids.add(o.patchID);
+        }
+        nextToken = conn?.nextToken ?? null;
+      } while (nextToken);
+      setOwnedPatchIds(ids);
+    } catch (err) {
+      console.error('Error fetching patch owners:', err);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -173,6 +205,11 @@ export default function AdminPage() {
   <Link href={`/admin/patches/${patch.id}`} className="text-blue-600 underline">
     {patch.name}
   </Link>
+  {ownedPatchIds.has(patch.id) && (
+    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-800 font-medium">
+      Owner
+    </span>
+  )}
   <br />
   <span className="text-xs text-gray-500">{patch.id}</span>
 </td>
