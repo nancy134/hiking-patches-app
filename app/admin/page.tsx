@@ -4,6 +4,11 @@ import Header from '@/components/Header';
 export default function AdminDashboard() {
   const sections = [
     {
+      title: 'Notifications',
+      description: 'Latest signups, purchases, and ownership requests.',
+      href: '/admin/notifications',
+    },
+    {
       title: 'Manage Patches',
       description: 'Create, edit, update and delete patches.',
       href: '/admin/patches',
@@ -12,6 +17,11 @@ export default function AdminDashboard() {
       title: 'Review Requests',
       description: 'Review user requests for new patches.',
       href: '/admin/requests',
+    },
+    {
+      title: 'Ownership Requests',
+      description: 'Approve or reject patch ownership claims.',
+      href: '/admin/ownership-requests',
     },
     {
       title: 'Users',
@@ -32,6 +42,11 @@ export default function AdminDashboard() {
       title: "Data Cleanup",
       description: "Find and remove duplicate UserPatch records.",
       href: "/admin/cleanup"
+    },
+    {
+      title: "Settings",
+      description: "Feature toggles, including owner editing.",
+      href: "/admin/settings"
     },
   ];
 

@@ -53,3 +53,78 @@ export const deleteUserTrailMinimal = /* GraphQL */ `
     }
   }
 `;
+
+// ─── Patch ownership ─────────────────────────────────────────────────────────
+
+// A user submits an ownership request for a patch.
+export const createPatchOwnerRequestCustom = /* GraphQL */ `
+  mutation CreatePatchOwnerRequest($input: CreatePatchOwnerRequestInput!) {
+    createPatchOwnerRequest(input: $input) {
+      id patchID patchName userID userEmail message status createdAt
+    }
+  }
+`;
+
+// Admin approves a request → records the user as an owner of the patch.
+export const createPatchOwnerCustom = /* GraphQL */ `
+  mutation CreatePatchOwner($input: CreatePatchOwnerInput!) {
+    createPatchOwner(input: $input) {
+      id patchID userID userEmail patchName
+    }
+  }
+`;
+
+// Admin approves or rejects a request.
+export const updatePatchOwnerRequestStatus = /* GraphQL */ `
+  mutation UpdatePatchOwnerRequest($input: UpdatePatchOwnerRequestInput!) {
+    updatePatchOwnerRequest(input: $input) {
+      id status
+    }
+  }
+`;
+
+// ─── Admin notifications ─────────────────────────────────────────────────────
+
+// Producers (webhook / signup / request modal) record an event. Created via the
+// API key — see src/lib/notify.ts.
+export const createAdminNotificationCustom = /* GraphQL */ `
+  mutation CreateAdminNotification($input: CreateAdminNotificationInput!) {
+    createAdminNotification(input: $input) {
+      id type title body link read createdAt
+    }
+  }
+`;
+
+// Admin marks a notification read/unread.
+export const updateAdminNotificationRead = /* GraphQL */ `
+  mutation UpdateAdminNotification($input: UpdateAdminNotificationInput!) {
+    updateAdminNotification(input: $input) {
+      id read
+    }
+  }
+`;
+
+// Admin dismisses a notification.
+export const deleteAdminNotificationCustom = /* GraphQL */ `
+  mutation DeleteAdminNotification($input: DeleteAdminNotificationInput!) {
+    deleteAdminNotification(input: $input) {
+      id
+    }
+  }
+`;
+
+// ─── App settings / feature flags ────────────────────────────────────────────
+
+// Admin-only upsert of a setting. The row may not exist yet (identifier `key`),
+// so callers create-then-fall-back-to-update. See app/admin/settings/page.tsx.
+export const createAppSettingCustom = /* GraphQL */ `
+  mutation CreateAppSetting($input: CreateAppSettingInput!) {
+    createAppSetting(input: $input) { key value }
+  }
+`;
+
+export const updateAppSettingCustom = /* GraphQL */ `
+  mutation UpdateAppSetting($input: UpdateAppSettingInput!) {
+    updateAppSetting(input: $input) { key value }
+  }
+`;

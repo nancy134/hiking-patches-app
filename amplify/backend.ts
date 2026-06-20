@@ -117,6 +117,8 @@ const listUsersIntegration = new apigw.LambdaIntegration(backend.listUsers.resou
 listUsersApi.root.addResource('list-users').addMethod('ANY', listUsersIntegration);
 listUsersApi.root.addResource('user-entry-counts').addMethod('POST', listUsersIntegration);
 listUsersApi.root.addResource('popular-patches').addMethod('GET', listUsersIntegration);
+listUsersApi.root.addResource('owner-patch-update').addMethod('POST', listUsersIntegration);
+listUsersApi.root.addResource('patch-stats').addMethod('POST', listUsersIntegration);
 
 new CfnOutput(stack, 'ListUsersApiUrl', {
   value: listUsersApi.url,

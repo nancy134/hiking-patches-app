@@ -10,7 +10,14 @@ import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/auth-context';
 import type { GraphQLResult } from '@aws-amplify/api';
 import { UpdateUserPatchMutation, CreateUserPatchMutation } from '@/API';
-import { getPatchWithMountainsPaged, userPatchesByUserByPatchFull } from '@/graphql/custom-queries';
+import {
+  getPatchWithMountainsPaged,
+  userPatchesByUserByPatchFull,
+  patchOwnersByPatch as patchOwnersByPatchQuery,
+  listMyOwnerRequestsForPatch,
+} from '@/graphql/custom-queries';
+import Link from 'next/link';
+import PatchOwnerRequestModal from '@/components/PatchOwnerRequestModal';
 import PatchMountains from '@/components/PatchMountains';
 import PatchProgress from '@/components/PatchProgress';
 import PatchTrails from '@/components/PatchTrails';
@@ -18,6 +25,7 @@ import ProgressSummary from '@/components/ProgressSummary';
 import PatchGrid from '@/components/PatchGrid';
 import { usePatchProgressSummary } from '@/hooks/usePatchProgressSummary';
 import { useRelatedPatches } from '@/hooks/useRelatedPatches';
+import { useOwnerEditingEnabled } from '@/lib/featureFlags';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -81,8 +89,12 @@ export default function PatchDetailClient({ id }: { id: string }) {
   const [isInProgress, setIsInProgress] = useState<boolean | null>(null);
   const [dates, setDates] = useState<{ [mountainId: string]: string }>({});
   const [userMountainMap, setUserMountainMap] = useState<UserMountainMap>({});
+  const [isOwner, setIsOwner] = useState(false);
+  const [hasOwnerRequest, setHasOwnerRequest] = useState(false);
+  const [showOwnerModal, setShowOwnerModal] = useState(false);
 
   const { user } = useAuth();
+  const { enabled: ownerEditingEnabled } = useOwnerEditingEnabled();
 
   useEffect(() => {
     const fetchPatch = async () => {
@@ -136,6 +148,35 @@ export default function PatchDetailClient({ id }: { id: string }) {
   useEffect(() => {
     fetchUserPatch();
   }, [fetchUserPatch]);
+
+  useEffect(() => {
+    const fetchOwnership = async () => {
+      if (!user?.userId || !id) return;
+      try {
+        const ownersRes = await client.graphql({
+          query: patchOwnersByPatchQuery,
+          variables: { patchID: id, limit: 100 },
+          authMode: 'userPool',
+        });
+        const owners = (ownersRes as any).data?.patchOwnersByPatch?.items ?? [];
+        setIsOwner(owners.some((o: any) => o.userID === user.userId));
+
+        // Only check for an existing request if they aren't already an owner.
+        if (!owners.some((o: any) => o.userID === user.userId)) {
+          const reqRes = await client.graphql({
+            query: listMyOwnerRequestsForPatch,
+            variables: { filter: { patchID: { eq: id } }, limit: 1 },
+            authMode: 'userPool',
+          });
+          const reqs = (reqRes as any).data?.listPatchOwnerRequests?.items ?? [];
+          setHasOwnerRequest(reqs.length > 0);
+        }
+      } catch (err) {
+        console.error('Error fetching patch ownership:', err);
+      }
+    };
+    fetchOwnership();
+  }, [user, id]);
 
   const handleDateChange = (mountainId: string, value: string) => {
     setDates((prev) => ({ ...prev, [mountainId]: value }));
@@ -427,7 +468,39 @@ export default function PatchDetailClient({ id }: { id: string }) {
             <PatchGrid patches={relatedPatches} />
           </div>
         )}
+
+        {user && ownerEditingEnabled && (
+          <div className="mt-8 pt-4 border-t text-center">
+            {isOwner ? (
+              <Link
+                href={`/owner/${patch.id}`}
+                className="inline-block text-blue-600 underline font-medium"
+              >
+                Owner Dashboard →
+              </Link>
+            ) : hasOwnerRequest ? (
+              <p className="text-sm text-gray-400">Your ownership request is under review.</p>
+            ) : (
+              <button
+                onClick={() => setShowOwnerModal(true)}
+                className="text-sm text-gray-500 underline hover:text-gray-700"
+              >
+                Are you the owner of this patch?
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      {user && ownerEditingEnabled && (
+        <PatchOwnerRequestModal
+          open={showOwnerModal}
+          onClose={() => setShowOwnerModal(false)}
+          patchId={patch.id}
+          patchName={patch.name}
+          onSubmitted={() => setHasOwnerRequest(true)}
+        />
+      )}
     </>
   );
 }

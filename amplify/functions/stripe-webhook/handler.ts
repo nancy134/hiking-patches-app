@@ -19,6 +19,12 @@ const CREATE_PATCH_PURCHASE = /* GraphQL */ `
   }
 `;
 
+const CREATE_ADMIN_NOTIFICATION = /* GraphQL */ `
+  mutation CreateAdminNotification($input: CreateAdminNotificationInput!) {
+    createAdminNotification(input: $input) { id }
+  }
+`;
+
 export const handler: APIGatewayProxyHandler = async (event) => {
   const sig = event.headers['Stripe-Signature'] ?? event.headers['stripe-signature'] ?? '';
   let rawBody = event.body ?? '';
@@ -47,11 +53,11 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     return { statusCode: 200, body: 'ok' };
   }
 
-  try {
-    let amount: number | null = null;
-    let currency: string | null = null;
-    let stripeReceiptUrl: string | null = null;
+  let amount: number | null = null;
+  let currency: string | null = null;
+  let stripeReceiptUrl: string | null = null;
 
+  try {
     if (session.payment_intent) {
       const pi = await stripe.paymentIntents.retrieve(session.payment_intent as string, { expand: ['charges'] });
       amount = pi.amount_received ?? pi.amount ?? null;
@@ -76,6 +82,32 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   } catch (err) {
     console.error('Error creating PatchPurchase', err);
     return { statusCode: 500, body: 'Internal error' };
+  }
+
+  // Best-effort admin notification — never fail the webhook (Stripe needs 200)
+  // over a notification write.
+  try {
+    const amountStr = typeof amount === 'number'
+      ? ` • ${(amount / 100).toFixed(2)} ${(currency ?? '').toUpperCase()}`
+      : '';
+    await fetch(process.env.APPSYNC_URL!, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': process.env.APPSYNC_API_KEY! },
+      body: JSON.stringify({
+        query: CREATE_ADMIN_NOTIFICATION,
+        variables: {
+          input: {
+            type: 'PATCH_PURCHASED',
+            title: 'Patch purchased',
+            body: `Patch ${patchId} by user ${userId}${amountStr}`,
+            link: `/admin/users/${userId}/patches`,
+            read: false,
+          },
+        },
+      }),
+    });
+  } catch (err) {
+    console.error('Error creating purchase notification (non-fatal)', err);
   }
 
   return { statusCode: 200, body: 'ok' };

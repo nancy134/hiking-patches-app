@@ -297,3 +297,67 @@ export const getMountainPublic = /* GraphQL */ `
     }
   }
 `;
+
+// ─── Patch ownership ─────────────────────────────────────────────────────────
+
+// All owners for a patch — used on the patch detail page to derive `isOwner`.
+export const patchOwnersByPatch = /* GraphQL */ `
+  query PatchOwnersByPatch($patchID: ID!, $limit: Int, $nextToken: String) {
+    patchOwnersByPatch(patchID: $patchID, limit: $limit, nextToken: $nextToken) {
+      items { id userID userEmail patchName }
+      nextToken
+    }
+  }
+`;
+
+// The signed-in user's own ownership requests (owner-auth auto-filters to the
+// caller), narrowed to one patch — used to avoid re-showing the "Are you the
+// owner?" prompt after they've already applied.
+export const listMyOwnerRequestsForPatch = /* GraphQL */ `
+  query ListMyOwnerRequestsForPatch($filter: ModelPatchOwnerRequestFilterInput, $limit: Int) {
+    listPatchOwnerRequests(filter: $filter, limit: $limit) {
+      items { id patchID status }
+    }
+  }
+`;
+
+// Admin view: all ownership requests with full detail.
+export const listAllOwnerRequests = /* GraphQL */ `
+  query ListAllOwnerRequests($limit: Int, $nextToken: String) {
+    listPatchOwnerRequests(limit: $limit, nextToken: $nextToken) {
+      items { id patchID patchName userID userEmail message status createdAt }
+      nextToken
+    }
+  }
+`;
+
+// Admin view: all owner records (lightweight) — used to badge patches that
+// have at least one owner.
+export const listAllPatchOwners = /* GraphQL */ `
+  query ListAllPatchOwners($limit: Int, $nextToken: String) {
+    listPatchOwners(limit: $limit, nextToken: $nextToken) {
+      items { id patchID }
+      nextToken
+    }
+  }
+`;
+
+// Admin view: the notification feed (newest-first sorting done client-side).
+export const listAdminNotificationsCustom = /* GraphQL */ `
+  query ListAdminNotifications($limit: Int, $nextToken: String) {
+    listAdminNotifications(limit: $limit, nextToken: $nextToken) {
+      items { id type title body link read createdAt }
+      nextToken
+    }
+  }
+`;
+
+// ─── App settings / feature flags ────────────────────────────────────────────
+
+// Reads a single key/value setting (e.g. OWNER_EDITING_ENABLED). Any signed-in
+// user may read; see src/lib/featureFlags.ts.
+export const getAppSettingCustom = /* GraphQL */ `
+  query GetAppSetting($key: String!) {
+    getAppSetting(key: $key) { key value }
+  }
+`;

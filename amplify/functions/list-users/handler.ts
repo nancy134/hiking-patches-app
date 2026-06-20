@@ -20,17 +20,22 @@ const jwtVerifier = CognitoJwtVerifier.create({
   clientId: null,
 });
 
-async function requireAdmin(event: Parameters<APIGatewayProxyHandler>[0]): Promise<boolean> {
+async function verifyToken(event: Parameters<APIGatewayProxyHandler>[0]) {
   const authHeader = event.headers?.Authorization ?? event.headers?.authorization ?? '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-  if (!token) return false;
+  if (!token) return null;
   try {
-    const payload = await jwtVerifier.verify(token);
-    const groups = (payload['cognito:groups'] as string[] | undefined) ?? [];
-    return groups.includes('Admin');
+    return await jwtVerifier.verify(token);
   } catch {
-    return false;
+    return null;
   }
+}
+
+async function requireAdmin(event: Parameters<APIGatewayProxyHandler>[0]): Promise<boolean> {
+  const payload = await verifyToken(event);
+  if (!payload) return false;
+  const groups = (payload['cognito:groups'] as string[] | undefined) ?? [];
+  return groups.includes('Admin');
 }
 
 function getAppSyncEndpoint() {
@@ -125,6 +130,53 @@ const GQL_userPatchesByUserByPatch = `
     }
   }
 `;
+const GQL_patchOwnersByPatch = `
+  query PatchOwnersByPatch($patchID: ID!, $limit: Int, $nextToken: String) {
+    patchOwnersByPatch(patchID: $patchID, limit: $limit, nextToken: $nextToken) {
+      items { userID } nextToken
+    }
+  }
+`;
+const GQL_userPatchesByPatchStats = `
+  query UserPatchesByPatch($patchID: ID!, $limit: Int, $nextToken: String) {
+    userPatchesByPatch(patchID: $patchID, limit: $limit, nextToken: $nextToken) {
+      items { inProgress dateCompleted } nextToken
+    }
+  }
+`;
+const GQL_updatePatchOwnerFields = `
+  mutation UpdatePatch($input: UpdatePatchInput!) {
+    updatePatch(input: $input) { id description howToGet imageUrl }
+  }
+`;
+const GQL_getAppSetting = `
+  query GetAppSetting($key: String!) {
+    getAppSetting(key: $key) { value }
+  }
+`;
+
+const OWNER_EDITING_KEY = 'OWNER_EDITING_ENABLED';
+
+// Runtime kill switch for the owner feature, toggled from the admin console
+// (AppSetting model). Fail-closed: any error, missing row, or non-'true' value
+// disables it. Server-side enforcement so the switch is real, not just UI.
+async function isOwnerEditingEnabled(): Promise<boolean> {
+  try {
+    const data = await graphQL(GQL_getAppSetting, { key: OWNER_EDITING_KEY }, true) as {
+      getAppSetting?: { value?: string | null } | null;
+    };
+    return data?.getAppSetting?.value === 'true';
+  } catch (err) {
+    console.error('Failed to read OWNER_EDITING_ENABLED; treating as disabled', err);
+    return false;
+  }
+}
+
+const jsonOwnerDisabled = () => ({
+  statusCode: 403,
+  body: JSON.stringify({ error: 'Owner editing is currently disabled' }),
+  headers: { 'Content-Type': 'application/json' },
+});
 
 async function countAllPages(query: string, variablesBase: Record<string, unknown>, connectionName: string) {
   let total = 0;
@@ -146,6 +198,16 @@ const json200 = (body: unknown) => ({
 const json403 = () => ({
   statusCode: 403,
   body: JSON.stringify({ error: 'Forbidden' }),
+  headers: { 'Content-Type': 'application/json' },
+});
+const json401 = () => ({
+  statusCode: 401,
+  body: JSON.stringify({ error: 'Unauthorized' }),
+  headers: { 'Content-Type': 'application/json' },
+});
+const json400 = (error: string) => ({
+  statusCode: 400,
+  body: JSON.stringify({ error }),
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -211,6 +273,74 @@ async function handlePopularPatches() {
   return json200(results.filter(Boolean));
 }
 
+// Returns true if `userID` (a Cognito sub) is a recorded owner of the patch.
+async function isPatchOwner(patchID: string, userID: string): Promise<boolean> {
+  let nextToken: string | null = null;
+  do {
+    const data = await graphQL(GQL_patchOwnersByPatch, { patchID, limit: 200, nextToken }, true) as { patchOwnersByPatch?: { items: Array<{ userID?: string }>; nextToken?: string } };
+    const items = data?.patchOwnersByPatch?.items ?? [];
+    if (items.some((o) => o.userID === userID)) return true;
+    nextToken = data?.patchOwnersByPatch?.nextToken ?? null;
+  } while (nextToken);
+  return false;
+}
+
+// Owner-gated patch edit: only description, howToGet, imageUrl are ever
+// written, regardless of what the caller sends.
+async function handleOwnerPatchUpdate(event: Parameters<APIGatewayProxyHandler>[0]) {
+  const payload = await verifyToken(event);
+  if (!payload) return json401();
+  const userID = payload.sub as string;
+
+  if (!(await isOwnerEditingEnabled())) return jsonOwnerDisabled();
+
+  const body = typeof event.body === 'string' ? JSON.parse(event.body || '{}') : (event.body ?? {});
+  const { patchId, description, howToGet, imageUrl } = body as {
+    patchId?: string; description?: string; howToGet?: string; imageUrl?: string;
+  };
+  if (!patchId) return json400('patchId is required');
+
+  if (!(await isPatchOwner(patchId, userID))) return json403();
+
+  const input: Record<string, unknown> = { id: patchId };
+  if (description !== undefined) input.description = description;
+  if (howToGet !== undefined) input.howToGet = howToGet;
+  if (imageUrl !== undefined) input.imageUrl = imageUrl;
+
+  const data = await graphQL(GQL_updatePatchOwnerFields, { input }, true) as { updatePatch?: unknown };
+  return json200({ patch: data?.updatePatch });
+}
+
+// Owner-gated aggregate stats for a patch: how many users are working on it
+// vs. have completed it. Returns counts only, no PII.
+async function handlePatchStats(event: Parameters<APIGatewayProxyHandler>[0]) {
+  const payload = await verifyToken(event);
+  if (!payload) return json401();
+  const userID = payload.sub as string;
+
+  if (!(await isOwnerEditingEnabled())) return jsonOwnerDisabled();
+
+  const body = typeof event.body === 'string' ? JSON.parse(event.body || '{}') : (event.body ?? {});
+  const { patchId } = body as { patchId?: string };
+  if (!patchId) return json400('patchId is required');
+
+  if (!(await isPatchOwner(patchId, userID))) return json403();
+
+  let inProgressCount = 0;
+  let completedCount = 0;
+  let nextToken: string | null = null;
+  do {
+    const data = await graphQL(GQL_userPatchesByPatchStats, { patchID: patchId, limit: 200, nextToken }, true) as { userPatchesByPatch?: { items: Array<{ inProgress?: boolean; dateCompleted?: string | null }>; nextToken?: string } };
+    for (const up of data?.userPatchesByPatch?.items ?? []) {
+      if (up?.dateCompleted) completedCount += 1;
+      else if (up?.inProgress) inProgressCount += 1;
+    }
+    nextToken = data?.userPatchesByPatch?.nextToken ?? null;
+  } while (nextToken);
+
+  return json200({ inProgressCount, completedCount });
+}
+
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const path = event.path ?? '';
@@ -218,6 +348,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if ((method === 'POST' || method === 'GET') && path.endsWith('/list-users')) return await handleListUsers(event);
     if (method === 'POST' && path.endsWith('/user-entry-counts')) return await handleUserEntryCounts(event);
     if (method === 'GET' && path.endsWith('/popular-patches')) return await handlePopularPatches();
+    if (method === 'POST' && path.endsWith('/owner-patch-update')) return await handleOwnerPatchUpdate(event);
+    if (method === 'POST' && path.endsWith('/patch-stats')) return await handlePatchStats(event);
     return { statusCode: 404, body: JSON.stringify({ error: 'Not Found' }), headers: { 'Content-Type': 'application/json' } };
   } catch (err) {
     console.error('Lambda error', err);

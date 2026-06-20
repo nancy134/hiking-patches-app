@@ -9,6 +9,8 @@ const schema = a.schema({
   Difficulty: a.enum(['EASY', 'MODERATE', 'HARD', 'EXTRA_HARD', 'EXTRA_EXTRA_HARD']),
   PatchStatus: a.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   Season: a.enum(['FALL', 'WINTER', 'SPRING', 'SUMMER']),
+  OwnershipRequestStatus: a.enum(['PENDING', 'APPROVED', 'REJECTED']),
+  NotificationType: a.enum(['NEW_USER', 'PATCH_PURCHASED', 'OWNER_REQUEST']),
 
   // ─── Custom types & queries ─────────────────────────────────────────────────
 
@@ -93,6 +95,76 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.publicApiKey().to(['create']),
       allow.group('Admin').to(['read']),
+    ]),
+
+  // Links an approved owner (Cognito user) to a patch. Multiple owners per
+  // patch are allowed, so ownership is tracked here rather than via an
+  // @owner field on Patch. Created by admins when they approve a request.
+  PatchOwner: a
+    .model({
+      patchID: a.id().required(),
+      userID: a.string().required(),
+      userEmail: a.string().required(),
+      patchName: a.string().required(),
+    })
+    .secondaryIndexes((index) => [
+      index('patchID').name('byPatch').queryField('patchOwnersByPatch'),
+      index('userID').name('byUser').queryField('patchOwnersByUser'),
+    ])
+    .authorization((allow) => [
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
+    ]),
+
+  // A user's request to be listed as an owner of a patch. The requester can
+  // create and read their own requests (to check status); admins review and
+  // update the status.
+  PatchOwnerRequest: a
+    .model({
+      patchID: a.id().required(),
+      patchName: a.string().required(),
+      userID: a.string().required(),
+      userEmail: a.string().required(),
+      message: a.string(),
+      status: a.ref('OwnershipRequestStatus').required(),
+    })
+    .authorization((allow) => [
+      allow.ownerDefinedIn('userID').to(['create', 'read']),
+      allow.group('Admin').to(['read', 'update', 'delete']),
+    ]),
+
+  // An in-app admin notification — a lightweight feed of noteworthy events
+  // (new signups, purchases, ownership requests). Producers create rows via
+  // the API key (webhook, signup, request modal); admins read and manage them.
+  // `link` is an optional in-app path to the relevant page. Marking read =
+  // updating `read`. See src/lib/notify.ts for the single producer helper.
+  AdminNotification: a
+    .model({
+      type: a.ref('NotificationType').required(),
+      title: a.string().required(),
+      body: a.string(),
+      link: a.string(),
+      read: a.boolean().default(false),
+    })
+    .authorization((allow) => [
+      allow.publicApiKey().to(['create']),
+      allow.group('Admin'),
+    ]),
+
+  // Key/value app settings — a tiny store for runtime feature flags toggled
+  // from the admin console (each environment has its own value). Currently
+  // holds `OWNER_EDITING_ENABLED` ('true'/'false') gating the owner feature.
+  // Absent/any-non-'true' value = disabled (fail-closed). Any signed-in user
+  // can read (the owner UI checks the flag); only admins write.
+  AppSetting: a
+    .model({
+      key: a.string().required(),
+      value: a.string(),
+    })
+    .identifier(['key'])
+    .authorization((allow) => [
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
     ]),
 
   Mountain: a
@@ -246,7 +318,9 @@ const schema = a.schema({
     .handler(a.handler.function(getRelatedPatches)),
 }).authorization((allow) => [
   allow.resource(getPatchProgress).to(['query']),
-  allow.resource(listUsers).to(['query']),
+  // listUsers also handles owner-gated patch edits, so it needs mutate access
+  // (to call updatePatch after verifying ownership server-side).
+  allow.resource(listUsers).to(['query', 'mutate']),
 ]);
 
 export type Schema = ClientSchema<typeof schema>;
