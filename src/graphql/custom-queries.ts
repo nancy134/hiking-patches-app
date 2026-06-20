@@ -341,3 +341,13 @@ export const listAllPatchOwners = /* GraphQL */ `
     }
   }
 `;
+
+// Admin view: the notification feed (newest-first sorting done client-side).
+export const listAdminNotificationsCustom = /* GraphQL */ `
+  query ListAdminNotifications($limit: Int, $nextToken: String) {
+    listAdminNotifications(limit: $limit, nextToken: $nextToken) {
+      items { id type title body link read createdAt }
+      nextToken
+    }
+  }
+`;

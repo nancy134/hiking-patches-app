@@ -6,6 +6,7 @@ import { generateClient } from 'aws-amplify/api';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { useAuth } from '@/context/auth-context';
 import { createPatchOwnerRequestCustom } from '@/graphql/custom-mutations';
+import { notifyAdmins } from '@/lib/notify';
 
 const client = generateClient();
 
@@ -53,6 +54,13 @@ export default function PatchOwnerRequestModal({
           },
         },
         authMode: 'userPool',
+      });
+
+      await notifyAdmins({
+        type: 'OWNER_REQUEST',
+        title: `New ownership request for ${patchName}`,
+        body: email,
+        link: '/admin/ownership-requests',
       });
 
       setSubmitted(true);

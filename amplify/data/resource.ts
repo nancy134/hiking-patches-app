@@ -10,6 +10,7 @@ const schema = a.schema({
   PatchStatus: a.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   Season: a.enum(['FALL', 'WINTER', 'SPRING', 'SUMMER']),
   OwnershipRequestStatus: a.enum(['PENDING', 'APPROVED', 'REJECTED']),
+  NotificationType: a.enum(['NEW_USER', 'PATCH_PURCHASED', 'OWNER_REQUEST']),
 
   // ─── Custom types & queries ─────────────────────────────────────────────────
 
@@ -130,6 +131,24 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.ownerDefinedIn('userID').to(['create', 'read']),
       allow.group('Admin').to(['read', 'update', 'delete']),
+    ]),
+
+  // An in-app admin notification — a lightweight feed of noteworthy events
+  // (new signups, purchases, ownership requests). Producers create rows via
+  // the API key (webhook, signup, request modal); admins read and manage them.
+  // `link` is an optional in-app path to the relevant page. Marking read =
+  // updating `read`. See src/lib/notify.ts for the single producer helper.
+  AdminNotification: a
+    .model({
+      type: a.ref('NotificationType').required(),
+      title: a.string().required(),
+      body: a.string(),
+      link: a.string(),
+      read: a.boolean().default(false),
+    })
+    .authorization((allow) => [
+      allow.publicApiKey().to(['create']),
+      allow.group('Admin'),
     ]),
 
   Mountain: a

@@ -4,6 +4,11 @@ import Header from '@/components/Header';
 export default function AdminDashboard() {
   const sections = [
     {
+      title: 'Notifications',
+      description: 'Latest signups, purchases, and ownership requests.',
+      href: '/admin/notifications',
+    },
+    {
       title: 'Manage Patches',
       description: 'Create, edit, update and delete patches.',
       href: '/admin/patches',

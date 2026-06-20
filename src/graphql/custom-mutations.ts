@@ -82,3 +82,33 @@ export const updatePatchOwnerRequestStatus = /* GraphQL */ `
     }
   }
 `;
+
+// ─── Admin notifications ─────────────────────────────────────────────────────
+
+// Producers (webhook / signup / request modal) record an event. Created via the
+// API key — see src/lib/notify.ts.
+export const createAdminNotificationCustom = /* GraphQL */ `
+  mutation CreateAdminNotification($input: CreateAdminNotificationInput!) {
+    createAdminNotification(input: $input) {
+      id type title body link read createdAt
+    }
+  }
+`;
+
+// Admin marks a notification read/unread.
+export const updateAdminNotificationRead = /* GraphQL */ `
+  mutation UpdateAdminNotification($input: UpdateAdminNotificationInput!) {
+    updateAdminNotification(input: $input) {
+      id read
+    }
+  }
+`;
+
+// Admin dismisses a notification.
+export const deleteAdminNotificationCustom = /* GraphQL */ `
+  mutation DeleteAdminNotification($input: DeleteAdminNotificationInput!) {
+    deleteAdminNotification(input: $input) {
+      id
+    }
+  }
+`;
