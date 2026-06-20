@@ -88,12 +88,15 @@ async function main() {
     if (typeof fn !== 'function') throw new Error(`No handler export found in ${name}`);
     return fn;
   };
+  // Cast through `unknown`: the handlers' APIGatewayProxyHandler signature
+  // (3 args) doesn't overlap our loose single-arg LambdaHandler, so a direct
+  // assertion is rejected by tsc (which runs during `next build`).
   const createCheckout = pickHandler(
-    (await import('../amplify/functions/create-checkout/handler.ts')) as HandlerModule,
+    (await import('../amplify/functions/create-checkout/handler.ts')) as unknown as HandlerModule,
     'create-checkout',
   );
   const stripeWebhook = pickHandler(
-    (await import('../amplify/functions/stripe-webhook/handler.ts')) as HandlerModule,
+    (await import('../amplify/functions/stripe-webhook/handler.ts')) as unknown as HandlerModule,
     'stripe-webhook',
   );
 
