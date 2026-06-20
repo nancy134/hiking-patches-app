@@ -15,6 +15,7 @@ import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
 import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
 import Link from 'next/link';
+import PatchMap from '@/components/PatchMap';
 
 const client = generateClient();
 
@@ -115,6 +116,7 @@ export default function PatchMountains({
   const [sortBy, setSortBy] = useState<'name' | 'elev'>('elev');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [showAll, setShowAll] = useState(false);
+  const [view, setView] = useState<'list' | 'map'>('list');
 
   // NEW: loading flags
   const [loadingPatch, setLoadingPatch] = useState<boolean>(true);
@@ -288,6 +290,15 @@ export default function PatchMountains({
     ? visibleMountains
     : visibleMountains.slice(0, VISIBLE_LIMIT);
 
+  // Peaks the signed-in user has climbed (drives green markers). Empty for
+  // anonymous visitors, so all their pins render in the single "not yet" color.
+  const completedIds = useMemo(
+    () =>
+      new Set(visibleMountains.filter(isCompleted).map((pm) => pm.mountain.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visibleMountains, userMountainMap]
+  );
+
   const handleSave = async (newDates: string[]) => {
     // close modal immediately for snappy UX
     const mountainId = (modalMountain as any)?.mountain?.id as string | undefined;
@@ -360,7 +371,26 @@ export default function PatchMountains({
         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent animate-[pulse_1.2s_ease-in-out_infinite]" />
       )}
 
-      <h2 className="text-xl font-semibold mb-2">Mountains in Patch</h2>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h2 className="text-xl font-semibold">Mountains in Patch</h2>
+        <div className="inline-flex shrink-0 overflow-hidden rounded-md border text-sm">
+          {(['list', 'map'] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setView(v)}
+              aria-pressed={view === v}
+              className={`px-3 py-1 capitalize transition ${
+                view === v
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error && (
         <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -431,6 +461,8 @@ export default function PatchMountains({
         )}
       </div>
 
+      {view === 'list' ? (
+        <>
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
@@ -510,6 +542,18 @@ export default function PatchMountains({
             {showAll ? 'Show Less' : `Show More (${visibleMountains.length - VISIBLE_LIMIT} more)`}
           </button>
         </div>
+      )}
+        </>
+      ) : loadingPatch ? (
+        <div className="flex h-[420px] w-full items-center justify-center rounded border bg-gray-50 text-sm text-gray-500">
+          Loading map…
+        </div>
+      ) : (
+        <PatchMap
+          peaks={visibleMountains.map((pm) => pm.mountain)}
+          completedIds={completedIds}
+          patchId={patchId}
+        />
       )}
 
       {modalMountain && (
