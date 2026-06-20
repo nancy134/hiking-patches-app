@@ -9,6 +9,7 @@ import { useAuth } from '@/context/auth-context';
 import Header from '@/components/Header';
 import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import { patchOwnersByPatch as patchOwnersByPatchQuery } from '@/graphql/custom-queries';
+import { useOwnerEditingEnabled } from '@/lib/featureFlags';
 
 const client = generateClient();
 
@@ -28,6 +29,7 @@ type Stats = { inProgressCount: number; completedCount: number };
 
 export default function OwnerDashboardClient({ id }: { id: string }) {
   const { user, authReady } = useAuth();
+  const { enabled: ownerEditingEnabled, loading: flagLoading } = useOwnerEditingEnabled();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -130,8 +132,18 @@ export default function OwnerDashboardClient({ id }: { id: string }) {
     }
   };
 
-  if (!authReady || loading) return <p className="p-6">Loading…</p>;
+  if (!authReady || loading || flagLoading) return <p className="p-6">Loading…</p>;
   if (!user) return null; // redirecting home
+  if (!ownerEditingEnabled) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto">
+        <Header />
+        <p className="p-6 text-gray-600 font-semibold">
+          ⚠️ Owner editing is currently unavailable.
+        </p>
+      </div>
+    );
+  }
   if (!isOwner) {
     return (
       <div className="p-6 max-w-3xl mx-auto">

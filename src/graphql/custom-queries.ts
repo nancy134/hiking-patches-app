@@ -351,3 +351,13 @@ export const listAdminNotificationsCustom = /* GraphQL */ `
     }
   }
 `;
+
+// ─── App settings / feature flags ────────────────────────────────────────────
+
+// Reads a single key/value setting (e.g. OWNER_EDITING_ENABLED). Any signed-in
+// user may read; see src/lib/featureFlags.ts.
+export const getAppSettingCustom = /* GraphQL */ `
+  query GetAppSetting($key: String!) {
+    getAppSetting(key: $key) { key value }
+  }
+`;

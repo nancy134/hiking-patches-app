@@ -25,6 +25,7 @@ import ProgressSummary from '@/components/ProgressSummary';
 import PatchGrid from '@/components/PatchGrid';
 import { usePatchProgressSummary } from '@/hooks/usePatchProgressSummary';
 import { useRelatedPatches } from '@/hooks/useRelatedPatches';
+import { useOwnerEditingEnabled } from '@/lib/featureFlags';
 
 type UserMountainMap = {
   [mountainID: string]: UserMountain[];
@@ -93,6 +94,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
   const [showOwnerModal, setShowOwnerModal] = useState(false);
 
   const { user } = useAuth();
+  const { enabled: ownerEditingEnabled } = useOwnerEditingEnabled();
 
   useEffect(() => {
     const fetchPatch = async () => {
@@ -467,7 +469,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
           </div>
         )}
 
-        {user && (
+        {user && ownerEditingEnabled && (
           <div className="mt-8 pt-4 border-t text-center">
             {isOwner ? (
               <Link
@@ -490,7 +492,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
         )}
       </div>
 
-      {user && (
+      {user && ownerEditingEnabled && (
         <PatchOwnerRequestModal
           open={showOwnerModal}
           onClose={() => setShowOwnerModal(false)}

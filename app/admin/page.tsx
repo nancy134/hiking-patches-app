@@ -43,6 +43,11 @@ export default function AdminDashboard() {
       description: "Find and remove duplicate UserPatch records.",
       href: "/admin/cleanup"
     },
+    {
+      title: "Settings",
+      description: "Feature toggles, including owner editing.",
+      href: "/admin/settings"
+    },
   ];
 
   return (

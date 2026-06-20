@@ -112,3 +112,19 @@ export const deleteAdminNotificationCustom = /* GraphQL */ `
     }
   }
 `;
+
+// ─── App settings / feature flags ────────────────────────────────────────────
+
+// Admin-only upsert of a setting. The row may not exist yet (identifier `key`),
+// so callers create-then-fall-back-to-update. See app/admin/settings/page.tsx.
+export const createAppSettingCustom = /* GraphQL */ `
+  mutation CreateAppSetting($input: CreateAppSettingInput!) {
+    createAppSetting(input: $input) { key value }
+  }
+`;
+
+export const updateAppSettingCustom = /* GraphQL */ `
+  mutation UpdateAppSetting($input: UpdateAppSettingInput!) {
+    updateAppSetting(input: $input) { key value }
+  }
+`;

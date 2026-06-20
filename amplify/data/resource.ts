@@ -151,6 +151,22 @@ const schema = a.schema({
       allow.group('Admin'),
     ]),
 
+  // Key/value app settings — a tiny store for runtime feature flags toggled
+  // from the admin console (each environment has its own value). Currently
+  // holds `OWNER_EDITING_ENABLED` ('true'/'false') gating the owner feature.
+  // Absent/any-non-'true' value = disabled (fail-closed). Any signed-in user
+  // can read (the owner UI checks the flag); only admins write.
+  AppSetting: a
+    .model({
+      key: a.string().required(),
+      value: a.string(),
+    })
+    .identifier(['key'])
+    .authorization((allow) => [
+      allow.authenticated().to(['read']),
+      allow.group('Admin'),
+    ]),
+
   Mountain: a
     .model({
       name: a.string().required(),

@@ -149,6 +149,34 @@ const GQL_updatePatchOwnerFields = `
     updatePatch(input: $input) { id description howToGet imageUrl }
   }
 `;
+const GQL_getAppSetting = `
+  query GetAppSetting($key: String!) {
+    getAppSetting(key: $key) { value }
+  }
+`;
+
+const OWNER_EDITING_KEY = 'OWNER_EDITING_ENABLED';
+
+// Runtime kill switch for the owner feature, toggled from the admin console
+// (AppSetting model). Fail-closed: any error, missing row, or non-'true' value
+// disables it. Server-side enforcement so the switch is real, not just UI.
+async function isOwnerEditingEnabled(): Promise<boolean> {
+  try {
+    const data = await graphQL(GQL_getAppSetting, { key: OWNER_EDITING_KEY }, true) as {
+      getAppSetting?: { value?: string | null } | null;
+    };
+    return data?.getAppSetting?.value === 'true';
+  } catch (err) {
+    console.error('Failed to read OWNER_EDITING_ENABLED; treating as disabled', err);
+    return false;
+  }
+}
+
+const jsonOwnerDisabled = () => ({
+  statusCode: 403,
+  body: JSON.stringify({ error: 'Owner editing is currently disabled' }),
+  headers: { 'Content-Type': 'application/json' },
+});
 
 async function countAllPages(query: string, variablesBase: Record<string, unknown>, connectionName: string) {
   let total = 0;
@@ -264,6 +292,8 @@ async function handleOwnerPatchUpdate(event: Parameters<APIGatewayProxyHandler>[
   if (!payload) return json401();
   const userID = payload.sub as string;
 
+  if (!(await isOwnerEditingEnabled())) return jsonOwnerDisabled();
+
   const body = typeof event.body === 'string' ? JSON.parse(event.body || '{}') : (event.body ?? {});
   const { patchId, description, howToGet, imageUrl } = body as {
     patchId?: string; description?: string; howToGet?: string; imageUrl?: string;
@@ -287,6 +317,8 @@ async function handlePatchStats(event: Parameters<APIGatewayProxyHandler>[0]) {
   const payload = await verifyToken(event);
   if (!payload) return json401();
   const userID = payload.sub as string;
+
+  if (!(await isOwnerEditingEnabled())) return jsonOwnerDisabled();
 
   const body = typeof event.body === 'string' ? JSON.parse(event.body || '{}') : (event.body ?? {});
   const { patchId } = body as { patchId?: string };
