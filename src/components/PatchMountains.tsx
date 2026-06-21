@@ -550,7 +550,10 @@ export default function PatchMountains({
         </div>
       ) : (
         <PatchMap
-          peaks={visibleMountains.map((pm) => pm.mountain)}
+          peaks={visibleMountains.map((pm) => ({
+            ...pm.mountain,
+            delisted: !!(pm as any).delisted,
+          }))}
           completedIds={completedIds}
           patchId={patchId}
         />
