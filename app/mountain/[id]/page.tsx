@@ -22,6 +22,7 @@ import type {
 import { ModelSortDirection } from '@/API';
 
 import MountainAscentModal from '@/components/MountainAscentModal';
+import PatchMap from '@/components/PatchMap';
 
 const client = generateClient();
 
@@ -213,11 +214,30 @@ export default function MountainDetailPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              View on map
+              Open in Google Maps
             </a>
           </div>
         ) : null}
       </div>
+
+      {mountain.latitude != null && mountain.longitude != null ? (
+        <div className="mb-6">
+          <PatchMap
+            peaks={[
+              {
+                id: mountain.id,
+                name: mountain.name ?? '',
+                elevation: mountain.elevation,
+                state: mountain.state,
+                latitude: mountain.latitude,
+                longitude: mountain.longitude,
+              },
+            ]}
+            completedIds={userMountains.length ? new Set([mountain.id]) : new Set()}
+            patchId={fromPatchId ?? ''}
+          />
+        </div>
+      ) : null}
 
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center justify-between gap-4">
