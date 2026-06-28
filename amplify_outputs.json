@@ -988,6 +988,13 @@
               "isRequired": false,
               "attributes": []
             },
+            "alltrailsUrl": {
+              "name": "alltrailsUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "patchMountains": {
               "name": "patchMountains",
               "isArray": true,
@@ -1418,6 +1425,13 @@
               "isArray": false,
               "type": "Float",
               "isRequired": true,
+              "attributes": []
+            },
+            "alltrailsUrl": {
+              "name": "alltrailsUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
               "attributes": []
             },
             "patchTrails": {

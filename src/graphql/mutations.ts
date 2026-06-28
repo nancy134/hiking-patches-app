@@ -329,6 +329,7 @@ export const createMountain = /* GraphQL */ `mutation CreateMountain(
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -358,6 +359,7 @@ export const updateMountain = /* GraphQL */ `mutation UpdateMountain(
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -387,6 +389,7 @@ export const deleteMountain = /* GraphQL */ `mutation DeleteMountain(
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -441,6 +444,7 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -492,6 +496,7 @@ export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -543,6 +548,7 @@ export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -575,6 +581,7 @@ export const createUserMountain = /* GraphQL */ `mutation CreateUserMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -607,6 +614,7 @@ export const updateUserMountain = /* GraphQL */ `mutation UpdateUserMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -639,6 +647,7 @@ export const deleteUserMountain = /* GraphQL */ `mutation DeleteUserMountain(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -662,6 +671,7 @@ export const createTrail = /* GraphQL */ `mutation CreateTrail(
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -688,6 +698,7 @@ export const updateTrail = /* GraphQL */ `mutation UpdateTrail(
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -714,6 +725,7 @@ export const deleteTrail = /* GraphQL */ `mutation DeleteTrail(
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -765,6 +777,7 @@ export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -813,6 +826,7 @@ export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -861,6 +875,7 @@ export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -890,6 +905,7 @@ export const createUserTrail = /* GraphQL */ `mutation CreateUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -918,6 +934,7 @@ export const updateUserTrail = /* GraphQL */ `mutation UpdateUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -946,6 +963,7 @@ export const deleteUserTrail = /* GraphQL */ `mutation DeleteUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename

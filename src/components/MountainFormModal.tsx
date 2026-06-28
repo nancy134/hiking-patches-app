@@ -32,7 +32,8 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
     latitude: '',
     longitude: '',
     city: '',
-    state: ''
+    state: '',
+    alltrailsUrl: ''
   });
 
   useEffect(() => {
@@ -43,7 +44,8 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
         latitude: mountain.latitude?.toString() || '',
         longitude: mountain.longitude?.toString() || '',
         city: mountain.city || '',
-        state: mountain.state || ''
+        state: mountain.state || '',
+        alltrailsUrl: mountain.alltrailsUrl || ''
       });
     }
   }, [mountain]);
@@ -62,7 +64,8 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
       latitude: parseFloat(form.latitude),
       longitude: parseFloat(form.longitude),
       city: form.city.trim(),
-      state: form.state.trim()
+      state: form.state.trim(),
+      alltrailsUrl: form.alltrailsUrl.trim() || null
     };
 
     if (isEdit && mountain?.id) {
@@ -169,6 +172,20 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
               ))}
             </select>
 
+          </div>
+
+          <div>
+            <label className="block font-medium">AllTrails widget URL</label>
+            <input
+              name="alltrailsUrl"
+              value={form.alltrailsUrl}
+              onChange={handleChange}
+              placeholder="https://www.alltrails.com/widget/..."
+              className="w-full border px-3 py-2 rounded"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Paste the <code>src</code> URL from the AllTrails embed code (optional).
+            </p>
           </div>
 
           <div className="flex justify-end gap-3 mt-6">

@@ -175,6 +175,7 @@ const schema = a.schema({
       longitude: a.float(),
       city: a.string(),
       state: a.string(),
+      alltrailsUrl: a.string(),
       patchMountains: a.hasMany('PatchMountain', 'mountainPatchMountainsId'),
       userMountains: a.hasMany('UserMountain', 'mountainID'),
     })
@@ -226,6 +227,7 @@ const schema = a.schema({
       name: a.string().required(),
       description: a.string(),
       lengthMiles: a.float().required(),
+      alltrailsUrl: a.string(),
       patchTrails: a.hasMany('PatchTrail', 'trailPatchTrailsId'),
       userTrails: a.hasMany('UserTrail', 'trailID'),
     })

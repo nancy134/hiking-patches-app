@@ -18,6 +18,25 @@ npm run lint       # Run ESLint
 
 No test suite is configured in this project.
 
+## Amplify backend deploys (IMPORTANT — Gen2)
+
+This app is on **Amplify Gen2** (code-first `defineBackend`) in every environment — the Gen1→Gen2 migration completed 2026-06-14. **Do NOT use `amplify push`** (that is the Gen1 CLI; it deploys the old, decommissioning Gen1 backend and only regenerates Gen1 codegen files — it does NOT touch the live Gen2 backend). Schema lives in `amplify/data/resource.ts` (`a.model()` / `a.string()` etc.), **not** `amplify/backend/api/.../schema.graphql` (Gen1 leftover).
+
+All `ampx` commands **must run on Node 20** (not the default Node 24 — tsx@4.19 + Node 24 fails to parse the TS backend with `SyntaxError: Unexpected identifier 'as'`), need `AWS_PROFILE=hiking-patches-app` (CDK bootstrap SSM perms), and need the heap flag (dev box has ~1.9GiB RAM; the type-check phase OOMs otherwise).
+
+```bash
+# dev (personal sandbox) — deploy here FIRST, always
+PATH="$HOME/.nvm/versions/node/v20.20.2/bin:$PATH" AWS_PROFILE=hiking-patches-app \
+  NODE_OPTIONS="--max-old-space-size=3072" npx ampx sandbox --once
+
+# staging / prod (Amplify Hosting app id d1gebwofi6iyc4) — CI=true + AWS_BRANCH required
+PATH="$HOME/.nvm/versions/node/v20.20.2/bin:$PATH" AWS_PROFILE=hiking-patches-app \
+  AWS_BRANCH=staging CI=true NODE_OPTIONS="--max-old-space-size=3072" \
+  npx ampx pipeline-deploy --branch staging --app-id d1gebwofi6iyc4 --outputs-out-dir .amplify/outputs-staging
+```
+
+Deploy to **dev first**, never straight to prod. `ampx sandbox` regenerates `amplify_outputs.json`; `pipeline-deploy` writes per-env outputs under `.amplify/outputs-<env>/`. Frontend promotion is via branch merge dev→staging→prod, but the branch merge alone does NOT deploy schema changes to that env's AppSync backend — each env must be `pipeline-deploy`'d separately (Amplify Hosting runs `ampx pipeline-deploy` in its build per branch). `referenceAuth()` selects the per-env Cognito pool via `AWS_BRANCH` (defaults to `dev` when unset, e.g. local sandbox).
+
 ## Architecture
 
 **Next.js 15 (App Router) + React 19 frontend backed by AWS Amplify.**
@@ -36,10 +55,10 @@ No test suite is configured in this project.
 - **DynamoDB** — Stores patches, user progress, mountains, trails, purchases, requests.
 - **Cognito** — Auth with User Pools. Admin role detected via `cognito:groups` claim.
 - **S3** — Patch image storage (`patchImages` bucket).
-- **Lambda functions** in `amplify/backend/function/`:
-  - `createCheckout` + `stripeWebhook` — Stripe payment flow
-  - `getPatchProgress` — Calculates patch completion %
-  - `listUsersFunction` — Admin user listing
+- **Lambda functions** in `amplify/functions/` (Gen2 `defineFunction`):
+  - `create-checkout` + `stripe-webhook` — Stripe payment flow
+  - `get-patch-progress` — Calculates patch completion %
+  - `list-users` — Admin user listing
 
 ### Authentication
 - `AuthProvider` in `src/context/auth-context.tsx` wraps the app in `app/layout.tsx`.

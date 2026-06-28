@@ -16,6 +16,7 @@ import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal 
 
 import type { Trail, ListUserTrailsQuery, UserTrail } from '@/API';
 import TrailProgressModal from '@/components/TrailProgressModal';
+import AllTrailsEmbed from '@/components/AllTrailsEmbed';
 import ReactMarkdown from 'react-markdown';
 
 const client = generateClient();
@@ -222,6 +223,8 @@ export default function TrailDetailPage() {
       ) : (
         <p className="text-gray-500 italic mb-6">No description available.</p>
       )}
+
+      <AllTrailsEmbed url={trail.alltrailsUrl} />
 
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center justify-between gap-4">

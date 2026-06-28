@@ -23,6 +23,7 @@ import { ModelSortDirection } from '@/API';
 
 import MountainAscentModal from '@/components/MountainAscentModal';
 import PatchMap from '@/components/PatchMap';
+import AllTrailsEmbed from '@/components/AllTrailsEmbed';
 
 const client = generateClient();
 
@@ -238,6 +239,8 @@ export default function MountainDetailPage() {
           />
         </div>
       ) : null}
+
+      <AllTrailsEmbed url={mountain.alltrailsUrl} />
 
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center justify-between gap-4">

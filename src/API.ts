@@ -28,6 +28,7 @@ export type Mountain = {
   longitude?: number | null,
   city?: string | null,
   state?: string | null,
+  alltrailsUrl?: string | null,
   patchMountains?: ModelPatchMountainConnection | null,
   userMountains?: ModelUserMountainConnection | null,
   createdAt: string,
@@ -147,6 +148,7 @@ export type Trail = {
   name: string,
   description?: string | null,
   lengthMiles: number,
+  alltrailsUrl?: string | null,
   patchTrails?: ModelPatchTrailConnection | null,
   userTrails?: ModelUserTrailConnection | null,
   createdAt: string,
@@ -505,6 +507,7 @@ export type CreateMountainInput = {
   longitude?: number | null,
   city?: string | null,
   state?: string | null,
+  alltrailsUrl?: string | null,
 };
 
 export type ModelMountainConditionInput = {
@@ -514,6 +517,7 @@ export type ModelMountainConditionInput = {
   longitude?: ModelFloatInput | null,
   city?: ModelStringInput | null,
   state?: ModelStringInput | null,
+  alltrailsUrl?: ModelStringInput | null,
   and?: Array< ModelMountainConditionInput | null > | null,
   or?: Array< ModelMountainConditionInput | null > | null,
   not?: ModelMountainConditionInput | null,
@@ -529,6 +533,7 @@ export type UpdateMountainInput = {
   longitude?: number | null,
   city?: string | null,
   state?: string | null,
+  alltrailsUrl?: string | null,
 };
 
 export type DeleteMountainInput = {
@@ -590,12 +595,14 @@ export type CreateTrailInput = {
   name: string,
   description?: string | null,
   lengthMiles: number,
+  alltrailsUrl?: string | null,
 };
 
 export type ModelTrailConditionInput = {
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
   lengthMiles?: ModelFloatInput | null,
+  alltrailsUrl?: ModelStringInput | null,
   and?: Array< ModelTrailConditionInput | null > | null,
   or?: Array< ModelTrailConditionInput | null > | null,
   not?: ModelTrailConditionInput | null,
@@ -608,6 +615,7 @@ export type UpdateTrailInput = {
   name?: string | null,
   description?: string | null,
   lengthMiles?: number | null,
+  alltrailsUrl?: string | null,
 };
 
 export type DeleteTrailInput = {
@@ -804,6 +812,7 @@ export type ModelMountainFilterInput = {
   longitude?: ModelFloatInput | null,
   city?: ModelStringInput | null,
   state?: ModelStringInput | null,
+  alltrailsUrl?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelMountainFilterInput | null > | null,
@@ -846,6 +855,7 @@ export type ModelTrailFilterInput = {
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
   lengthMiles?: ModelFloatInput | null,
+  alltrailsUrl?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelTrailFilterInput | null > | null,

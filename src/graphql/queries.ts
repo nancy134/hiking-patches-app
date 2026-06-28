@@ -38,26 +38,6 @@ export const listPatchProgress = /* GraphQL */ `query ListPatchProgress($patchId
   APITypes.ListPatchProgressQueryVariables,
   APITypes.ListPatchProgressQuery
 >;
-export const getRelatedPatches = /* GraphQL */ `query GetRelatedPatches($limit: Int, $patchId: ID!) {
-  getRelatedPatches(limit: $limit, patchId: $patchId) {
-    description
-    difficulty
-    hasPeaks
-    hasTrails
-    id
-    imageUrl
-    isPurchasable
-    matchScore
-    name
-    popularity
-    regions
-    __typename
-  }
-}
-` as GeneratedQuery<
-  APITypes.GetRelatedPatchesQueryVariables,
-  APITypes.GetRelatedPatchesQuery
->;
 export const getPatch = /* GraphQL */ `query GetPatch($id: ID!) {
   getPatch(id: $id) {
     id
@@ -317,6 +297,7 @@ export const getMountain = /* GraphQL */ `query GetMountain($id: ID!) {
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -348,6 +329,7 @@ export const listMountains = /* GraphQL */ `query ListMountains(
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -394,6 +376,7 @@ export const getPatchMountain = /* GraphQL */ `query GetPatchMountain($id: ID!) 
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -508,6 +491,7 @@ export const getUserMountain = /* GraphQL */ `query GetUserMountain($id: ID!) {
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -689,6 +673,7 @@ export const getTrail = /* GraphQL */ `query GetTrail($id: ID!) {
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -714,6 +699,7 @@ export const listTrails = /* GraphQL */ `query ListTrails(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -757,6 +743,7 @@ export const getPatchTrail = /* GraphQL */ `query GetPatchTrail($id: ID!) {
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -868,6 +855,7 @@ export const getUserTrail = /* GraphQL */ `query GetUserTrail($userID: ID!, $tra
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename

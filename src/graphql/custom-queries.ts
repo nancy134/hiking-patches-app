@@ -1,3 +1,24 @@
+// Custom query backed by an AppSync resolver (not in the model schema), so it
+// must live here — keeping it in the auto-generated queries.ts gets it wiped on
+// every `amplify push` codegen.
+export const getRelatedPatches = /* GraphQL */ `query GetRelatedPatches($limit: Int, $patchId: ID!) {
+  getRelatedPatches(limit: $limit, patchId: $patchId) {
+    description
+    difficulty
+    hasPeaks
+    hasTrails
+    id
+    imageUrl
+    isPurchasable
+    matchScore
+    name
+    popularity
+    regions
+    __typename
+  }
+}
+`;
+
 export const listUserPatchesWithPatch = /* GraphQL */ `
   query ListUserPatchesWithPatch($filter: ModelUserPatchFilterInput, $limit: Int, $nextToken: String) {
     listUserPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
@@ -275,6 +296,7 @@ export const getTrailPublic = /* GraphQL */ `query GetTrailPublic($id: ID!) {
     name
     description
     lengthMiles
+    alltrailsUrl
     createdAt
     updatedAt
     __typename
@@ -292,6 +314,7 @@ export const getMountainPublic = /* GraphQL */ `
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
     }

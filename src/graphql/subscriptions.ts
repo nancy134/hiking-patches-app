@@ -314,6 +314,7 @@ export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($fi
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -340,6 +341,7 @@ export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($fi
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -366,6 +368,7 @@ export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($fi
     longitude
     city
     state
+    alltrailsUrl
     patchMountains {
       nextToken
       __typename
@@ -419,6 +422,7 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -469,6 +473,7 @@ export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMo
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -519,6 +524,7 @@ export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMo
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -551,6 +557,7 @@ export const onCreateUserMountain = /* GraphQL */ `subscription OnCreateUserMoun
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -583,6 +590,7 @@ export const onUpdateUserMountain = /* GraphQL */ `subscription OnUpdateUserMoun
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -615,6 +623,7 @@ export const onDeleteUserMountain = /* GraphQL */ `subscription OnDeleteUserMoun
       longitude
       city
       state
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -635,6 +644,7 @@ export const onCreateTrail = /* GraphQL */ `subscription OnCreateTrail($filter: 
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -658,6 +668,7 @@ export const onUpdateTrail = /* GraphQL */ `subscription OnUpdateTrail($filter: 
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -681,6 +692,7 @@ export const onDeleteTrail = /* GraphQL */ `subscription OnDeleteTrail($filter: 
     name
     description
     lengthMiles
+    alltrailsUrl
     patchTrails {
       nextToken
       __typename
@@ -731,6 +743,7 @@ export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -778,6 +791,7 @@ export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -825,6 +839,7 @@ export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -854,6 +869,7 @@ export const onCreateUserTrail = /* GraphQL */ `subscription OnCreateUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -882,6 +898,7 @@ export const onUpdateUserTrail = /* GraphQL */ `subscription OnUpdateUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
@@ -910,6 +927,7 @@ export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
       name
       description
       lengthMiles
+      alltrailsUrl
       createdAt
       updatedAt
       __typename
