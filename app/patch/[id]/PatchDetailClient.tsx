@@ -18,6 +18,7 @@ import {
 import Link from 'next/link';
 import PatchOwnerRequestModal from '@/components/PatchOwnerRequestModal';
 import PatchMountains from '@/components/PatchMountains';
+import PatchHowTo from '@/components/PatchHowTo';
 import ReferenceLinks from '@/components/ReferenceLinks';
 import PatchProgress from '@/components/PatchProgress';
 import ProgressSummary from '@/components/ProgressSummary';
@@ -354,6 +355,18 @@ export default function PatchDetailClient({ id }: { id: string }) {
             />
           )}
         </div>
+
+        <PatchHowTo
+          className="mt-6"
+          howToGet={patch.howToGet}
+          links={{
+            website: patch.websiteUrl,
+            facebook: patch.facebookUrl,
+            alltrails: patch.alltrailsUrl,
+            purchase: patch.purchaseUrl,
+            form: patch.formUrl,
+          }}
+        />
 
         <ReferenceLinks
           className="mt-6"

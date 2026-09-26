@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { absoluteUrl } from '@/lib/urls';
 
 /* ------------------------------------------------------------------ */
 /* "Links & Resources" card (prototype Direction B). Shared across      */
@@ -82,7 +83,11 @@ export default function ReferenceLinks({
   links: Partial<Record<LinkKind, string | null | undefined>>;
   className?: string;
 }) {
-  const items = ORDER.filter((k) => links[k]?.trim());
+  // Resolve to absolute URLs up front: a stored "www.foo.com" would otherwise
+  // render as a relative href and navigate inside the app.
+  const items = ORDER
+    .map((k) => [k, absoluteUrl(links[k])] as const)
+    .filter((e): e is readonly [LinkKind, string] => e[1] !== null);
   if (items.length === 0) return null;
 
   return (
@@ -91,12 +96,12 @@ export default function ReferenceLinks({
         Links &amp; Resources
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {items.map((kind) => {
+        {items.map(([kind, href]) => {
           const m = META[kind];
           return (
             <a
               key={kind}
-              href={links[kind] as string}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 rounded-lg border border-gray-100 p-2.5 hover:border-gray-300 hover:bg-gray-50 transition"
