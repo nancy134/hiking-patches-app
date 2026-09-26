@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { getRelatedPatches } from '@/graphql/queries';
+import type { GraphQLResult } from '@aws-amplify/api';
+import { getRelatedPatches } from '@/graphql/custom-queries';
 import type { GetRelatedPatchesQuery } from '@/API';
 
 const client = generateClient();
@@ -21,8 +22,10 @@ export function useRelatedPatches(patchId: string | null, limit = 6) {
     let alive = true;
     setLoading(true);
 
-    client
-      .graphql({ query: getRelatedPatches, variables: { patchId, limit } })
+    (client.graphql({
+      query: getRelatedPatches,
+      variables: { patchId, limit },
+    }) as Promise<GraphQLResult<GetRelatedPatchesQuery>>)
       .then((r) => {
         if (alive) setPatches(r.data?.getRelatedPatches ?? []);
       })

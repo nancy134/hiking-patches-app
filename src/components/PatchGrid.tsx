@@ -7,8 +7,9 @@ type PatchGridProps = {
   patches: PatchCardData[];
   userPatchMap?: Map<string, UserPatchLite>;
   userDataReady?: boolean;
-  wishlistSet?: Set<string>; 
+  wishlistSet?: Set<string>;
   onWishlistChange?: (patchId: string, wishlisted: boolean) => void;
+  compact?: boolean;
 };
 
 export default function PatchGrid({
@@ -17,6 +18,7 @@ export default function PatchGrid({
   userDataReady = false,
   wishlistSet,
   onWishlistChange,
+  compact = false,
 }: PatchGridProps) {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -34,8 +36,9 @@ export default function PatchGrid({
             key={patch.id}
             patch={patch}
             status={status}
-            wishInit={wishInit} 
+            wishInit={wishInit}
             onWishlistChange={onWishlistChange}
+            compact={compact}
           />
         );
       })}

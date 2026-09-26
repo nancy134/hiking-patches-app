@@ -372,7 +372,7 @@ export default function PatchProgress({
           ) : (
             <>
               <span aria-hidden="true">✎</span>
-              Edit
+              Update
             </>
           )}
         </button>

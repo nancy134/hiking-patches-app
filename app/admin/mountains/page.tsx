@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import Header from '@/components/Header';
-import { listMountains } from '@/graphql/queries';
+import { listMountainsAdmin } from '@/graphql/custom-queries';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListMountainsQuery } from '@/API';
 import { createMountain, updateMountain, deleteMountain } from '@/graphql/mutations';
@@ -37,7 +37,7 @@ export default function AdminMountainsPage() {
 
     do {
       const response: GraphQLResult<ListMountainsQuery> = await client.graphql({
-        query: listMountains,
+        query: listMountainsAdmin,
         variables: { limit: 1000, nextToken }
       });
 

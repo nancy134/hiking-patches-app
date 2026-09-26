@@ -9,13 +9,12 @@ import {
   updatePatch,
   deletePatch
 } from '@/graphql/mutations';
-import { listPatches } from '@/graphql/queries';
 import Header from '@/components/Header';
 import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import { Patch, Difficulty } from '@/API';
 import { useAuth } from '@/context/auth-context';
 import PatchFormModal from '@/components/PatchFormModal';
-import { listAllPatchOwners } from '@/graphql/custom-queries';
+import { listAllPatchOwners, listPatchesAdmin } from '@/graphql/custom-queries';
 import Link from 'next/link';
 const client = generateClient();
 
@@ -56,7 +55,7 @@ export default function AdminPage() {
   }, []);
 
   const fetchPatches = async () => {
-    const response = await client.graphql({ query: listPatches });
+    const response = await client.graphql({ query: listPatchesAdmin });
     setPatches(response.data.listPatches.items);
   };
 

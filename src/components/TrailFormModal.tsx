@@ -21,6 +21,8 @@ export default function TrailFormModal({
     name: '',
     description: '',
     lengthMiles: '',
+    alltrailsUrl: '',
+    trailLinkUrl: '',
   });
 
   useEffect(() => {
@@ -29,6 +31,8 @@ export default function TrailFormModal({
         name: trail.name ?? '',
         description: trail.description ?? '',
         lengthMiles: trail.lengthMiles?.toString() ?? '',
+        alltrailsUrl: trail.alltrailsUrl ?? '',
+        trailLinkUrl: (trail as any).trailLinkUrl ?? '',
       });
     }
   }, [trail]);
@@ -44,6 +48,8 @@ export default function TrailFormModal({
       name: form.name.trim(),
       description: form.description.trim() || undefined,
       lengthMiles: Number(form.lengthMiles),
+      alltrailsUrl: form.alltrailsUrl.trim() || null,
+      trailLinkUrl: form.trailLinkUrl.trim() || null,
     };
     if (!Number.isFinite(input.lengthMiles) || input.lengthMiles <= 0) {
       alert('Length (miles) must be > 0'); return;
@@ -81,6 +87,15 @@ export default function TrailFormModal({
           <div>
             <label className="block font-medium">Length (miles)</label>
             <input name="lengthMiles" type="number" step="any" value={form.lengthMiles} onChange={onChange} className="w-full border px-3 py-2 rounded" required />
+          </div>
+          <div>
+            <label className="block font-medium">AllTrails widget URL</label>
+            <input name="alltrailsUrl" value={form.alltrailsUrl} onChange={onChange} placeholder="https://www.alltrails.com/widget/..." className="w-full border px-3 py-2 rounded" />
+            <p className="text-xs text-gray-500 mt-1">Paste the <code>src</code> URL from the AllTrails embed code (optional).</p>
+          </div>
+          <div>
+            <label className="block font-medium">TrailLink URL</label>
+            <input name="trailLinkUrl" value={form.trailLinkUrl} onChange={onChange} placeholder="https://www.traillink.com/trail/..." className="w-full border px-3 py-2 rounded" />
           </div>
           <div className="flex justify-end gap-3 mt-6">
             <button type="button" onClick={onClose} className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Cancel</button>

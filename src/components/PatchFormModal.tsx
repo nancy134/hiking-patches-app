@@ -28,6 +28,11 @@ export default function PatchFormModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [howToGet, setHowToGet] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
+  const [facebookUrl, setFacebookUrl] = useState('');
+  const [alltrailsUrl, setAlltrailsUrl] = useState('');
+  const [purchaseUrl, setPurchaseUrl] = useState('');
+  const [formUrl, setFormUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [regions, setRegions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty | ''>('');
@@ -53,6 +58,11 @@ export default function PatchFormModal({
       setName(patch.name ?? '');
       setDescription(patch.description ?? '');
       setHowToGet(patch.howToGet ?? '');
+      setWebsiteUrl((patch as any).websiteUrl ?? '');
+      setFacebookUrl((patch as any).facebookUrl ?? '');
+      setAlltrailsUrl((patch as any).alltrailsUrl ?? '');
+      setPurchaseUrl((patch as any).purchaseUrl ?? '');
+      setFormUrl((patch as any).formUrl ?? '');
       setRegions((patch.regions ?? []).filter((r): r is string => r !== null));
       setDifficulty(patch.difficulty ?? '');
       setLatitude(isNaN(Number(patch.latitude)) ? null : patch.latitude ?? null);
@@ -103,6 +113,11 @@ export default function PatchFormModal({
       setName('');
       setDescription('');
       setHowToGet('');
+      setWebsiteUrl('');
+      setFacebookUrl('');
+      setAlltrailsUrl('');
+      setPurchaseUrl('');
+      setFormUrl('');
       setImageFile(null);
       setRegions([]);
       setDifficulty('');
@@ -172,6 +187,11 @@ export default function PatchFormModal({
         description,
         howToGet,
         imageUrl,
+        websiteUrl: websiteUrl.trim() || null,
+        facebookUrl: facebookUrl.trim() || null,
+        alltrailsUrl: alltrailsUrl.trim() || null,
+        purchaseUrl: purchaseUrl.trim() || null,
+        formUrl: formUrl.trim() || null,
         regions,
         difficulty: difficulty as Difficulty,
         latitude,
@@ -250,6 +270,42 @@ export default function PatchFormModal({
               className="w-full p-2 border rounded"
               required
               rows={4}
+            />
+
+            <input
+              type="url"
+              value={websiteUrl}
+              onChange={(e) => setWebsiteUrl(e.target.value)}
+              placeholder="Website URL"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="url"
+              value={facebookUrl}
+              onChange={(e) => setFacebookUrl(e.target.value)}
+              placeholder="Facebook URL"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="url"
+              value={alltrailsUrl}
+              onChange={(e) => setAlltrailsUrl(e.target.value)}
+              placeholder="AllTrails URL"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="url"
+              value={purchaseUrl}
+              onChange={(e) => setPurchaseUrl(e.target.value)}
+              placeholder="Purchase / order URL"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="url"
+              value={formUrl}
+              onChange={(e) => setFormUrl(e.target.value)}
+              placeholder="Downloadable form URL"
+              className="w-full p-2 border rounded"
             />
 
             <FileUploader
