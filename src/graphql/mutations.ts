@@ -8,338 +8,67 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
-export const createPatch = /* GraphQL */ `mutation CreatePatch(
-  $input: CreatePatchInput!
-  $condition: ModelPatchConditionInput
+export const createAdminNotification = /* GraphQL */ `mutation CreateAdminNotification(
+  $condition: ModelAdminNotificationConditionInput
+  $input: CreateAdminNotificationInput!
 ) {
-  createPatch(input: $input, condition: $condition) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
+  createAdminNotification(condition: $condition, input: $input) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreatePatchMutationVariables,
-  APITypes.CreatePatchMutation
+  APITypes.CreateAdminNotificationMutationVariables,
+  APITypes.CreateAdminNotificationMutation
 >;
-export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
-  $input: UpdatePatchInput!
-  $condition: ModelPatchConditionInput
+export const createAppSetting = /* GraphQL */ `mutation CreateAppSetting(
+  $condition: ModelAppSettingConditionInput
+  $input: CreateAppSettingInput!
 ) {
-  updatePatch(input: $input, condition: $condition) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
+  createAppSetting(condition: $condition, input: $input) {
     createdAt
+    key
     updatedAt
+    value
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdatePatchMutationVariables,
-  APITypes.UpdatePatchMutation
->;
-export const deletePatch = /* GraphQL */ `mutation DeletePatch(
-  $input: DeletePatchInput!
-  $condition: ModelPatchConditionInput
-) {
-  deletePatch(input: $input, condition: $condition) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeletePatchMutationVariables,
-  APITypes.DeletePatchMutation
->;
-export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
-  $input: CreateUserPatchInput!
-  $condition: ModelUserPatchConditionInput
-) {
-  createUserPatch(input: $input, condition: $condition) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreateUserPatchMutationVariables,
-  APITypes.CreateUserPatchMutation
->;
-export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
-  $input: UpdateUserPatchInput!
-  $condition: ModelUserPatchConditionInput
-) {
-  updateUserPatch(input: $input, condition: $condition) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdateUserPatchMutationVariables,
-  APITypes.UpdateUserPatchMutation
->;
-export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
-  $input: DeleteUserPatchInput!
-  $condition: ModelUserPatchConditionInput
-) {
-  deleteUserPatch(input: $input, condition: $condition) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteUserPatchMutationVariables,
-  APITypes.DeleteUserPatchMutation
->;
-export const createPatchRequest = /* GraphQL */ `mutation CreatePatchRequest(
-  $input: CreatePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  createPatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreatePatchRequestMutationVariables,
-  APITypes.CreatePatchRequestMutation
->;
-export const updatePatchRequest = /* GraphQL */ `mutation UpdatePatchRequest(
-  $input: UpdatePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  updatePatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdatePatchRequestMutationVariables,
-  APITypes.UpdatePatchRequestMutation
->;
-export const deletePatchRequest = /* GraphQL */ `mutation DeletePatchRequest(
-  $input: DeletePatchRequestInput!
-  $condition: ModelPatchRequestConditionInput
-) {
-  deletePatchRequest(input: $input, condition: $condition) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeletePatchRequestMutationVariables,
-  APITypes.DeletePatchRequestMutation
+  APITypes.CreateAppSettingMutationVariables,
+  APITypes.CreateAppSettingMutation
 >;
 export const createMountain = /* GraphQL */ `mutation CreateMountain(
-  $input: CreateMountainInput!
   $condition: ModelMountainConditionInput
+  $input: CreateMountainInput!
 ) {
-  createMountain(input: $input, condition: $condition) {
-    id
-    name
+  createMountain(condition: $condition, input: $input) {
+    alltrailsUrl
+    city
+    createdAt
     elevation
+    id
     latitude
     longitude
-    city
-    state
-    alltrailsUrl
+    name
     patchMountains {
       nextToken
       __typename
     }
+    peakbaggerUrl
+    state
+    updatedAt
     userMountains {
       nextToken
       __typename
     }
-    createdAt
-    updatedAt
+    weatherUrl
     __typename
   }
 }
@@ -347,110 +76,104 @@ export const createMountain = /* GraphQL */ `mutation CreateMountain(
   APITypes.CreateMountainMutationVariables,
   APITypes.CreateMountainMutation
 >;
-export const updateMountain = /* GraphQL */ `mutation UpdateMountain(
-  $input: UpdateMountainInput!
-  $condition: ModelMountainConditionInput
+export const createPatch = /* GraphQL */ `mutation CreatePatch(
+  $condition: ModelPatchConditionInput
+  $input: CreatePatchInput!
 ) {
-  updateMountain(input: $input, condition: $condition) {
+  createPatch(condition: $condition, input: $input) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
     id
-    name
-    elevation
+    imageUrl
+    isPurchasable
     latitude
     longitude
-    city
-    state
-    alltrailsUrl
+    name
     patchMountains {
       nextToken
       __typename
     }
-    userMountains {
+    patchTrails {
       nextToken
       __typename
     }
-    createdAt
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
     updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateMountainMutationVariables,
-  APITypes.UpdateMountainMutation
->;
-export const deleteMountain = /* GraphQL */ `mutation DeleteMountain(
-  $input: DeleteMountainInput!
-  $condition: ModelMountainConditionInput
-) {
-  deleteMountain(input: $input, condition: $condition) {
-    id
-    name
-    elevation
-    latitude
-    longitude
-    city
-    state
-    alltrailsUrl
-    patchMountains {
-      nextToken
-      __typename
-    }
-    userMountains {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteMountainMutationVariables,
-  APITypes.DeleteMountainMutation
+  APITypes.CreatePatchMutationVariables,
+  APITypes.CreatePatchMutation
 >;
 export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
-  $input: CreatePatchMountainInput!
   $condition: ModelPatchMountainConditionInput
+  $input: CreatePatchMountainInput!
 ) {
-  createPatchMountain(input: $input, condition: $condition) {
+  createPatchMountain(condition: $condition, input: $input) {
+    createdAt
+    delisted
     id
-    patchPatchMountainsId
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
     mountainPatchMountainsId
     patch {
-      id
-      name
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      howToGet
-      imageUrl
-      regions
       difficulty
-      latitude
-      longitude
-      popularity
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
+      howToGet
       id
-      name
-      elevation
+      imageUrl
+      isPurchasable
       latitude
       longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
       updatedAt
+      websiteUrl
       __typename
     }
-    delisted
-    createdAt
+    patchPatchMountainsId
     updatedAt
     __typename
   }
@@ -459,331 +182,131 @@ export const createPatchMountain = /* GraphQL */ `mutation CreatePatchMountain(
   APITypes.CreatePatchMountainMutationVariables,
   APITypes.CreatePatchMountainMutation
 >;
-export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
-  $input: UpdatePatchMountainInput!
-  $condition: ModelPatchMountainConditionInput
+export const createPatchOwner = /* GraphQL */ `mutation CreatePatchOwner(
+  $condition: ModelPatchOwnerConditionInput
+  $input: CreatePatchOwnerInput!
 ) {
-  updatePatchMountain(input: $input, condition: $condition) {
-    id
-    patchPatchMountainsId
-    mountainPatchMountainsId
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    delisted
+  createPatchOwner(condition: $condition, input: $input) {
     createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdatePatchMountainMutationVariables,
-  APITypes.UpdatePatchMountainMutation
->;
-export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
-  $input: DeletePatchMountainInput!
-  $condition: ModelPatchMountainConditionInput
-) {
-  deletePatchMountain(input: $input, condition: $condition) {
     id
-    patchPatchMountainsId
-    mountainPatchMountainsId
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    delisted
-    createdAt
+    patchID
+    patchName
     updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeletePatchMountainMutationVariables,
-  APITypes.DeletePatchMountainMutation
->;
-export const createUserMountain = /* GraphQL */ `mutation CreateUserMountain(
-  $input: CreateUserMountainInput!
-  $condition: ModelUserMountainConditionInput
-) {
-  createUserMountain(input: $input, condition: $condition) {
-    id
+    userEmail
     userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    createdAt
-    updatedAt
-    owner
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateUserMountainMutationVariables,
-  APITypes.CreateUserMountainMutation
+  APITypes.CreatePatchOwnerMutationVariables,
+  APITypes.CreatePatchOwnerMutation
 >;
-export const updateUserMountain = /* GraphQL */ `mutation UpdateUserMountain(
-  $input: UpdateUserMountainInput!
-  $condition: ModelUserMountainConditionInput
+export const createPatchOwnerRequest = /* GraphQL */ `mutation CreatePatchOwnerRequest(
+  $condition: ModelPatchOwnerRequestConditionInput
+  $input: CreatePatchOwnerRequestInput!
 ) {
-  updateUserMountain(input: $input, condition: $condition) {
+  createPatchOwnerRequest(condition: $condition, input: $input) {
+    createdAt
     id
+    message
+    patchID
+    patchName
+    status
+    updatedAt
+    userEmail
     userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    createdAt
-    updatedAt
-    owner
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateUserMountainMutationVariables,
-  APITypes.UpdateUserMountainMutation
+  APITypes.CreatePatchOwnerRequestMutationVariables,
+  APITypes.CreatePatchOwnerRequestMutation
 >;
-export const deleteUserMountain = /* GraphQL */ `mutation DeleteUserMountain(
-  $input: DeleteUserMountainInput!
-  $condition: ModelUserMountainConditionInput
+export const createPatchPurchase = /* GraphQL */ `mutation CreatePatchPurchase(
+  $condition: ModelPatchPurchaseConditionInput
+  $input: CreatePatchPurchaseInput!
 ) {
-  deleteUserMountain(input: $input, condition: $condition) {
-    id
-    userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
+  createPatchPurchase(condition: $condition, input: $input) {
+    amount
     createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
     updatedAt
-    owner
+    userId
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteUserMountainMutationVariables,
-  APITypes.DeleteUserMountainMutation
+  APITypes.CreatePatchPurchaseMutationVariables,
+  APITypes.CreatePatchPurchaseMutation
 >;
-export const createTrail = /* GraphQL */ `mutation CreateTrail(
-  $input: CreateTrailInput!
-  $condition: ModelTrailConditionInput
+export const createPatchRequest = /* GraphQL */ `mutation CreatePatchRequest(
+  $condition: ModelPatchRequestConditionInput
+  $input: CreatePatchRequestInput!
 ) {
-  createTrail(input: $input, condition: $condition) {
-    id
-    name
+  createPatchRequest(condition: $condition, input: $input) {
+    createdAt
     description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreateTrailMutationVariables,
-  APITypes.CreateTrailMutation
->;
-export const updateTrail = /* GraphQL */ `mutation UpdateTrail(
-  $input: UpdateTrailInput!
-  $condition: ModelTrailConditionInput
-) {
-  updateTrail(input: $input, condition: $condition) {
+    email
     id
-    name
-    description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
-    createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateTrailMutationVariables,
-  APITypes.UpdateTrailMutation
->;
-export const deleteTrail = /* GraphQL */ `mutation DeleteTrail(
-  $input: DeleteTrailInput!
-  $condition: ModelTrailConditionInput
-) {
-  deleteTrail(input: $input, condition: $condition) {
-    id
-    name
-    description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteTrailMutationVariables,
-  APITypes.DeleteTrailMutation
+  APITypes.CreatePatchRequestMutationVariables,
+  APITypes.CreatePatchRequestMutation
 >;
 export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
-  $input: CreatePatchTrailInput!
   $condition: ModelPatchTrailConditionInput
+  $input: CreatePatchTrailInput!
 ) {
-  createPatchTrail(input: $input, condition: $condition) {
+  createPatchTrail(condition: $condition, input: $input) {
+    createdAt
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
     patch {
-      id
-      name
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      howToGet
-      imageUrl
-      regions
       difficulty
-      latitude
-      longitude
-      popularity
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
+    patchPatchTrailsId
+    requiredMiles
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
-    createdAt
+    trailPatchTrailsId
     updatedAt
     __typename
   }
@@ -792,96 +315,447 @@ export const createPatchTrail = /* GraphQL */ `mutation CreatePatchTrail(
   APITypes.CreatePatchTrailMutationVariables,
   APITypes.CreatePatchTrailMutation
 >;
-export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
-  $input: UpdatePatchTrailInput!
-  $condition: ModelPatchTrailConditionInput
+export const createTrail = /* GraphQL */ `mutation CreateTrail(
+  $condition: ModelTrailConditionInput
+  $input: CreateTrailInput!
 ) {
-  updatePatchTrail(input: $input, condition: $condition) {
+  createTrail(condition: $condition, input: $input) {
+    alltrailsUrl
+    createdAt
+    description
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
-    patch {
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
+      __typename
+    }
+    trailLinkUrl
+    updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateTrailMutationVariables,
+  APITypes.CreateTrailMutation
+>;
+export const createUserMountain = /* GraphQL */ `mutation CreateUserMountain(
+  $condition: ModelUserMountainConditionInput
+  $input: CreateUserMountainInput!
+) {
+  createUserMountain(condition: $condition, input: $input) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
       id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
       latitude
       longitude
-      popularity
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainID
+    notes
+    owner
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateUserMountainMutationVariables,
+  APITypes.CreateUserMountainMutation
+>;
+export const createUserPatch = /* GraphQL */ `mutation CreateUserPatch(
+  $condition: ModelUserPatchConditionInput
+  $input: CreateUserPatchInput!
+) {
+  createUserPatch(condition: $condition, input: $input) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateUserPatchMutationVariables,
+  APITypes.CreateUserPatchMutation
+>;
+export const createUserTrail = /* GraphQL */ `mutation CreateUserTrail(
+  $condition: ModelUserTrailConditionInput
+  $input: CreateUserTrailInput!
+) {
+  createUserTrail(condition: $condition, input: $input) {
+    createdAt
+    dateCompleted
+    milesRemaining
+    notes
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
+    trailID
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateUserTrailMutationVariables,
+  APITypes.CreateUserTrailMutation
+>;
+export const deleteAdminNotification = /* GraphQL */ `mutation DeleteAdminNotification(
+  $condition: ModelAdminNotificationConditionInput
+  $input: DeleteAdminNotificationInput!
+) {
+  deleteAdminNotification(condition: $condition, input: $input) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdatePatchTrailMutationVariables,
-  APITypes.UpdatePatchTrailMutation
+  APITypes.DeleteAdminNotificationMutationVariables,
+  APITypes.DeleteAdminNotificationMutation
 >;
-export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
-  $input: DeletePatchTrailInput!
-  $condition: ModelPatchTrailConditionInput
+export const deleteAppSetting = /* GraphQL */ `mutation DeleteAppSetting(
+  $condition: ModelAppSettingConditionInput
+  $input: DeleteAppSettingInput!
 ) {
-  deletePatchTrail(input: $input, condition: $condition) {
+  deleteAppSetting(condition: $condition, input: $input) {
+    createdAt
+    key
+    updatedAt
+    value
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteAppSettingMutationVariables,
+  APITypes.DeleteAppSettingMutation
+>;
+export const deleteMountain = /* GraphQL */ `mutation DeleteMountain(
+  $condition: ModelMountainConditionInput
+  $input: DeleteMountainInput!
+) {
+  deleteMountain(condition: $condition, input: $input) {
+    alltrailsUrl
+    city
+    createdAt
+    elevation
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
-    patch {
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    peakbaggerUrl
+    state
+    updatedAt
+    userMountains {
+      nextToken
+      __typename
+    }
+    weatherUrl
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteMountainMutationVariables,
+  APITypes.DeleteMountainMutation
+>;
+export const deletePatch = /* GraphQL */ `mutation DeletePatch(
+  $condition: ModelPatchConditionInput
+  $input: DeletePatchInput!
+) {
+  deletePatch(condition: $condition, input: $input) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
+    id
+    imageUrl
+    isPurchasable
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
+      nextToken
+      __typename
+    }
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
+    updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchMutationVariables,
+  APITypes.DeletePatchMutation
+>;
+export const deletePatchMountain = /* GraphQL */ `mutation DeletePatchMountain(
+  $condition: ModelPatchMountainConditionInput
+  $input: DeletePatchMountainInput!
+) {
+  deletePatchMountain(condition: $condition, input: $input) {
+    createdAt
+    delisted
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
       id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
       latitude
       longitude
-      popularity
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainPatchMountainsId
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
-    trail {
-      id
-      name
+    patchPatchMountainsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchMountainMutationVariables,
+  APITypes.DeletePatchMountainMutation
+>;
+export const deletePatchOwner = /* GraphQL */ `mutation DeletePatchOwner(
+  $condition: ModelPatchOwnerConditionInput
+  $input: DeletePatchOwnerInput!
+) {
+  deletePatchOwner(condition: $condition, input: $input) {
+    createdAt
+    id
+    patchID
+    patchName
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchOwnerMutationVariables,
+  APITypes.DeletePatchOwnerMutation
+>;
+export const deletePatchOwnerRequest = /* GraphQL */ `mutation DeletePatchOwnerRequest(
+  $condition: ModelPatchOwnerRequestConditionInput
+  $input: DeletePatchOwnerRequestInput!
+) {
+  deletePatchOwnerRequest(condition: $condition, input: $input) {
+    createdAt
+    id
+    message
+    patchID
+    patchName
+    status
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchOwnerRequestMutationVariables,
+  APITypes.DeletePatchOwnerRequestMutation
+>;
+export const deletePatchPurchase = /* GraphQL */ `mutation DeletePatchPurchase(
+  $condition: ModelPatchPurchaseConditionInput
+  $input: DeletePatchPurchaseInput!
+) {
+  deletePatchPurchase(condition: $condition, input: $input) {
+    amount
+    createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
+    updatedAt
+    userId
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchPurchaseMutationVariables,
+  APITypes.DeletePatchPurchaseMutation
+>;
+export const deletePatchRequest = /* GraphQL */ `mutation DeletePatchRequest(
+  $condition: ModelPatchRequestConditionInput
+  $input: DeletePatchRequestInput!
+) {
+  deletePatchRequest(condition: $condition, input: $input) {
+    createdAt
+    description
+    email
+    id
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeletePatchRequestMutationVariables,
+  APITypes.DeletePatchRequestMutation
+>;
+export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
+  $condition: ModelPatchTrailConditionInput
+  $input: DeletePatchTrailInput!
+) {
+  deletePatchTrail(condition: $condition, input: $input) {
+    createdAt
+    id
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      lengthMiles
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchTrailsId
+    requiredMiles
+    trail {
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
-    createdAt
+    trailPatchTrailsId
     updatedAt
     __typename
   }
@@ -890,86 +764,141 @@ export const deletePatchTrail = /* GraphQL */ `mutation DeletePatchTrail(
   APITypes.DeletePatchTrailMutationVariables,
   APITypes.DeletePatchTrailMutation
 >;
-export const createUserTrail = /* GraphQL */ `mutation CreateUserTrail(
-  $input: CreateUserTrailInput!
-  $condition: ModelUserTrailConditionInput
+export const deleteTrail = /* GraphQL */ `mutation DeleteTrail(
+  $condition: ModelTrailConditionInput
+  $input: DeleteTrailInput!
 ) {
-  createUserTrail(input: $input, condition: $condition) {
-    userID
-    trailID
-    dateCompleted
-    milesRemaining
-    notes
-    trail {
-      id
-      name
-      description
-      lengthMiles
-      alltrailsUrl
-      createdAt
-      updatedAt
+  deleteTrail(condition: $condition, input: $input) {
+    alltrailsUrl
+    createdAt
+    description
+    id
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
       __typename
     }
-    createdAt
+    trailLinkUrl
     updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateUserTrailMutationVariables,
-  APITypes.CreateUserTrailMutation
+  APITypes.DeleteTrailMutationVariables,
+  APITypes.DeleteTrailMutation
 >;
-export const updateUserTrail = /* GraphQL */ `mutation UpdateUserTrail(
-  $input: UpdateUserTrailInput!
-  $condition: ModelUserTrailConditionInput
+export const deleteUserMountain = /* GraphQL */ `mutation DeleteUserMountain(
+  $condition: ModelUserMountainConditionInput
+  $input: DeleteUserMountainInput!
 ) {
-  updateUserTrail(input: $input, condition: $condition) {
-    userID
-    trailID
-    dateCompleted
-    milesRemaining
-    notes
-    trail {
-      id
-      name
-      description
-      lengthMiles
+  deleteUserMountain(condition: $condition, input: $input) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
       alltrailsUrl
+      city
       createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
       updatedAt
+      weatherUrl
       __typename
     }
-    createdAt
+    mountainID
+    notes
+    owner
     updatedAt
+    userID
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateUserTrailMutationVariables,
-  APITypes.UpdateUserTrailMutation
+  APITypes.DeleteUserMountainMutationVariables,
+  APITypes.DeleteUserMountainMutation
+>;
+export const deleteUserPatch = /* GraphQL */ `mutation DeleteUserPatch(
+  $condition: ModelUserPatchConditionInput
+  $input: DeleteUserPatchInput!
+) {
+  deleteUserPatch(condition: $condition, input: $input) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteUserPatchMutationVariables,
+  APITypes.DeleteUserPatchMutation
 >;
 export const deleteUserTrail = /* GraphQL */ `mutation DeleteUserTrail(
-  $input: DeleteUserTrailInput!
   $condition: ModelUserTrailConditionInput
+  $input: DeleteUserTrailInput!
 ) {
-  deleteUserTrail(input: $input, condition: $condition) {
-    userID
-    trailID
+  deleteUserTrail(condition: $condition, input: $input) {
+    createdAt
     dateCompleted
     milesRemaining
     notes
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    createdAt
+    trailID
     updatedAt
+    userID
     __typename
   }
 }
@@ -977,41 +906,234 @@ export const deleteUserTrail = /* GraphQL */ `mutation DeleteUserTrail(
   APITypes.DeleteUserTrailMutationVariables,
   APITypes.DeleteUserTrailMutation
 >;
-export const createPatchPurchase = /* GraphQL */ `mutation CreatePatchPurchase(
-  $input: CreatePatchPurchaseInput!
-  $condition: ModelPatchPurchaseConditionInput
+export const updateAdminNotification = /* GraphQL */ `mutation UpdateAdminNotification(
+  $condition: ModelAdminNotificationConditionInput
+  $input: UpdateAdminNotificationInput!
 ) {
-  createPatchPurchase(input: $input, condition: $condition) {
-    id
-    userId
-    patchId
-    stripeSessionId
-    amount
-    currency
-    stripeReceiptUrl
+  updateAdminNotification(condition: $condition, input: $input) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreatePatchPurchaseMutationVariables,
-  APITypes.CreatePatchPurchaseMutation
+  APITypes.UpdateAdminNotificationMutationVariables,
+  APITypes.UpdateAdminNotificationMutation
+>;
+export const updateAppSetting = /* GraphQL */ `mutation UpdateAppSetting(
+  $condition: ModelAppSettingConditionInput
+  $input: UpdateAppSettingInput!
+) {
+  updateAppSetting(condition: $condition, input: $input) {
+    createdAt
+    key
+    updatedAt
+    value
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateAppSettingMutationVariables,
+  APITypes.UpdateAppSettingMutation
+>;
+export const updateMountain = /* GraphQL */ `mutation UpdateMountain(
+  $condition: ModelMountainConditionInput
+  $input: UpdateMountainInput!
+) {
+  updateMountain(condition: $condition, input: $input) {
+    alltrailsUrl
+    city
+    createdAt
+    elevation
+    id
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    peakbaggerUrl
+    state
+    updatedAt
+    userMountains {
+      nextToken
+      __typename
+    }
+    weatherUrl
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateMountainMutationVariables,
+  APITypes.UpdateMountainMutation
+>;
+export const updatePatch = /* GraphQL */ `mutation UpdatePatch(
+  $condition: ModelPatchConditionInput
+  $input: UpdatePatchInput!
+) {
+  updatePatch(condition: $condition, input: $input) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
+    id
+    imageUrl
+    isPurchasable
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
+      nextToken
+      __typename
+    }
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
+    updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchMutationVariables,
+  APITypes.UpdatePatchMutation
+>;
+export const updatePatchMountain = /* GraphQL */ `mutation UpdatePatchMountain(
+  $condition: ModelPatchMountainConditionInput
+  $input: UpdatePatchMountainInput!
+) {
+  updatePatchMountain(condition: $condition, input: $input) {
+    createdAt
+    delisted
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainPatchMountainsId
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchMountainsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchMountainMutationVariables,
+  APITypes.UpdatePatchMountainMutation
+>;
+export const updatePatchOwner = /* GraphQL */ `mutation UpdatePatchOwner(
+  $condition: ModelPatchOwnerConditionInput
+  $input: UpdatePatchOwnerInput!
+) {
+  updatePatchOwner(condition: $condition, input: $input) {
+    createdAt
+    id
+    patchID
+    patchName
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchOwnerMutationVariables,
+  APITypes.UpdatePatchOwnerMutation
+>;
+export const updatePatchOwnerRequest = /* GraphQL */ `mutation UpdatePatchOwnerRequest(
+  $condition: ModelPatchOwnerRequestConditionInput
+  $input: UpdatePatchOwnerRequestInput!
+) {
+  updatePatchOwnerRequest(condition: $condition, input: $input) {
+    createdAt
+    id
+    message
+    patchID
+    patchName
+    status
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchOwnerRequestMutationVariables,
+  APITypes.UpdatePatchOwnerRequestMutation
 >;
 export const updatePatchPurchase = /* GraphQL */ `mutation UpdatePatchPurchase(
-  $input: UpdatePatchPurchaseInput!
   $condition: ModelPatchPurchaseConditionInput
+  $input: UpdatePatchPurchaseInput!
 ) {
-  updatePatchPurchase(input: $input, condition: $condition) {
-    id
-    userId
-    patchId
-    stripeSessionId
+  updatePatchPurchase(condition: $condition, input: $input) {
     amount
-    currency
-    stripeReceiptUrl
     createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
     updatedAt
+    userId
     __typename
   }
 }
@@ -1019,24 +1141,217 @@ export const updatePatchPurchase = /* GraphQL */ `mutation UpdatePatchPurchase(
   APITypes.UpdatePatchPurchaseMutationVariables,
   APITypes.UpdatePatchPurchaseMutation
 >;
-export const deletePatchPurchase = /* GraphQL */ `mutation DeletePatchPurchase(
-  $input: DeletePatchPurchaseInput!
-  $condition: ModelPatchPurchaseConditionInput
+export const updatePatchRequest = /* GraphQL */ `mutation UpdatePatchRequest(
+  $condition: ModelPatchRequestConditionInput
+  $input: UpdatePatchRequestInput!
 ) {
-  deletePatchPurchase(input: $input, condition: $condition) {
-    id
-    userId
-    patchId
-    stripeSessionId
-    amount
-    currency
-    stripeReceiptUrl
+  updatePatchRequest(condition: $condition, input: $input) {
     createdAt
+    description
+    email
+    id
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeletePatchPurchaseMutationVariables,
-  APITypes.DeletePatchPurchaseMutation
+  APITypes.UpdatePatchRequestMutationVariables,
+  APITypes.UpdatePatchRequestMutation
+>;
+export const updatePatchTrail = /* GraphQL */ `mutation UpdatePatchTrail(
+  $condition: ModelPatchTrailConditionInput
+  $input: UpdatePatchTrailInput!
+) {
+  updatePatchTrail(condition: $condition, input: $input) {
+    createdAt
+    id
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchTrailsId
+    requiredMiles
+    trail {
+      alltrailsUrl
+      createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
+      updatedAt
+      __typename
+    }
+    trailPatchTrailsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdatePatchTrailMutationVariables,
+  APITypes.UpdatePatchTrailMutation
+>;
+export const updateTrail = /* GraphQL */ `mutation UpdateTrail(
+  $condition: ModelTrailConditionInput
+  $input: UpdateTrailInput!
+) {
+  updateTrail(condition: $condition, input: $input) {
+    alltrailsUrl
+    createdAt
+    description
+    id
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
+      __typename
+    }
+    trailLinkUrl
+    updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateTrailMutationVariables,
+  APITypes.UpdateTrailMutation
+>;
+export const updateUserMountain = /* GraphQL */ `mutation UpdateUserMountain(
+  $condition: ModelUserMountainConditionInput
+  $input: UpdateUserMountainInput!
+) {
+  updateUserMountain(condition: $condition, input: $input) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainID
+    notes
+    owner
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateUserMountainMutationVariables,
+  APITypes.UpdateUserMountainMutation
+>;
+export const updateUserPatch = /* GraphQL */ `mutation UpdateUserPatch(
+  $condition: ModelUserPatchConditionInput
+  $input: UpdateUserPatchInput!
+) {
+  updateUserPatch(condition: $condition, input: $input) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateUserPatchMutationVariables,
+  APITypes.UpdateUserPatchMutation
+>;
+export const updateUserTrail = /* GraphQL */ `mutation UpdateUserTrail(
+  $condition: ModelUserTrailConditionInput
+  $input: UpdateUserTrailInput!
+) {
+  updateUserTrail(condition: $condition, input: $input) {
+    createdAt
+    dateCompleted
+    milesRemaining
+    notes
+    trail {
+      alltrailsUrl
+      createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
+      updatedAt
+      __typename
+    }
+    trailID
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateUserTrailMutationVariables,
+  APITypes.UpdateUserTrailMutation
 >;

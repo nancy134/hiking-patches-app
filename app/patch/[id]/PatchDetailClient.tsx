@@ -6,7 +6,6 @@ import { generateClient } from 'aws-amplify/api';
 import { listUserMountains } from '@/graphql/queries';
 import { Patch, UserPatch, UserMountain } from '@/API';
 import Header from '@/components/Header';
-import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/auth-context';
 import type { GraphQLResult } from '@aws-amplify/api';
 import { UpdateUserPatchMutation, CreateUserPatchMutation } from '@/API';
@@ -19,9 +18,10 @@ import {
 import Link from 'next/link';
 import PatchOwnerRequestModal from '@/components/PatchOwnerRequestModal';
 import PatchMountains from '@/components/PatchMountains';
+import ReferenceLinks from '@/components/ReferenceLinks';
 import PatchProgress from '@/components/PatchProgress';
-import PatchTrails from '@/components/PatchTrails';
 import ProgressSummary from '@/components/ProgressSummary';
+import PatchTrails from '@/components/PatchTrails';
 import PatchGrid from '@/components/PatchGrid';
 import { usePatchProgressSummary } from '@/hooks/usePatchProgressSummary';
 import { useRelatedPatches } from '@/hooks/useRelatedPatches';
@@ -293,7 +293,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
     refresh: refreshProgress,
   } = usePatchProgressSummary(patch?.id ?? null, user?.userId ?? null);
 
-  const { patches: relatedPatches, loading: loadingRelated } = useRelatedPatches(patch?.id ?? null);
+  const { patches: relatedPatches, loading: loadingRelated } = useRelatedPatches(patch?.id ?? null, 4);
 
   const progressUnit = useMemo<'miles' | null>(() => {
     const raw: unknown = (patch as any)?.completionRule;
@@ -310,8 +310,9 @@ export default function PatchDetailClient({ id }: { id: string }) {
 
   return (
     <>
-      <div className="w-full max-w-6xl mx-auto p-4">
-        <Header />
+      <div className="min-h-screen bg-gray-100">
+        <div className="w-full max-w-6xl mx-auto p-4">
+          <Header />
 
         <div className="flex flex-col md:flex-row md:items-start gap-6 mb-6">
           <div className="flex-1">
@@ -324,9 +325,9 @@ export default function PatchDetailClient({ id }: { id: string }) {
               </p>
             )}
 
-            {/* ✅ PatchProgress summary chips sit here (not in a card) */}
+            {/* Overall Patch Status — your progress, boxed and set apart from the links */}
             {user && (
-              <div className="mt-3">
+              <div className="mt-3 rounded-lg bg-gray-50 ring-1 ring-gray-200 p-3">
                 <PatchProgress
                   patchId={patch.id}
                   userId={user.userId}
@@ -349,57 +350,21 @@ export default function PatchDetailClient({ id }: { id: string }) {
             <img
               src={patch.imageUrl}
               alt={patch.name}
-              className="w-40 h-auto rounded shadow"
+              className="w-40 h-auto"
             />
           )}
         </div>
 
-        {patch.howToGet && (
-          <div className="mt-6 bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-2">How to Get This Patch</h2>
-            <div className="prose max-w-none">
-              <ReactMarkdown
-                components={{
-                  a: ({ href, children }) => {
-                    const isExternal = href?.startsWith('http');
-
-                    return isExternal ? (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline inline-flex items-center gap-1"
-                      >
-                        {children}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 inline"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M18 13V18a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5M15 3h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
-                    ) : (
-                      <a href={href} className="text-blue-600 underline">
-                        {children}
-                      </a>
-                    );
-                  },
-                }}
-              >
-                {patch.howToGet}
-              </ReactMarkdown>
-            </div>
-          </div>
-        )}
+        <ReferenceLinks
+          className="mt-6"
+          links={{
+            website: (patch as any).websiteUrl,
+            facebook: (patch as any).facebookUrl,
+            alltrails: (patch as any).alltrailsUrl,
+            purchase: (patch as any).purchaseUrl,
+            form: (patch as any).formUrl,
+          }}
+        />
 
         {user ? (
           <>
@@ -441,11 +406,24 @@ export default function PatchDetailClient({ id }: { id: string }) {
           </>
         ) : (
           <>
-            <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded text-blue-800">
-              <p className="text-lg font-medium mb-2">
-                Want to keep track of your progress?
-              </p>
-              <p>Sign in to mark your patch progress and log your climbs.</p>
+            <div className="mt-6 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white p-5 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
+                  <span className="text-2xl leading-none" aria-hidden>🥾</span>
+                  <div>
+                    <p className="text-lg font-semibold">Track your progress on this patch</p>
+                    <p className="text-sm text-emerald-50">
+                      Log every ascent and trail mile, and watch your patch fill in — it&apos;s free.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href={`/auth?redirect=/patch/${patch.id}`}
+                  className="shrink-0 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm hover:bg-emerald-50 transition-colors text-center"
+                >
+                  Sign in — it&apos;s free
+                </Link>
+              </div>
             </div>
 
             {patch.hasPeaks && (
@@ -465,7 +443,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
         {!loadingRelated && relatedPatches.length > 0 && (
           <div className="bg-white p-4 rounded shadow mt-6">
             <h2 className="text-lg font-semibold mb-3">Related Patches</h2>
-            <PatchGrid patches={relatedPatches} />
+            <PatchGrid patches={relatedPatches} compact />
           </div>
         )}
 
@@ -490,6 +468,7 @@ export default function PatchDetailClient({ id }: { id: string }) {
             )}
           </div>
         )}
+        </div>
       </div>
 
       {user && ownerEditingEnabled && (

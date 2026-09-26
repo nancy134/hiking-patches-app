@@ -1,3 +1,15 @@
+import * as APITypes from "../API";
+
+// Brands a hand-written operation string the same way the generated queries.ts
+// does, so `client.graphql()` picks the typed overload and returns
+// GraphQLResult<T> instead of the untyped GraphQLResult<any> | Subscription
+// union. Without this, assigning the result to GraphQLResult<ListXQuery> is a
+// type error (TS2322).
+type GeneratedQuery<InputType, OutputType> = string & {
+  __generatedQueryInput: InputType;
+  __generatedQueryOutput: OutputType;
+};
+
 // Custom query backed by an AppSync resolver (not in the model schema), so it
 // must live here — keeping it in the auto-generated queries.ts gets it wiped on
 // every `amplify push` codegen.
@@ -60,6 +72,11 @@ export const getPatchWithMountainsPaged = /* GraphQL */ `
       description
       howToGet
       imageUrl
+      websiteUrl
+      facebookUrl
+      alltrailsUrl
+      purchaseUrl
+      formUrl
       regions
       difficulty
       popularity
@@ -297,6 +314,7 @@ export const getTrailPublic = /* GraphQL */ `query GetTrailPublic($id: ID!) {
     description
     lengthMiles
     alltrailsUrl
+    trailLinkUrl
     createdAt
     updatedAt
     __typename
@@ -315,6 +333,8 @@ export const getMountainPublic = /* GraphQL */ `
       city
       state
       alltrailsUrl
+      peakbaggerUrl
+      weatherUrl
       createdAt
       updatedAt
     }
@@ -384,3 +404,97 @@ export const getAppSettingCustom = /* GraphQL */ `
     getAppSetting(key: $key) { key value }
   }
 `;
+
+// ─── Admin list queries ──────────────────────────────────────────────────────
+// These mirror the generated listPatches/listMountains/listTrails but ADD the
+// reference-link fields (websiteUrl, facebookUrl, etc.). The admin pages feed a
+// list item straight into the edit modal, so if these fields aren't selected the
+// modal loads them blank and the next save wipes them. Keep field selections in
+// sync with the generated queries when adding new columns.
+export const listPatchesAdmin = /* GraphQL */ `
+  query ListPatchesAdmin($filter: ModelPatchFilterInput, $limit: Int, $nextToken: String) {
+    listPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        howToGet
+        imageUrl
+        websiteUrl
+        facebookUrl
+        alltrailsUrl
+        purchaseUrl
+        formUrl
+        regions
+        difficulty
+        latitude
+        longitude
+        popularity
+        hasPeaks
+        hasTrails
+        completionRule
+        isPurchasable
+        status
+        seasons
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+` as GeneratedQuery<
+  APITypes.ListPatchesQueryVariables,
+  APITypes.ListPatchesQuery
+>;
+
+export const listMountainsAdmin = /* GraphQL */ `
+  query ListMountainsAdmin($filter: ModelMountainFilterInput, $limit: Int, $nextToken: String) {
+    listMountains(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        elevation
+        latitude
+        longitude
+        city
+        state
+        alltrailsUrl
+        peakbaggerUrl
+        weatherUrl
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+` as GeneratedQuery<
+  APITypes.ListMountainsQueryVariables,
+  APITypes.ListMountainsQuery
+>;
+
+export const listTrailsAdmin = /* GraphQL */ `
+  query ListTrailsAdmin($filter: ModelTrailFilterInput, $limit: Int, $nextToken: String) {
+    listTrails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        lengthMiles
+        alltrailsUrl
+        trailLinkUrl
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+` as GeneratedQuery<
+  APITypes.ListTrailsQueryVariables,
+  APITypes.ListTrailsQuery
+>;

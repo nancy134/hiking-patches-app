@@ -33,7 +33,9 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
     longitude: '',
     city: '',
     state: '',
-    alltrailsUrl: ''
+    alltrailsUrl: '',
+    peakbaggerUrl: '',
+    weatherUrl: ''
   });
 
   useEffect(() => {
@@ -45,7 +47,9 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
         longitude: mountain.longitude?.toString() || '',
         city: mountain.city || '',
         state: mountain.state || '',
-        alltrailsUrl: mountain.alltrailsUrl || ''
+        alltrailsUrl: mountain.alltrailsUrl || '',
+        peakbaggerUrl: (mountain as any).peakbaggerUrl || '',
+        weatherUrl: (mountain as any).weatherUrl || ''
       });
     }
   }, [mountain]);
@@ -65,7 +69,9 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
       longitude: parseFloat(form.longitude),
       city: form.city.trim(),
       state: form.state.trim(),
-      alltrailsUrl: form.alltrailsUrl.trim() || null
+      alltrailsUrl: form.alltrailsUrl.trim() || null,
+      peakbaggerUrl: form.peakbaggerUrl.trim() || null,
+      weatherUrl: form.weatherUrl.trim() || null
     };
 
     if (isEdit && mountain?.id) {
@@ -186,6 +192,28 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
             <p className="text-xs text-gray-500 mt-1">
               Paste the <code>src</code> URL from the AllTrails embed code (optional).
             </p>
+          </div>
+
+          <div>
+            <label className="block font-medium">Peakbagger URL</label>
+            <input
+              name="peakbaggerUrl"
+              value={form.peakbaggerUrl}
+              onChange={handleChange}
+              placeholder="https://www.peakbagger.com/peak.aspx?pid=..."
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium">Weather forecast URL</label>
+            <input
+              name="weatherUrl"
+              value={form.weatherUrl}
+              onChange={handleChange}
+              placeholder="https://forecast.weather.gov/..."
+              className="w-full border px-3 py-2 rounded"
+            />
           </div>
 
           <div className="flex justify-end gap-3 mt-6">

@@ -373,22 +373,38 @@ export default function PatchMountains({
 
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">Mountains in Patch</h2>
-        <div className="inline-flex shrink-0 overflow-hidden rounded-md border text-sm">
-          {(['list', 'map'] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => setView(v)}
-              aria-pressed={view === v}
-              className={`px-3 py-1 capitalize transition ${
-                view === v
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {v}
-            </button>
-          ))}
+        <div className="inline-flex shrink-0 rounded-lg bg-gray-100 p-0.5 ring-1 ring-gray-200 text-sm">
+          <button
+            type="button"
+            onClick={() => setView('list')}
+            aria-pressed={view === 'list'}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 font-medium transition-colors ${
+              view === 'list'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+              <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            List
+          </button>
+          <button
+            type="button"
+            onClick={() => setView('map')}
+            aria-pressed={view === 'map'}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 font-medium transition-colors ${
+              view === 'map'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+              <polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21 1 6" /><line x1="8" y1="3" x2="8" y2="18" /><line x1="16" y1="6" x2="16" y2="21" />
+            </svg>
+            Map
+          </button>
         </div>
       </div>
 

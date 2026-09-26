@@ -16,7 +16,12 @@ import '@aws-amplify/ui-react/styles.css';
 const authServices = {
   async handleSignUp(input: Parameters<typeof signUp>[0]) {
     const result = await signUp(input);
-    notifyAdmins({
+    // Await so the notification POST is guaranteed to be sent before this
+    // resolves and the Authenticator advances / the page redirects. When it was
+    // fire-and-forget, auto sign-in could navigate away from /auth and cancel
+    // the in-flight request, so the notification was silently lost. notifyAdmins
+    // never throws, so awaiting can't break the sign-up flow.
+    await notifyAdmins({
       type: 'NEW_USER',
       title: 'New user signed up',
       body: input.username,

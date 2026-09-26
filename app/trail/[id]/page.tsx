@@ -17,6 +17,7 @@ import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal 
 import type { Trail, ListUserTrailsQuery, UserTrail } from '@/API';
 import TrailProgressModal from '@/components/TrailProgressModal';
 import AllTrailsEmbed from '@/components/AllTrailsEmbed';
+import ReferenceLinks from '@/components/ReferenceLinks';
 import ReactMarkdown from 'react-markdown';
 
 const client = generateClient();
@@ -225,6 +226,11 @@ export default function TrailDetailPage() {
       )}
 
       <AllTrailsEmbed url={trail.alltrailsUrl} />
+
+      <ReferenceLinks
+        className="mb-6"
+        links={{ traillink: (trail as any).trailLinkUrl }}
+      />
 
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center justify-between gap-4">

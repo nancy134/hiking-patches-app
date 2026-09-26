@@ -45,6 +45,11 @@ const schema = a.schema({
       description: a.string(),
       howToGet: a.string(),
       imageUrl: a.string(),
+      websiteUrl: a.string(),
+      facebookUrl: a.string(),
+      alltrailsUrl: a.string(),
+      purchaseUrl: a.string(),
+      formUrl: a.string(),
       regions: a.string().array(),
       difficulty: a.ref('Difficulty'),
       latitude: a.float(),
@@ -176,6 +181,8 @@ const schema = a.schema({
       city: a.string(),
       state: a.string(),
       alltrailsUrl: a.string(),
+      peakbaggerUrl: a.string(),
+      weatherUrl: a.string(),
       patchMountains: a.hasMany('PatchMountain', 'mountainPatchMountainsId'),
       userMountains: a.hasMany('UserMountain', 'mountainID'),
     })
@@ -228,6 +235,7 @@ const schema = a.schema({
       description: a.string(),
       lengthMiles: a.float().required(),
       alltrailsUrl: a.string(),
+      trailLinkUrl: a.string(),
       patchTrails: a.hasMany('PatchTrail', 'trailPatchTrailsId'),
       userTrails: a.hasMany('UserTrail', 'trailID'),
     })

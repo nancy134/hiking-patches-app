@@ -75,6 +75,41 @@
               "isRequired": false,
               "attributes": []
             },
+            "websiteUrl": {
+              "name": "websiteUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "facebookUrl": {
+              "name": "facebookUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "alltrailsUrl": {
+              "name": "alltrailsUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "purchaseUrl": {
+              "name": "purchaseUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "formUrl": {
+              "name": "formUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "regions": {
               "name": "regions",
               "isArray": true,
@@ -995,6 +1030,20 @@
               "isRequired": false,
               "attributes": []
             },
+            "peakbaggerUrl": {
+              "name": "peakbaggerUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "weatherUrl": {
+              "name": "weatherUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "patchMountains": {
               "name": "patchMountains",
               "isArray": true,
@@ -1429,6 +1478,13 @@
             },
             "alltrailsUrl": {
               "name": "alltrailsUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "trailLinkUrl": {
+              "name": "trailLinkUrl",
               "isArray": false,
               "type": "String",
               "isRequired": false,

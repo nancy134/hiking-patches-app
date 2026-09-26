@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Papa from 'papaparse';
 
 // GraphQL
-import { listTrails } from '@/graphql/queries';
+import { listTrailsAdmin } from '@/graphql/custom-queries';
 import { createTrail, updateTrail, deleteTrail } from '@/graphql/mutations';
 import type { GraphQLResult } from '@aws-amplify/api';
 import type { ListTrailsQuery, Trail } from '@/API';
@@ -36,7 +36,7 @@ export default function AdminTrailsPage() {
     let nextToken: string | null | undefined = null;
     do {
       const resp: GraphQLResult<ListTrailsQuery> = await client.graphql({
-        query: listTrails,
+        query: listTrailsAdmin,
         variables: { limit: 1000, nextToken },
       });
       const conn = resp.data?.listTrails;

@@ -22,16 +22,16 @@ No test suite is configured in this project.
 
 This app is on **Amplify Gen2** (code-first `defineBackend`) in every environment — the Gen1→Gen2 migration completed 2026-06-14. **Do NOT use `amplify push`** (that is the Gen1 CLI; it deploys the old, decommissioning Gen1 backend and only regenerates Gen1 codegen files — it does NOT touch the live Gen2 backend). Schema lives in `amplify/data/resource.ts` (`a.model()` / `a.string()` etc.), **not** `amplify/backend/api/.../schema.graphql` (Gen1 leftover).
 
-All `ampx` commands **must run on Node 20** (not the default Node 24 — tsx@4.19 + Node 24 fails to parse the TS backend with `SyntaxError: Unexpected identifier 'as'`), need `AWS_PROFILE=hiking-patches-app` (CDK bootstrap SSM perms), and need the heap flag (dev box has ~1.9GiB RAM; the type-check phase OOMs otherwise).
+All `ampx` commands **must run on Node 20** (not the default Node 24 — tsx@4.19 + Node 24 fails to parse the TS backend with `SyntaxError: Unexpected identifier 'as'`) and need `AWS_PROFILE=hiking-patches-app` (CDK bootstrap SSM perms). The `NODE_OPTIONS=--max-old-space-size=3072` heap flag is **no longer required** since the dev box was upgraded to 4 GiB (2026-07-04) — a verified sandbox deploy peaks ~2.9 GiB with no OOM. Re-add it only if a deploy OOMs.
 
 ```bash
 # dev (personal sandbox) — deploy here FIRST, always
 PATH="$HOME/.nvm/versions/node/v20.20.2/bin:$PATH" AWS_PROFILE=hiking-patches-app \
-  NODE_OPTIONS="--max-old-space-size=3072" npx ampx sandbox --once
+  npx ampx sandbox --once
 
 # staging / prod (Amplify Hosting app id d1gebwofi6iyc4) — CI=true + AWS_BRANCH required
 PATH="$HOME/.nvm/versions/node/v20.20.2/bin:$PATH" AWS_PROFILE=hiking-patches-app \
-  AWS_BRANCH=staging CI=true NODE_OPTIONS="--max-old-space-size=3072" \
+  AWS_BRANCH=staging CI=true \
   npx ampx pipeline-deploy --branch staging --app-id d1gebwofi6iyc4 --outputs-out-dir .amplify/outputs-staging
 ```
 

@@ -14,9 +14,10 @@ type Props = {
   status?: '' | 'In Progress' | 'Completed';
   wishInit?: boolean;
   onWishlistChange?: (patchId: string, next: boolean) => void;
+  compact?: boolean;
 };
 
-export function PatchCard({ patch, status = '', wishInit = false, onWishlistChange }: Props) {
+export function PatchCard({ patch, status = '', wishInit = false, onWishlistChange, compact = false }: Props) {
   // Show overlay if the patch tracks EITHER peaks or trails
   const hasProgress = Boolean(patch.hasPeaks) || Boolean(patch.hasTrails);
 
@@ -40,7 +41,7 @@ export function PatchCard({ patch, status = '', wishInit = false, onWishlistChan
   );
 
   return (
-    <Link href={`/patch/${patch.id}`} className="block" data-testid="patch-card">
+    <Link href={`/patch/${patch.id}`} className="block h-full" data-testid="patch-card">
       <PatchDisplay
         imageUrl={patch.imageUrl}
         name={patch.name as string}
@@ -49,7 +50,8 @@ export function PatchCard({ patch, status = '', wishInit = false, onWishlistChan
         difficulty={patch.difficulty}
         status={status}
         topRight={topRight}
-        extraFooter={hasProgress ? <UserProgressOverlay patchId={patch.id} showLabel /> : null}
+        compact={compact}
+        extraFooter={!compact && hasProgress ? <UserProgressOverlay patchId={patch.id} showLabel /> : null}
       />
     </Link>
   );

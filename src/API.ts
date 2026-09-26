@@ -2,37 +2,49 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type DeleteUserMountainInput = {
+export type AdminNotification = {
+  __typename: "AdminNotification",
+  body?: string | null,
+  createdAt: string,
   id: string,
+  link?: string | null,
+  read?: boolean | null,
+  title: string,
+  type: NotificationType,
+  updatedAt: string,
 };
 
-export type UserMountain = {
-  __typename: "UserMountain",
-  id: string,
-  userID: string,
-  mountainID: string,
-  dateClimbed: string,
-  notes?: string | null,
-  mountain?: Mountain | null,
+export enum NotificationType {
+  NEW_USER = "NEW_USER",
+  OWNER_REQUEST = "OWNER_REQUEST",
+  PATCH_PURCHASED = "PATCH_PURCHASED",
+}
+
+
+export type AppSetting = {
+  __typename: "AppSetting",
   createdAt: string,
+  key: string,
   updatedAt: string,
-  owner?: string | null,
+  value?: string | null,
 };
 
 export type Mountain = {
   __typename: "Mountain",
-  id: string,
-  name: string,
+  alltrailsUrl?: string | null,
+  city?: string | null,
+  createdAt: string,
   elevation?: number | null,
+  id: string,
   latitude?: number | null,
   longitude?: number | null,
-  city?: string | null,
-  state?: string | null,
-  alltrailsUrl?: string | null,
+  name: string,
   patchMountains?: ModelPatchMountainConnection | null,
-  userMountains?: ModelUserMountainConnection | null,
-  createdAt: string,
+  peakbaggerUrl?: string | null,
+  state?: string | null,
   updatedAt: string,
+  userMountains?: ModelUserMountainConnection | null,
+  weatherUrl?: string | null,
 };
 
 export type ModelPatchMountainConnection = {
@@ -43,62 +55,110 @@ export type ModelPatchMountainConnection = {
 
 export type PatchMountain = {
   __typename: "PatchMountain",
-  id: string,
-  patchPatchMountainsId?: string | null,
-  mountainPatchMountainsId?: string | null,
-  patch: Patch,
-  mountain: Mountain,
-  delisted?: boolean | null,
   createdAt: string,
+  delisted?: boolean | null,
+  id: string,
+  mountain?: Mountain | null,
+  mountainPatchMountainsId?: string | null,
+  patch?: Patch | null,
+  patchPatchMountainsId?: string | null,
   updatedAt: string,
 };
 
 export type Patch = {
   __typename: "Patch",
-  id: string,
-  name: string,
+  alltrailsUrl?: string | null,
+  completionRule?: string | null,
+  createdAt: string,
   description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
   difficulty?: Difficulty | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  popularity?: number | null,
+  facebookUrl?: string | null,
+  formUrl?: string | null,
   hasPeaks?: boolean | null,
   hasTrails?: boolean | null,
-  completionRule?: string | null,
+  howToGet?: string | null,
+  id: string,
+  imageUrl?: string | null,
   isPurchasable?: boolean | null,
-  status?: PatchStatus | null,
-  seasons?: Array< Season | null > | null,
-  userPatches?: ModelUserPatchConnection | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  name: string,
   patchMountains?: ModelPatchMountainConnection | null,
   patchTrails?: ModelPatchTrailConnection | null,
-  createdAt: string,
+  popularity?: number | null,
+  purchaseUrl?: string | null,
+  regions?: Array< string | null > | null,
+  seasons?: Array< Season | null > | null,
+  status?: string | null,
   updatedAt: string,
+  userPatches?: ModelUserPatchConnection | null,
+  websiteUrl?: string | null,
 };
 
 export enum Difficulty {
   EASY = "EASY",
-  MODERATE = "MODERATE",
-  HARD = "HARD",
-  EXTRA_HARD = "EXTRA_HARD",
   EXTRA_EXTRA_HARD = "EXTRA_EXTRA_HARD",
+  EXTRA_HARD = "EXTRA_HARD",
+  HARD = "HARD",
+  MODERATE = "MODERATE",
 }
 
 
-export enum PatchStatus {
-  DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED",
-  ARCHIVED = "ARCHIVED",
-}
+export type ModelPatchTrailConnection = {
+  __typename: "ModelPatchTrailConnection",
+  items:  Array<PatchTrail | null >,
+  nextToken?: string | null,
+};
 
+export type PatchTrail = {
+  __typename: "PatchTrail",
+  createdAt: string,
+  id: string,
+  patch?: Patch | null,
+  patchPatchTrailsId?: string | null,
+  requiredMiles?: number | null,
+  trail?: Trail | null,
+  trailPatchTrailsId?: string | null,
+  updatedAt: string,
+};
+
+export type Trail = {
+  __typename: "Trail",
+  alltrailsUrl?: string | null,
+  createdAt: string,
+  description?: string | null,
+  id: string,
+  lengthMiles: number,
+  name: string,
+  patchTrails?: ModelPatchTrailConnection | null,
+  trailLinkUrl?: string | null,
+  updatedAt: string,
+  userTrails?: ModelUserTrailConnection | null,
+};
+
+export type ModelUserTrailConnection = {
+  __typename: "ModelUserTrailConnection",
+  items:  Array<UserTrail | null >,
+  nextToken?: string | null,
+};
+
+export type UserTrail = {
+  __typename: "UserTrail",
+  createdAt: string,
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
+  notes?: string | null,
+  trail?: Trail | null,
+  trailID: string,
+  updatedAt: string,
+  userID: string,
+};
 
 export enum Season {
   FALL = "FALL",
-  WINTER = "WINTER",
   SPRING = "SPRING",
   SUMMER = "SUMMER",
+  WINTER = "WINTER",
 }
 
 
@@ -110,67 +170,18 @@ export type ModelUserPatchConnection = {
 
 export type UserPatch = {
   __typename: "UserPatch",
-  id: string,
-  patchID: string,
-  patch?: Patch | null,
-  userID: string,
+  createdAt: string,
   dateCompleted?: string | null,
-  notes?: string | null,
   difficulty?: number | null,
+  id: string,
   imageUrl?: string | null,
   inProgress?: boolean | null,
-  wishlisted?: boolean | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type ModelPatchTrailConnection = {
-  __typename: "ModelPatchTrailConnection",
-  items:  Array<PatchTrail | null >,
-  nextToken?: string | null,
-};
-
-export type PatchTrail = {
-  __typename: "PatchTrail",
-  id: string,
-  patchPatchTrailsId?: string | null,
-  trailPatchTrailsId?: string | null,
-  patch: Patch,
-  trail: Trail,
-  requiredMiles?: number | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type Trail = {
-  __typename: "Trail",
-  id: string,
-  name: string,
-  description?: string | null,
-  lengthMiles: number,
-  alltrailsUrl?: string | null,
-  patchTrails?: ModelPatchTrailConnection | null,
-  userTrails?: ModelUserTrailConnection | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type ModelUserTrailConnection = {
-  __typename: "ModelUserTrailConnection",
-  items:  Array<UserTrail | null >,
-  nextToken?: string | null,
-};
-
-export type UserTrail = {
-  __typename: "UserTrail",
-  userID: string,
-  trailID: string,
-  dateCompleted?: string | null,
-  milesRemaining?: number | null,
   notes?: string | null,
-  trail?: Trail | null,
-  createdAt: string,
+  patch?: Patch | null,
+  patchID: string,
   updatedAt: string,
+  userID: string,
+  wishlisted?: boolean | null,
 };
 
 export type ModelUserMountainConnection = {
@@ -179,69 +190,129 @@ export type ModelUserMountainConnection = {
   nextToken?: string | null,
 };
 
-export type CreateUserMountainInput = {
-  id?: string | null,
-  userID: string,
-  mountainID: string,
+export type UserMountain = {
+  __typename: "UserMountain",
+  createdAt: string,
   dateClimbed: string,
+  id: string,
+  mountain?: Mountain | null,
+  mountainID: string,
   notes?: string | null,
-};
-
-export type CreateUserTrailInput = {
+  owner?: string | null,
+  updatedAt: string,
   userID: string,
-  trailID: string,
-  dateCompleted?: string | null,
-  milesRemaining?: number | null,
-  notes?: string | null,
 };
 
-export type UpdateUserTrailInput = {
+export type PatchOwner = {
+  __typename: "PatchOwner",
+  createdAt: string,
+  id: string,
+  patchID: string,
+  patchName: string,
+  updatedAt: string,
+  userEmail: string,
   userID: string,
-  trailID: string,
-  dateCompleted?: string | null,
-  milesRemaining?: number | null,
-  notes?: string | null,
 };
 
-export type DeleteUserTrailInput = {
+export type PatchOwnerRequest = {
+  __typename: "PatchOwnerRequest",
+  createdAt: string,
+  id: string,
+  message?: string | null,
+  patchID: string,
+  patchName: string,
+  status: OwnershipRequestStatus,
+  updatedAt: string,
+  userEmail: string,
   userID: string,
-  trailID: string,
 };
 
-export type ModelUserPatchFilterInput = {
-  id?: ModelIDInput | null,
-  patchID?: ModelIDInput | null,
-  userID?: ModelStringInput | null,
-  dateCompleted?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
-  difficulty?: ModelIntInput | null,
-  imageUrl?: ModelStringInput | null,
-  inProgress?: ModelBooleanInput | null,
-  wishlisted?: ModelBooleanInput | null,
+export enum OwnershipRequestStatus {
+  APPROVED = "APPROVED",
+  PENDING = "PENDING",
+  REJECTED = "REJECTED",
+}
+
+
+export type PatchProgress = {
+  __typename: "PatchProgress",
+  completed: number,
+  denom: number,
+  note?: string | null,
+  patchId: string,
+  percent: number,
+  userId: string,
+};
+
+export type PatchPurchase = {
+  __typename: "PatchPurchase",
+  amount?: number | null,
+  createdAt: string,
+  currency?: string | null,
+  id: string,
+  patchId: string,
+  stripeReceiptUrl?: string | null,
+  stripeSessionId: string,
+  updatedAt: string,
+  userId: string,
+};
+
+export type PatchRequest = {
+  __typename: "PatchRequest",
+  createdAt: string,
+  description: string,
+  email: string,
+  id: string,
+  updatedAt: string,
+};
+
+export type RelatedPatch = {
+  __typename: "RelatedPatch",
+  description?: string | null,
+  difficulty?: Difficulty | null,
+  hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
+  id: string,
+  imageUrl?: string | null,
+  isPurchasable?: boolean | null,
+  matchScore: number,
+  name: string,
+  popularity?: number | null,
+  regions?: Array< string | null > | null,
+};
+
+export type ModelAdminNotificationFilterInput = {
+  and?: Array< ModelAdminNotificationFilterInput | null > | null,
+  body?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  link?: ModelStringInput | null,
+  not?: ModelAdminNotificationFilterInput | null,
+  or?: Array< ModelAdminNotificationFilterInput | null > | null,
+  read?: ModelBooleanInput | null,
+  title?: ModelStringInput | null,
+  type?: ModelNotificationTypeInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelUserPatchFilterInput | null > | null,
-  or?: Array< ModelUserPatchFilterInput | null > | null,
-  not?: ModelUserPatchFilterInput | null,
 };
 
-export type ModelIDInput = {
-  ne?: string | null,
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  contains?: string | null,
-  notContains?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
+export type ModelStringInput = {
   attributeExists?: boolean | null,
   attributeType?: ModelAttributeTypes | null,
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
+  contains?: string | null,
+  eq?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ne?: string | null,
+  notContains?: string | null,
   size?: ModelSizeInput | null,
 };
 
 export enum ModelAttributeTypes {
+  _null = "_null",
   binary = "binary",
   binarySet = "binarySet",
   bool = "bool",
@@ -251,524 +322,62 @@ export enum ModelAttributeTypes {
   numberSet = "numberSet",
   string = "string",
   stringSet = "stringSet",
-  _null = "_null",
 }
 
 
 export type ModelSizeInput = {
-  ne?: number | null,
+  between?: Array< number | null > | null,
   eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
   ge?: number | null,
   gt?: number | null,
-  between?: Array< number | null > | null,
+  le?: number | null,
+  lt?: number | null,
+  ne?: number | null,
 };
 
-export type ModelStringInput = {
-  ne?: string | null,
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  contains?: string | null,
-  notContains?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
+export type ModelIDInput = {
   attributeExists?: boolean | null,
   attributeType?: ModelAttributeTypes | null,
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
+  contains?: string | null,
+  eq?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ne?: string | null,
+  notContains?: string | null,
   size?: ModelSizeInput | null,
 };
 
-export type ModelIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
 export type ModelBooleanInput = {
-  ne?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
   eq?: boolean | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
+  ne?: boolean | null,
 };
 
-export type ModelPatchMountainFilterInput = {
-  id?: ModelIDInput | null,
-  patchPatchMountainsId?: ModelIDInput | null,
-  mountainPatchMountainsId?: ModelIDInput | null,
-  delisted?: ModelBooleanInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchMountainFilterInput | null > | null,
-  or?: Array< ModelPatchMountainFilterInput | null > | null,
-  not?: ModelPatchMountainFilterInput | null,
+export type ModelNotificationTypeInput = {
+  eq?: NotificationType | null,
+  ne?: NotificationType | null,
 };
 
-export type CreateUserPatchInput = {
-  id?: string | null,
-  patchID: string,
-  userID: string,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  wishlisted?: boolean | null,
-};
-
-export type UpdateUserPatchInput = {
-  id: string,
-  patchID?: string | null,
-  userID?: string | null,
-  dateCompleted?: string | null,
-  notes?: string | null,
-  difficulty?: number | null,
-  imageUrl?: string | null,
-  inProgress?: boolean | null,
-  wishlisted?: boolean | null,
-};
-
-export type ModelPatchTrailFilterInput = {
-  id?: ModelIDInput | null,
-  patchPatchTrailsId?: ModelIDInput | null,
-  trailPatchTrailsId?: ModelIDInput | null,
-  requiredMiles?: ModelFloatInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchTrailFilterInput | null > | null,
-  or?: Array< ModelPatchTrailFilterInput | null > | null,
-  not?: ModelPatchTrailFilterInput | null,
-};
-
-export type ModelFloatInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
-export type CreatePatchInput = {
-  id?: string | null,
-  name: string,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  popularity?: number | null,
-  hasPeaks?: boolean | null,
-  hasTrails?: boolean | null,
-  completionRule?: string | null,
-  isPurchasable?: boolean | null,
-  status?: PatchStatus | null,
-  seasons?: Array< Season | null > | null,
-};
-
-export type ModelPatchConditionInput = {
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  howToGet?: ModelStringInput | null,
-  imageUrl?: ModelStringInput | null,
-  regions?: ModelStringInput | null,
-  difficulty?: ModelDifficultyInput | null,
-  latitude?: ModelFloatInput | null,
-  longitude?: ModelFloatInput | null,
-  popularity?: ModelIntInput | null,
-  hasPeaks?: ModelBooleanInput | null,
-  hasTrails?: ModelBooleanInput | null,
-  completionRule?: ModelStringInput | null,
-  isPurchasable?: ModelBooleanInput | null,
-  status?: ModelPatchStatusInput | null,
-  seasons?: ModelSeasonListInput | null,
-  and?: Array< ModelPatchConditionInput | null > | null,
-  or?: Array< ModelPatchConditionInput | null > | null,
-  not?: ModelPatchConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type ModelDifficultyInput = {
-  eq?: Difficulty | null,
-  ne?: Difficulty | null,
-};
-
-export type ModelPatchStatusInput = {
-  eq?: PatchStatus | null,
-  ne?: PatchStatus | null,
-};
-
-export type ModelSeasonListInput = {
-  eq?: Array< Season | null > | null,
-  ne?: Array< Season | null > | null,
-  contains?: Season | null,
-  notContains?: Season | null,
-};
-
-export type UpdatePatchInput = {
-  id: string,
-  name?: string | null,
-  description?: string | null,
-  howToGet?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  popularity?: number | null,
-  hasPeaks?: boolean | null,
-  hasTrails?: boolean | null,
-  completionRule?: string | null,
-  isPurchasable?: boolean | null,
-  status?: PatchStatus | null,
-  seasons?: Array< Season | null > | null,
-};
-
-export type DeletePatchInput = {
-  id: string,
-};
-
-export type ModelUserPatchConditionInput = {
-  patchID?: ModelIDInput | null,
-  userID?: ModelStringInput | null,
-  dateCompleted?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
-  difficulty?: ModelIntInput | null,
-  imageUrl?: ModelStringInput | null,
-  inProgress?: ModelBooleanInput | null,
-  wishlisted?: ModelBooleanInput | null,
-  and?: Array< ModelUserPatchConditionInput | null > | null,
-  or?: Array< ModelUserPatchConditionInput | null > | null,
-  not?: ModelUserPatchConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type DeleteUserPatchInput = {
-  id: string,
-};
-
-export type CreatePatchRequestInput = {
-  id?: string | null,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-};
-
-export type ModelPatchRequestConditionInput = {
-  email?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  and?: Array< ModelPatchRequestConditionInput | null > | null,
-  or?: Array< ModelPatchRequestConditionInput | null > | null,
-  not?: ModelPatchRequestConditionInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type PatchRequest = {
-  __typename: "PatchRequest",
-  id: string,
-  email: string,
-  description: string,
-  createdAt?: string | null,
-  updatedAt: string,
-};
-
-export type UpdatePatchRequestInput = {
-  id: string,
-  email?: string | null,
-  description?: string | null,
-  createdAt?: string | null,
-};
-
-export type DeletePatchRequestInput = {
-  id: string,
-};
-
-export type CreateMountainInput = {
-  id?: string | null,
-  name: string,
-  elevation?: number | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  city?: string | null,
-  state?: string | null,
-  alltrailsUrl?: string | null,
-};
-
-export type ModelMountainConditionInput = {
-  name?: ModelStringInput | null,
-  elevation?: ModelIntInput | null,
-  latitude?: ModelFloatInput | null,
-  longitude?: ModelFloatInput | null,
-  city?: ModelStringInput | null,
-  state?: ModelStringInput | null,
-  alltrailsUrl?: ModelStringInput | null,
-  and?: Array< ModelMountainConditionInput | null > | null,
-  or?: Array< ModelMountainConditionInput | null > | null,
-  not?: ModelMountainConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type UpdateMountainInput = {
-  id: string,
-  name?: string | null,
-  elevation?: number | null,
-  latitude?: number | null,
-  longitude?: number | null,
-  city?: string | null,
-  state?: string | null,
-  alltrailsUrl?: string | null,
-};
-
-export type DeleteMountainInput = {
-  id: string,
-};
-
-export type CreatePatchMountainInput = {
-  id?: string | null,
-  patchPatchMountainsId?: string | null,
-  mountainPatchMountainsId?: string | null,
-  delisted?: boolean | null,
-};
-
-export type ModelPatchMountainConditionInput = {
-  patchPatchMountainsId?: ModelIDInput | null,
-  mountainPatchMountainsId?: ModelIDInput | null,
-  delisted?: ModelBooleanInput | null,
-  and?: Array< ModelPatchMountainConditionInput | null > | null,
-  or?: Array< ModelPatchMountainConditionInput | null > | null,
-  not?: ModelPatchMountainConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type UpdatePatchMountainInput = {
-  id: string,
-  patchPatchMountainsId?: string | null,
-  mountainPatchMountainsId?: string | null,
-  delisted?: boolean | null,
-};
-
-export type DeletePatchMountainInput = {
-  id: string,
-};
-
-export type ModelUserMountainConditionInput = {
-  userID?: ModelIDInput | null,
-  mountainID?: ModelIDInput | null,
-  dateClimbed?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
-  and?: Array< ModelUserMountainConditionInput | null > | null,
-  or?: Array< ModelUserMountainConditionInput | null > | null,
-  not?: ModelUserMountainConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  owner?: ModelStringInput | null,
-};
-
-export type UpdateUserMountainInput = {
-  id: string,
-  userID?: string | null,
-  mountainID?: string | null,
-  dateClimbed?: string | null,
-  notes?: string | null,
-};
-
-export type CreateTrailInput = {
-  id?: string | null,
-  name: string,
-  description?: string | null,
-  lengthMiles: number,
-  alltrailsUrl?: string | null,
-};
-
-export type ModelTrailConditionInput = {
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  lengthMiles?: ModelFloatInput | null,
-  alltrailsUrl?: ModelStringInput | null,
-  and?: Array< ModelTrailConditionInput | null > | null,
-  or?: Array< ModelTrailConditionInput | null > | null,
-  not?: ModelTrailConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type UpdateTrailInput = {
-  id: string,
-  name?: string | null,
-  description?: string | null,
-  lengthMiles?: number | null,
-  alltrailsUrl?: string | null,
-};
-
-export type DeleteTrailInput = {
-  id: string,
-};
-
-export type CreatePatchTrailInput = {
-  id?: string | null,
-  patchPatchTrailsId?: string | null,
-  trailPatchTrailsId?: string | null,
-  requiredMiles?: number | null,
-};
-
-export type ModelPatchTrailConditionInput = {
-  patchPatchTrailsId?: ModelIDInput | null,
-  trailPatchTrailsId?: ModelIDInput | null,
-  requiredMiles?: ModelFloatInput | null,
-  and?: Array< ModelPatchTrailConditionInput | null > | null,
-  or?: Array< ModelPatchTrailConditionInput | null > | null,
-  not?: ModelPatchTrailConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type UpdatePatchTrailInput = {
-  id: string,
-  patchPatchTrailsId?: string | null,
-  trailPatchTrailsId?: string | null,
-  requiredMiles?: number | null,
-};
-
-export type DeletePatchTrailInput = {
-  id: string,
-};
-
-export type ModelUserTrailConditionInput = {
-  dateCompleted?: ModelStringInput | null,
-  milesRemaining?: ModelFloatInput | null,
-  notes?: ModelStringInput | null,
-  and?: Array< ModelUserTrailConditionInput | null > | null,
-  or?: Array< ModelUserTrailConditionInput | null > | null,
-  not?: ModelUserTrailConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  userID?: ModelStringInput | null,
-};
-
-export type CreatePatchPurchaseInput = {
-  id?: string | null,
-  userId: string,
-  patchId: string,
-  stripeSessionId: string,
-  amount?: number | null,
-  currency?: string | null,
-  stripeReceiptUrl?: string | null,
-  createdAt?: string | null,
-};
-
-export type ModelPatchPurchaseConditionInput = {
-  userId?: ModelIDInput | null,
-  patchId?: ModelIDInput | null,
-  stripeSessionId?: ModelStringInput | null,
-  amount?: ModelIntInput | null,
-  currency?: ModelStringInput | null,
-  stripeReceiptUrl?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  and?: Array< ModelPatchPurchaseConditionInput | null > | null,
-  or?: Array< ModelPatchPurchaseConditionInput | null > | null,
-  not?: ModelPatchPurchaseConditionInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type PatchPurchase = {
-  __typename: "PatchPurchase",
-  id: string,
-  userId: string,
-  patchId: string,
-  stripeSessionId: string,
-  amount?: number | null,
-  currency?: string | null,
-  stripeReceiptUrl?: string | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type UpdatePatchPurchaseInput = {
-  id: string,
-  userId?: string | null,
-  patchId?: string | null,
-  stripeSessionId?: string | null,
-  amount?: number | null,
-  currency?: string | null,
-  stripeReceiptUrl?: string | null,
-  createdAt?: string | null,
-};
-
-export type DeletePatchPurchaseInput = {
-  id: string,
-};
-
-export type PatchProgress = {
-  __typename: "PatchProgress",
-  patchId: string,
-  userId: string,
-  completed: number,
-  denom: number,
-  percent: number,
-  note?: string | null,
-};
-
-export type RelatedPatch = {
-  __typename: "RelatedPatch",
-  id: string,
-  name: string,
-  description?: string | null,
-  imageUrl?: string | null,
-  regions?: Array< string | null > | null,
-  difficulty?: Difficulty | null,
-  hasPeaks?: boolean | null,
-  hasTrails?: boolean | null,
-  popularity?: number | null,
-  isPurchasable?: boolean | null,
-  matchScore: number,
-};
-
-export type ModelPatchFilterInput = {
-  id?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  howToGet?: ModelStringInput | null,
-  imageUrl?: ModelStringInput | null,
-  regions?: ModelStringInput | null,
-  difficulty?: ModelDifficultyInput | null,
-  latitude?: ModelFloatInput | null,
-  longitude?: ModelFloatInput | null,
-  popularity?: ModelIntInput | null,
-  hasPeaks?: ModelBooleanInput | null,
-  hasTrails?: ModelBooleanInput | null,
-  completionRule?: ModelStringInput | null,
-  isPurchasable?: ModelBooleanInput | null,
-  status?: ModelPatchStatusInput | null,
-  seasons?: ModelSeasonListInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchFilterInput | null > | null,
-  or?: Array< ModelPatchFilterInput | null > | null,
-  not?: ModelPatchFilterInput | null,
-};
-
-export type ModelPatchConnection = {
-  __typename: "ModelPatchConnection",
-  items:  Array<Patch | null >,
+export type ModelAdminNotificationConnection = {
+  __typename: "ModelAdminNotificationConnection",
+  items:  Array<AdminNotification | null >,
   nextToken?: string | null,
+};
+
+export type ModelAppSettingFilterInput = {
+  and?: Array< ModelAppSettingFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  key?: ModelStringInput | null,
+  not?: ModelAppSettingFilterInput | null,
+  or?: Array< ModelAppSettingFilterInput | null > | null,
+  updatedAt?: ModelStringInput | null,
+  value?: ModelStringInput | null,
 };
 
 export enum ModelSortDirection {
@@ -777,47 +386,52 @@ export enum ModelSortDirection {
 }
 
 
-export type ModelIDKeyConditionInput = {
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-};
-
-export type ModelPatchRequestFilterInput = {
-  id?: ModelIDInput | null,
-  email?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelPatchRequestFilterInput | null > | null,
-  or?: Array< ModelPatchRequestFilterInput | null > | null,
-  not?: ModelPatchRequestFilterInput | null,
-};
-
-export type ModelPatchRequestConnection = {
-  __typename: "ModelPatchRequestConnection",
-  items:  Array<PatchRequest | null >,
+export type ModelAppSettingConnection = {
+  __typename: "ModelAppSettingConnection",
+  items:  Array<AppSetting | null >,
   nextToken?: string | null,
 };
 
 export type ModelMountainFilterInput = {
-  id?: ModelIDInput | null,
-  name?: ModelStringInput | null,
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelMountainFilterInput | null > | null,
+  city?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
   elevation?: ModelIntInput | null,
+  id?: ModelIDInput | null,
   latitude?: ModelFloatInput | null,
   longitude?: ModelFloatInput | null,
-  city?: ModelStringInput | null,
-  state?: ModelStringInput | null,
-  alltrailsUrl?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelMountainFilterInput | null > | null,
-  or?: Array< ModelMountainFilterInput | null > | null,
+  name?: ModelStringInput | null,
   not?: ModelMountainFilterInput | null,
+  or?: Array< ModelMountainFilterInput | null > | null,
+  peakbaggerUrl?: ModelStringInput | null,
+  state?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  weatherUrl?: ModelStringInput | null,
+};
+
+export type ModelIntInput = {
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+  between?: Array< number | null > | null,
+  eq?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ne?: number | null,
+};
+
+export type ModelFloatInput = {
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+  between?: Array< number | null > | null,
+  eq?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ne?: number | null,
 };
 
 export type ModelMountainConnection = {
@@ -826,76 +440,76 @@ export type ModelMountainConnection = {
   nextToken?: string | null,
 };
 
-export type ModelUserMountainFilterInput = {
-  id?: ModelIDInput | null,
-  userID?: ModelIDInput | null,
-  mountainID?: ModelIDInput | null,
-  dateClimbed?: ModelStringInput | null,
-  notes?: ModelStringInput | null,
+export type ModelPatchMountainFilterInput = {
+  and?: Array< ModelPatchMountainFilterInput | null > | null,
   createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelUserMountainFilterInput | null > | null,
-  or?: Array< ModelUserMountainFilterInput | null > | null,
-  not?: ModelUserMountainFilterInput | null,
-  owner?: ModelStringInput | null,
-};
-
-export type ModelStringKeyConditionInput = {
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-};
-
-export type ModelTrailFilterInput = {
+  delisted?: ModelBooleanInput | null,
   id?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  lengthMiles?: ModelFloatInput | null,
-  alltrailsUrl?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
+  mountainPatchMountainsId?: ModelIDInput | null,
+  not?: ModelPatchMountainFilterInput | null,
+  or?: Array< ModelPatchMountainFilterInput | null > | null,
+  patchPatchMountainsId?: ModelIDInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelTrailFilterInput | null > | null,
-  or?: Array< ModelTrailFilterInput | null > | null,
-  not?: ModelTrailFilterInput | null,
 };
 
-export type ModelTrailConnection = {
-  __typename: "ModelTrailConnection",
-  items:  Array<Trail | null >,
+export type ModelPatchOwnerRequestFilterInput = {
+  and?: Array< ModelPatchOwnerRequestFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  message?: ModelStringInput | null,
+  not?: ModelPatchOwnerRequestFilterInput | null,
+  or?: Array< ModelPatchOwnerRequestFilterInput | null > | null,
+  patchID?: ModelIDInput | null,
+  patchName?: ModelStringInput | null,
+  status?: ModelOwnershipRequestStatusInput | null,
+  updatedAt?: ModelStringInput | null,
+  userEmail?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type ModelOwnershipRequestStatusInput = {
+  eq?: OwnershipRequestStatus | null,
+  ne?: OwnershipRequestStatus | null,
+};
+
+export type ModelPatchOwnerRequestConnection = {
+  __typename: "ModelPatchOwnerRequestConnection",
+  items:  Array<PatchOwnerRequest | null >,
   nextToken?: string | null,
 };
 
-export type ModelUserTrailFilterInput = {
-  userID?: ModelIDInput | null,
-  trailID?: ModelIDInput | null,
-  dateCompleted?: ModelStringInput | null,
-  milesRemaining?: ModelFloatInput | null,
-  notes?: ModelStringInput | null,
-  id?: ModelIDInput | null,
+export type ModelPatchOwnerFilterInput = {
+  and?: Array< ModelPatchOwnerFilterInput | null > | null,
   createdAt?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  not?: ModelPatchOwnerFilterInput | null,
+  or?: Array< ModelPatchOwnerFilterInput | null > | null,
+  patchID?: ModelIDInput | null,
+  patchName?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelUserTrailFilterInput | null > | null,
-  or?: Array< ModelUserTrailFilterInput | null > | null,
-  not?: ModelUserTrailFilterInput | null,
+  userEmail?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type ModelPatchOwnerConnection = {
+  __typename: "ModelPatchOwnerConnection",
+  items:  Array<PatchOwner | null >,
+  nextToken?: string | null,
 };
 
 export type ModelPatchPurchaseFilterInput = {
-  id?: ModelIDInput | null,
-  userId?: ModelIDInput | null,
-  patchId?: ModelIDInput | null,
-  stripeSessionId?: ModelStringInput | null,
   amount?: ModelIntInput | null,
-  currency?: ModelStringInput | null,
-  stripeReceiptUrl?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
   and?: Array< ModelPatchPurchaseFilterInput | null > | null,
-  or?: Array< ModelPatchPurchaseFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  currency?: ModelStringInput | null,
+  id?: ModelIDInput | null,
   not?: ModelPatchPurchaseFilterInput | null,
+  or?: Array< ModelPatchPurchaseFilterInput | null > | null,
+  patchId?: ModelIDInput | null,
+  stripeReceiptUrl?: ModelStringInput | null,
+  stripeSessionId?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
 };
 
 export type ModelPatchPurchaseConnection = {
@@ -904,199 +518,4759 @@ export type ModelPatchPurchaseConnection = {
   nextToken?: string | null,
 };
 
-export type ModelSubscriptionPatchFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  name?: ModelSubscriptionStringInput | null,
-  description?: ModelSubscriptionStringInput | null,
-  howToGet?: ModelSubscriptionStringInput | null,
-  imageUrl?: ModelSubscriptionStringInput | null,
-  regions?: ModelSubscriptionStringInput | null,
-  difficulty?: ModelSubscriptionStringInput | null,
-  latitude?: ModelSubscriptionFloatInput | null,
-  longitude?: ModelSubscriptionFloatInput | null,
-  popularity?: ModelSubscriptionIntInput | null,
-  hasPeaks?: ModelSubscriptionBooleanInput | null,
-  hasTrails?: ModelSubscriptionBooleanInput | null,
-  completionRule?: ModelSubscriptionStringInput | null,
-  isPurchasable?: ModelSubscriptionBooleanInput | null,
-  status?: ModelSubscriptionStringInput | null,
-  seasons?: ModelSubscriptionStringInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+export type ModelPatchRequestFilterInput = {
+  and?: Array< ModelPatchRequestFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  email?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  not?: ModelPatchRequestFilterInput | null,
+  or?: Array< ModelPatchRequestFilterInput | null > | null,
+  updatedAt?: ModelStringInput | null,
 };
 
-export type ModelSubscriptionIDInput = {
-  ne?: string | null,
+export type ModelPatchRequestConnection = {
+  __typename: "ModelPatchRequestConnection",
+  items:  Array<PatchRequest | null >,
+  nextToken?: string | null,
+};
+
+export type ModelPatchTrailFilterInput = {
+  and?: Array< ModelPatchTrailFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  not?: ModelPatchTrailFilterInput | null,
+  or?: Array< ModelPatchTrailFilterInput | null > | null,
+  patchPatchTrailsId?: ModelIDInput | null,
+  requiredMiles?: ModelFloatInput | null,
+  trailPatchTrailsId?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type ModelPatchFilterInput = {
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelPatchFilterInput | null > | null,
+  completionRule?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
+  facebookUrl?: ModelStringInput | null,
+  formUrl?: ModelStringInput | null,
+  hasPeaks?: ModelBooleanInput | null,
+  hasTrails?: ModelBooleanInput | null,
+  howToGet?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  imageUrl?: ModelStringInput | null,
+  isPurchasable?: ModelBooleanInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  name?: ModelStringInput | null,
+  not?: ModelPatchFilterInput | null,
+  or?: Array< ModelPatchFilterInput | null > | null,
+  popularity?: ModelIntInput | null,
+  purchaseUrl?: ModelStringInput | null,
+  regions?: ModelStringInput | null,
+  seasons?: ModelSeasonListInput | null,
+  status?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  websiteUrl?: ModelStringInput | null,
+};
+
+export type ModelDifficultyInput = {
+  eq?: Difficulty | null,
+  ne?: Difficulty | null,
+};
+
+export type ModelSeasonListInput = {
+  contains?: Season | null,
+  eq?: Array< Season | null > | null,
+  ne?: Array< Season | null > | null,
+  notContains?: Season | null,
+};
+
+export type ModelPatchConnection = {
+  __typename: "ModelPatchConnection",
+  items:  Array<Patch | null >,
+  nextToken?: string | null,
+};
+
+export type ModelTrailFilterInput = {
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelTrailFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  lengthMiles?: ModelFloatInput | null,
+  name?: ModelStringInput | null,
+  not?: ModelTrailFilterInput | null,
+  or?: Array< ModelTrailFilterInput | null > | null,
+  trailLinkUrl?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type ModelTrailConnection = {
+  __typename: "ModelTrailConnection",
+  items:  Array<Trail | null >,
+  nextToken?: string | null,
+};
+
+export type ModelUserMountainFilterInput = {
+  and?: Array< ModelUserMountainFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateClimbed?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  mountainID?: ModelIDInput | null,
+  not?: ModelUserMountainFilterInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserMountainFilterInput | null > | null,
+  owner?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelIDInput | null,
+};
+
+export type ModelUserPatchFilterInput = {
+  and?: Array< ModelUserPatchFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  difficulty?: ModelIntInput | null,
+  id?: ModelIDInput | null,
+  imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
+  not?: ModelUserPatchFilterInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserPatchFilterInput | null > | null,
+  patchID?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+  wishlisted?: ModelBooleanInput | null,
+};
+
+export type ModelUserTrailFilterInput = {
+  and?: Array< ModelUserTrailFilterInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  milesRemaining?: ModelFloatInput | null,
+  not?: ModelUserTrailFilterInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserTrailFilterInput | null > | null,
+  trailID?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelIDInput | null,
+};
+
+export type ModelIDKeyConditionInput = {
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
   eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
   ge?: string | null,
   gt?: string | null,
-  contains?: string | null,
-  notContains?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-  in?: Array< string | null > | null,
-  notIn?: Array< string | null > | null,
-};
-
-export type ModelSubscriptionStringInput = {
-  ne?: string | null,
-  eq?: string | null,
   le?: string | null,
   lt?: string | null,
+};
+
+export type ModelStringKeyConditionInput = {
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
+  eq?: string | null,
   ge?: string | null,
   gt?: string | null,
-  contains?: string | null,
-  notContains?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-  in?: Array< string | null > | null,
-  notIn?: Array< string | null > | null,
+  le?: string | null,
+  lt?: string | null,
 };
 
-export type ModelSubscriptionFloatInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  in?: Array< number | null > | null,
-  notIn?: Array< number | null > | null,
+export type ModelAdminNotificationConditionInput = {
+  and?: Array< ModelAdminNotificationConditionInput | null > | null,
+  body?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  link?: ModelStringInput | null,
+  not?: ModelAdminNotificationConditionInput | null,
+  or?: Array< ModelAdminNotificationConditionInput | null > | null,
+  read?: ModelBooleanInput | null,
+  title?: ModelStringInput | null,
+  type?: ModelNotificationTypeInput | null,
+  updatedAt?: ModelStringInput | null,
 };
 
-export type ModelSubscriptionIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  in?: Array< number | null > | null,
-  notIn?: Array< number | null > | null,
+export type CreateAdminNotificationInput = {
+  body?: string | null,
+  id?: string | null,
+  link?: string | null,
+  read?: boolean | null,
+  title: string,
+  type: NotificationType,
 };
 
-export type ModelSubscriptionBooleanInput = {
-  ne?: boolean | null,
-  eq?: boolean | null,
+export type ModelAppSettingConditionInput = {
+  and?: Array< ModelAppSettingConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  not?: ModelAppSettingConditionInput | null,
+  or?: Array< ModelAppSettingConditionInput | null > | null,
+  updatedAt?: ModelStringInput | null,
+  value?: ModelStringInput | null,
 };
 
-export type ModelSubscriptionUserPatchFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  patchID?: ModelSubscriptionIDInput | null,
-  dateCompleted?: ModelSubscriptionStringInput | null,
-  notes?: ModelSubscriptionStringInput | null,
-  difficulty?: ModelSubscriptionIntInput | null,
-  imageUrl?: ModelSubscriptionStringInput | null,
-  inProgress?: ModelSubscriptionBooleanInput | null,
-  wishlisted?: ModelSubscriptionBooleanInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
-  or?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
+export type CreateAppSettingInput = {
+  key: string,
+  value?: string | null,
+};
+
+export type ModelMountainConditionInput = {
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelMountainConditionInput | null > | null,
+  city?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  elevation?: ModelIntInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  name?: ModelStringInput | null,
+  not?: ModelMountainConditionInput | null,
+  or?: Array< ModelMountainConditionInput | null > | null,
+  peakbaggerUrl?: ModelStringInput | null,
+  state?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  weatherUrl?: ModelStringInput | null,
+};
+
+export type CreateMountainInput = {
+  alltrailsUrl?: string | null,
+  city?: string | null,
+  elevation?: number | null,
+  id?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  name: string,
+  peakbaggerUrl?: string | null,
+  state?: string | null,
+  weatherUrl?: string | null,
+};
+
+export type ModelPatchConditionInput = {
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelPatchConditionInput | null > | null,
+  completionRule?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  difficulty?: ModelDifficultyInput | null,
+  facebookUrl?: ModelStringInput | null,
+  formUrl?: ModelStringInput | null,
+  hasPeaks?: ModelBooleanInput | null,
+  hasTrails?: ModelBooleanInput | null,
+  howToGet?: ModelStringInput | null,
+  imageUrl?: ModelStringInput | null,
+  isPurchasable?: ModelBooleanInput | null,
+  latitude?: ModelFloatInput | null,
+  longitude?: ModelFloatInput | null,
+  name?: ModelStringInput | null,
+  not?: ModelPatchConditionInput | null,
+  or?: Array< ModelPatchConditionInput | null > | null,
+  popularity?: ModelIntInput | null,
+  purchaseUrl?: ModelStringInput | null,
+  regions?: ModelStringInput | null,
+  seasons?: ModelSeasonListInput | null,
+  status?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  websiteUrl?: ModelStringInput | null,
+};
+
+export type CreatePatchInput = {
+  alltrailsUrl?: string | null,
+  completionRule?: string | null,
+  description?: string | null,
+  difficulty?: Difficulty | null,
+  facebookUrl?: string | null,
+  formUrl?: string | null,
+  hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
+  howToGet?: string | null,
+  id?: string | null,
+  imageUrl?: string | null,
+  isPurchasable?: boolean | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  name: string,
+  popularity?: number | null,
+  purchaseUrl?: string | null,
+  regions?: Array< string | null > | null,
+  seasons?: Array< Season | null > | null,
+  status?: string | null,
+  websiteUrl?: string | null,
+};
+
+export type ModelPatchMountainConditionInput = {
+  and?: Array< ModelPatchMountainConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  delisted?: ModelBooleanInput | null,
+  mountainPatchMountainsId?: ModelIDInput | null,
+  not?: ModelPatchMountainConditionInput | null,
+  or?: Array< ModelPatchMountainConditionInput | null > | null,
+  patchPatchMountainsId?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type CreatePatchMountainInput = {
+  delisted?: boolean | null,
+  id?: string | null,
+  mountainPatchMountainsId?: string | null,
+  patchPatchMountainsId?: string | null,
+};
+
+export type ModelPatchOwnerConditionInput = {
+  and?: Array< ModelPatchOwnerConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  not?: ModelPatchOwnerConditionInput | null,
+  or?: Array< ModelPatchOwnerConditionInput | null > | null,
+  patchID?: ModelIDInput | null,
+  patchName?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userEmail?: ModelStringInput | null,
   userID?: ModelStringInput | null,
 };
 
-export type ModelSubscriptionPatchRequestFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  email?: ModelSubscriptionStringInput | null,
-  description?: ModelSubscriptionStringInput | null,
+export type CreatePatchOwnerInput = {
+  id?: string | null,
+  patchID: string,
+  patchName: string,
+  userEmail: string,
+  userID: string,
+};
+
+export type ModelPatchOwnerRequestConditionInput = {
+  and?: Array< ModelPatchOwnerRequestConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  message?: ModelStringInput | null,
+  not?: ModelPatchOwnerRequestConditionInput | null,
+  or?: Array< ModelPatchOwnerRequestConditionInput | null > | null,
+  patchID?: ModelIDInput | null,
+  patchName?: ModelStringInput | null,
+  status?: ModelOwnershipRequestStatusInput | null,
+  updatedAt?: ModelStringInput | null,
+  userEmail?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type CreatePatchOwnerRequestInput = {
+  id?: string | null,
+  message?: string | null,
+  patchID: string,
+  patchName: string,
+  status: OwnershipRequestStatus,
+  userEmail: string,
+  userID: string,
+};
+
+export type ModelPatchPurchaseConditionInput = {
+  amount?: ModelIntInput | null,
+  and?: Array< ModelPatchPurchaseConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  currency?: ModelStringInput | null,
+  not?: ModelPatchPurchaseConditionInput | null,
+  or?: Array< ModelPatchPurchaseConditionInput | null > | null,
+  patchId?: ModelIDInput | null,
+  stripeReceiptUrl?: ModelStringInput | null,
+  stripeSessionId?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
+};
+
+export type CreatePatchPurchaseInput = {
+  amount?: number | null,
+  currency?: string | null,
+  id?: string | null,
+  patchId: string,
+  stripeReceiptUrl?: string | null,
+  stripeSessionId: string,
+  userId: string,
+};
+
+export type ModelPatchRequestConditionInput = {
+  and?: Array< ModelPatchRequestConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  email?: ModelStringInput | null,
+  not?: ModelPatchRequestConditionInput | null,
+  or?: Array< ModelPatchRequestConditionInput | null > | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type CreatePatchRequestInput = {
+  description: string,
+  email: string,
+  id?: string | null,
+};
+
+export type ModelPatchTrailConditionInput = {
+  and?: Array< ModelPatchTrailConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  not?: ModelPatchTrailConditionInput | null,
+  or?: Array< ModelPatchTrailConditionInput | null > | null,
+  patchPatchTrailsId?: ModelIDInput | null,
+  requiredMiles?: ModelFloatInput | null,
+  trailPatchTrailsId?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type CreatePatchTrailInput = {
+  id?: string | null,
+  patchPatchTrailsId?: string | null,
+  requiredMiles?: number | null,
+  trailPatchTrailsId?: string | null,
+};
+
+export type ModelTrailConditionInput = {
+  alltrailsUrl?: ModelStringInput | null,
+  and?: Array< ModelTrailConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  lengthMiles?: ModelFloatInput | null,
+  name?: ModelStringInput | null,
+  not?: ModelTrailConditionInput | null,
+  or?: Array< ModelTrailConditionInput | null > | null,
+  trailLinkUrl?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type CreateTrailInput = {
+  alltrailsUrl?: string | null,
+  description?: string | null,
+  id?: string | null,
+  lengthMiles: number,
+  name: string,
+  trailLinkUrl?: string | null,
+};
+
+export type ModelUserMountainConditionInput = {
+  and?: Array< ModelUserMountainConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateClimbed?: ModelStringInput | null,
+  mountainID?: ModelIDInput | null,
+  not?: ModelUserMountainConditionInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserMountainConditionInput | null > | null,
+  owner?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelIDInput | null,
+};
+
+export type CreateUserMountainInput = {
+  dateClimbed: string,
+  id?: string | null,
+  mountainID: string,
+  notes?: string | null,
+  userID: string,
+};
+
+export type ModelUserPatchConditionInput = {
+  and?: Array< ModelUserPatchConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  difficulty?: ModelIntInput | null,
+  imageUrl?: ModelStringInput | null,
+  inProgress?: ModelBooleanInput | null,
+  not?: ModelUserPatchConditionInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserPatchConditionInput | null > | null,
+  patchID?: ModelIDInput | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+  wishlisted?: ModelBooleanInput | null,
+};
+
+export type CreateUserPatchInput = {
+  dateCompleted?: string | null,
+  difficulty?: number | null,
+  id?: string | null,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  notes?: string | null,
+  patchID: string,
+  userID: string,
+  wishlisted?: boolean | null,
+};
+
+export type ModelUserTrailConditionInput = {
+  and?: Array< ModelUserTrailConditionInput | null > | null,
+  createdAt?: ModelStringInput | null,
+  dateCompleted?: ModelStringInput | null,
+  milesRemaining?: ModelFloatInput | null,
+  not?: ModelUserTrailConditionInput | null,
+  notes?: ModelStringInput | null,
+  or?: Array< ModelUserTrailConditionInput | null > | null,
+  updatedAt?: ModelStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type CreateUserTrailInput = {
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
+  notes?: string | null,
+  trailID: string,
+  userID: string,
+};
+
+export type DeleteAdminNotificationInput = {
+  id: string,
+};
+
+export type DeleteAppSettingInput = {
+  key: string,
+};
+
+export type DeleteMountainInput = {
+  id: string,
+};
+
+export type DeletePatchInput = {
+  id: string,
+};
+
+export type DeletePatchMountainInput = {
+  id: string,
+};
+
+export type DeletePatchOwnerInput = {
+  id: string,
+};
+
+export type DeletePatchOwnerRequestInput = {
+  id: string,
+};
+
+export type DeletePatchPurchaseInput = {
+  id: string,
+};
+
+export type DeletePatchRequestInput = {
+  id: string,
+};
+
+export type DeletePatchTrailInput = {
+  id: string,
+};
+
+export type DeleteTrailInput = {
+  id: string,
+};
+
+export type DeleteUserMountainInput = {
+  id: string,
+};
+
+export type DeleteUserPatchInput = {
+  id: string,
+};
+
+export type DeleteUserTrailInput = {
+  trailID: string,
+  userID: string,
+};
+
+export type UpdateAdminNotificationInput = {
+  body?: string | null,
+  id: string,
+  link?: string | null,
+  read?: boolean | null,
+  title?: string | null,
+  type?: NotificationType | null,
+};
+
+export type UpdateAppSettingInput = {
+  key: string,
+  value?: string | null,
+};
+
+export type UpdateMountainInput = {
+  alltrailsUrl?: string | null,
+  city?: string | null,
+  elevation?: number | null,
+  id: string,
+  latitude?: number | null,
+  longitude?: number | null,
+  name?: string | null,
+  peakbaggerUrl?: string | null,
+  state?: string | null,
+  weatherUrl?: string | null,
+};
+
+export type UpdatePatchInput = {
+  alltrailsUrl?: string | null,
+  completionRule?: string | null,
+  description?: string | null,
+  difficulty?: Difficulty | null,
+  facebookUrl?: string | null,
+  formUrl?: string | null,
+  hasPeaks?: boolean | null,
+  hasTrails?: boolean | null,
+  howToGet?: string | null,
+  id: string,
+  imageUrl?: string | null,
+  isPurchasable?: boolean | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  name?: string | null,
+  popularity?: number | null,
+  purchaseUrl?: string | null,
+  regions?: Array< string | null > | null,
+  seasons?: Array< Season | null > | null,
+  status?: string | null,
+  websiteUrl?: string | null,
+};
+
+export type UpdatePatchMountainInput = {
+  delisted?: boolean | null,
+  id: string,
+  mountainPatchMountainsId?: string | null,
+  patchPatchMountainsId?: string | null,
+};
+
+export type UpdatePatchOwnerInput = {
+  id: string,
+  patchID?: string | null,
+  patchName?: string | null,
+  userEmail?: string | null,
+  userID?: string | null,
+};
+
+export type UpdatePatchOwnerRequestInput = {
+  id: string,
+  message?: string | null,
+  patchID?: string | null,
+  patchName?: string | null,
+  status?: OwnershipRequestStatus | null,
+  userEmail?: string | null,
+  userID?: string | null,
+};
+
+export type UpdatePatchPurchaseInput = {
+  amount?: number | null,
+  currency?: string | null,
+  id: string,
+  patchId?: string | null,
+  stripeReceiptUrl?: string | null,
+  stripeSessionId?: string | null,
+  userId?: string | null,
+};
+
+export type UpdatePatchRequestInput = {
+  description?: string | null,
+  email?: string | null,
+  id: string,
+};
+
+export type UpdatePatchTrailInput = {
+  id: string,
+  patchPatchTrailsId?: string | null,
+  requiredMiles?: number | null,
+  trailPatchTrailsId?: string | null,
+};
+
+export type UpdateTrailInput = {
+  alltrailsUrl?: string | null,
+  description?: string | null,
+  id: string,
+  lengthMiles?: number | null,
+  name?: string | null,
+  trailLinkUrl?: string | null,
+};
+
+export type UpdateUserMountainInput = {
+  dateClimbed?: string | null,
+  id: string,
+  mountainID?: string | null,
+  notes?: string | null,
+  userID?: string | null,
+};
+
+export type UpdateUserPatchInput = {
+  dateCompleted?: string | null,
+  difficulty?: number | null,
+  id: string,
+  imageUrl?: string | null,
+  inProgress?: boolean | null,
+  notes?: string | null,
+  patchID?: string | null,
+  userID?: string | null,
+  wishlisted?: boolean | null,
+};
+
+export type UpdateUserTrailInput = {
+  dateCompleted?: string | null,
+  milesRemaining?: number | null,
+  notes?: string | null,
+  trailID: string,
+  userID: string,
+};
+
+export type ModelSubscriptionAdminNotificationFilterInput = {
+  and?: Array< ModelSubscriptionAdminNotificationFilterInput | null > | null,
+  body?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  link?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionAdminNotificationFilterInput | null > | null,
+  read?: ModelSubscriptionBooleanInput | null,
+  title?: ModelSubscriptionStringInput | null,
+  type?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+};
+
+export type ModelSubscriptionStringInput = {
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
+  contains?: string | null,
+  eq?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  in?: Array< string | null > | null,
+  le?: string | null,
+  lt?: string | null,
+  ne?: string | null,
+  notContains?: string | null,
+  notIn?: Array< string | null > | null,
+};
+
+export type ModelSubscriptionIDInput = {
+  beginsWith?: string | null,
+  between?: Array< string | null > | null,
+  contains?: string | null,
+  eq?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  in?: Array< string | null > | null,
+  le?: string | null,
+  lt?: string | null,
+  ne?: string | null,
+  notContains?: string | null,
+  notIn?: Array< string | null > | null,
+};
+
+export type ModelSubscriptionBooleanInput = {
+  eq?: boolean | null,
+  ne?: boolean | null,
+};
+
+export type ModelSubscriptionAppSettingFilterInput = {
+  and?: Array< ModelSubscriptionAppSettingFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  key?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionAppSettingFilterInput | null > | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  value?: ModelSubscriptionStringInput | null,
 };
 
 export type ModelSubscriptionMountainFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  name?: ModelSubscriptionStringInput | null,
+  alltrailsUrl?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionMountainFilterInput | null > | null,
+  city?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
   elevation?: ModelSubscriptionIntInput | null,
+  id?: ModelSubscriptionIDInput | null,
   latitude?: ModelSubscriptionFloatInput | null,
   longitude?: ModelSubscriptionFloatInput | null,
-  city?: ModelSubscriptionStringInput | null,
-  state?: ModelSubscriptionStringInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionMountainFilterInput | null > | null,
+  name?: ModelSubscriptionStringInput | null,
   or?: Array< ModelSubscriptionMountainFilterInput | null > | null,
+  peakbaggerUrl?: ModelSubscriptionStringInput | null,
+  state?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  weatherUrl?: ModelSubscriptionStringInput | null,
+};
+
+export type ModelSubscriptionIntInput = {
+  between?: Array< number | null > | null,
+  eq?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  in?: Array< number | null > | null,
+  le?: number | null,
+  lt?: number | null,
+  ne?: number | null,
+  notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionFloatInput = {
+  between?: Array< number | null > | null,
+  eq?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  in?: Array< number | null > | null,
+  le?: number | null,
+  lt?: number | null,
+  ne?: number | null,
+  notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionPatchFilterInput = {
+  alltrailsUrl?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  completionRule?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  difficulty?: ModelSubscriptionStringInput | null,
+  facebookUrl?: ModelSubscriptionStringInput | null,
+  formUrl?: ModelSubscriptionStringInput | null,
+  hasPeaks?: ModelSubscriptionBooleanInput | null,
+  hasTrails?: ModelSubscriptionBooleanInput | null,
+  howToGet?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  imageUrl?: ModelSubscriptionStringInput | null,
+  isPurchasable?: ModelSubscriptionBooleanInput | null,
+  latitude?: ModelSubscriptionFloatInput | null,
+  longitude?: ModelSubscriptionFloatInput | null,
+  name?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionPatchFilterInput | null > | null,
+  popularity?: ModelSubscriptionIntInput | null,
+  purchaseUrl?: ModelSubscriptionStringInput | null,
+  regions?: ModelSubscriptionStringInput | null,
+  seasons?: ModelSubscriptionStringInput | null,
+  status?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  websiteUrl?: ModelSubscriptionStringInput | null,
 };
 
 export type ModelSubscriptionPatchMountainFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  patchPatchMountainsId?: ModelSubscriptionIDInput | null,
-  mountainPatchMountainsId?: ModelSubscriptionIDInput | null,
-  delisted?: ModelSubscriptionBooleanInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchMountainFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  delisted?: ModelSubscriptionBooleanInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  mountainPatchMountainsId?: ModelSubscriptionIDInput | null,
   or?: Array< ModelSubscriptionPatchMountainFilterInput | null > | null,
+  patchPatchMountainsId?: ModelSubscriptionIDInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
 };
 
-export type ModelSubscriptionUserMountainFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  userID?: ModelSubscriptionIDInput | null,
-  mountainID?: ModelSubscriptionIDInput | null,
-  dateClimbed?: ModelSubscriptionStringInput | null,
-  notes?: ModelSubscriptionStringInput | null,
+export type ModelSubscriptionPatchOwnerFilterInput = {
+  and?: Array< ModelSubscriptionPatchOwnerFilterInput | null > | null,
   createdAt?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  or?: Array< ModelSubscriptionPatchOwnerFilterInput | null > | null,
+  patchID?: ModelSubscriptionIDInput | null,
+  patchName?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
-  or?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
-  owner?: ModelStringInput | null,
+  userEmail?: ModelSubscriptionStringInput | null,
+  userID?: ModelSubscriptionStringInput | null,
 };
 
-export type ModelSubscriptionTrailFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  name?: ModelSubscriptionStringInput | null,
-  description?: ModelSubscriptionStringInput | null,
-  lengthMiles?: ModelSubscriptionFloatInput | null,
+export type ModelSubscriptionPatchOwnerRequestFilterInput = {
+  and?: Array< ModelSubscriptionPatchOwnerRequestFilterInput | null > | null,
   createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionTrailFilterInput | null > | null,
-  or?: Array< ModelSubscriptionTrailFilterInput | null > | null,
-};
-
-export type ModelSubscriptionPatchTrailFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  patchPatchTrailsId?: ModelSubscriptionIDInput | null,
-  trailPatchTrailsId?: ModelSubscriptionIDInput | null,
-  requiredMiles?: ModelSubscriptionFloatInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
+  message?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionPatchOwnerRequestFilterInput | null > | null,
+  patchID?: ModelSubscriptionIDInput | null,
+  patchName?: ModelSubscriptionStringInput | null,
+  status?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
-  or?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
-};
-
-export type ModelSubscriptionUserTrailFilterInput = {
-  trailID?: ModelSubscriptionIDInput | null,
-  dateCompleted?: ModelSubscriptionStringInput | null,
-  milesRemaining?: ModelSubscriptionFloatInput | null,
-  notes?: ModelSubscriptionStringInput | null,
-  id?: ModelSubscriptionIDInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
-  or?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
+  userEmail?: ModelSubscriptionStringInput | null,
   userID?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionPatchPurchaseFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  patchId?: ModelSubscriptionIDInput | null,
-  stripeSessionId?: ModelSubscriptionStringInput | null,
   amount?: ModelSubscriptionIntInput | null,
-  currency?: ModelSubscriptionStringInput | null,
-  stripeReceiptUrl?: ModelSubscriptionStringInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPatchPurchaseFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  currency?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
   or?: Array< ModelSubscriptionPatchPurchaseFilterInput | null > | null,
+  patchId?: ModelSubscriptionIDInput | null,
+  stripeReceiptUrl?: ModelSubscriptionStringInput | null,
+  stripeSessionId?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   userId?: ModelStringInput | null,
+};
+
+export type ModelSubscriptionPatchRequestFilterInput = {
+  and?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  email?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  or?: Array< ModelSubscriptionPatchRequestFilterInput | null > | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+};
+
+export type ModelSubscriptionPatchTrailFilterInput = {
+  and?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  or?: Array< ModelSubscriptionPatchTrailFilterInput | null > | null,
+  patchPatchTrailsId?: ModelSubscriptionIDInput | null,
+  requiredMiles?: ModelSubscriptionFloatInput | null,
+  trailPatchTrailsId?: ModelSubscriptionIDInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+};
+
+export type ModelSubscriptionTrailFilterInput = {
+  alltrailsUrl?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionTrailFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  lengthMiles?: ModelSubscriptionFloatInput | null,
+  name?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionTrailFilterInput | null > | null,
+  trailLinkUrl?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+};
+
+export type ModelSubscriptionUserMountainFilterInput = {
+  and?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  dateClimbed?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  mountainID?: ModelSubscriptionIDInput | null,
+  notes?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionUserMountainFilterInput | null > | null,
+  owner?: ModelStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  userID?: ModelSubscriptionIDInput | null,
+};
+
+export type ModelSubscriptionUserPatchFilterInput = {
+  and?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  dateCompleted?: ModelSubscriptionStringInput | null,
+  difficulty?: ModelSubscriptionIntInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  imageUrl?: ModelSubscriptionStringInput | null,
+  inProgress?: ModelSubscriptionBooleanInput | null,
+  notes?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionUserPatchFilterInput | null > | null,
+  patchID?: ModelSubscriptionIDInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  userID?: ModelStringInput | null,
+  wishlisted?: ModelSubscriptionBooleanInput | null,
+};
+
+export type ModelSubscriptionUserTrailFilterInput = {
+  and?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  dateCompleted?: ModelSubscriptionStringInput | null,
+  id?: ModelSubscriptionIDInput | null,
+  milesRemaining?: ModelSubscriptionFloatInput | null,
+  notes?: ModelSubscriptionStringInput | null,
+  or?: Array< ModelSubscriptionUserTrailFilterInput | null > | null,
+  trailID?: ModelSubscriptionIDInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  userID?: ModelStringInput | null,
+};
+
+export type GetAdminNotificationQueryVariables = {
+  id: string,
+};
+
+export type GetAdminNotificationQuery = {
+  getAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetAppSettingQueryVariables = {
+  key: string,
+};
+
+export type GetAppSettingQuery = {
+  getAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type GetMountainQueryVariables = {
+  id: string,
+};
+
+export type GetMountainQuery = {
+  getMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type GetPatchQueryVariables = {
+  id: string,
+};
+
+export type GetPatchQuery = {
+  getPatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type GetPatchMountainQueryVariables = {
+  id: string,
+};
+
+export type GetPatchMountainQuery = {
+  getPatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetPatchOwnerQueryVariables = {
+  id: string,
+};
+
+export type GetPatchOwnerQuery = {
+  getPatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type GetPatchOwnerRequestQueryVariables = {
+  id: string,
+};
+
+export type GetPatchOwnerRequestQuery = {
+  getPatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type GetPatchProgressSummaryQueryVariables = {
+  patchId: string,
+  userId: string,
+};
+
+export type GetPatchProgressSummaryQuery = {
+  getPatchProgressSummary?:  {
+    __typename: "PatchProgress",
+    completed: number,
+    denom: number,
+    note?: string | null,
+    patchId: string,
+    percent: number,
+    userId: string,
+  } | null,
+};
+
+export type GetPatchPurchaseQueryVariables = {
+  id: string,
+};
+
+export type GetPatchPurchaseQuery = {
+  getPatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type GetPatchRequestQueryVariables = {
+  id: string,
+};
+
+export type GetPatchRequestQuery = {
+  getPatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetPatchTrailQueryVariables = {
+  id: string,
+};
+
+export type GetPatchTrailQuery = {
+  getPatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetRelatedPatchesQueryVariables = {
+  limit?: number | null,
+  patchId: string,
+};
+
+export type GetRelatedPatchesQuery = {
+  getRelatedPatches:  Array< {
+    __typename: "RelatedPatch",
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    matchScore: number,
+    name: string,
+    popularity?: number | null,
+    regions?: Array< string | null > | null,
+  } >,
+};
+
+export type GetTrailQueryVariables = {
+  id: string,
+};
+
+export type GetTrailQuery = {
+  getTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type GetUserMountainQueryVariables = {
+  id: string,
+};
+
+export type GetUserMountainQuery = {
+  getUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type GetUserPatchQueryVariables = {
+  id: string,
+};
+
+export type GetUserPatchQuery = {
+  getUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type GetUserTrailQueryVariables = {
+  trailID: string,
+  userID: string,
+};
+
+export type GetUserTrailQuery = {
+  getUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type ListAdminNotificationsQueryVariables = {
+  filter?: ModelAdminNotificationFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListAdminNotificationsQuery = {
+  listAdminNotifications?:  {
+    __typename: "ModelAdminNotificationConnection",
+    items:  Array< {
+      __typename: "AdminNotification",
+      body?: string | null,
+      createdAt: string,
+      id: string,
+      link?: string | null,
+      read?: boolean | null,
+      title: string,
+      type: NotificationType,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListAppSettingsQueryVariables = {
+  filter?: ModelAppSettingFilterInput | null,
+  key?: string | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type ListAppSettingsQuery = {
+  listAppSettings?:  {
+    __typename: "ModelAppSettingConnection",
+    items:  Array< {
+      __typename: "AppSetting",
+      createdAt: string,
+      key: string,
+      updatedAt: string,
+      value?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListMountainsQueryVariables = {
+  filter?: ModelMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListMountainsQuery = {
+  listMountains?:  {
+    __typename: "ModelMountainConnection",
+    items:  Array< {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchMountainsQueryVariables = {
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchMountainsQuery = {
+  listPatchMountains?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      createdAt: string,
+      delisted?: boolean | null,
+      id: string,
+      mountainPatchMountainsId?: string | null,
+      patchPatchMountainsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchOwnerRequestsQueryVariables = {
+  filter?: ModelPatchOwnerRequestFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchOwnerRequestsQuery = {
+  listPatchOwnerRequests?:  {
+    __typename: "ModelPatchOwnerRequestConnection",
+    items:  Array< {
+      __typename: "PatchOwnerRequest",
+      createdAt: string,
+      id: string,
+      message?: string | null,
+      patchID: string,
+      patchName: string,
+      status: OwnershipRequestStatus,
+      updatedAt: string,
+      userEmail: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchOwnersQueryVariables = {
+  filter?: ModelPatchOwnerFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchOwnersQuery = {
+  listPatchOwners?:  {
+    __typename: "ModelPatchOwnerConnection",
+    items:  Array< {
+      __typename: "PatchOwner",
+      createdAt: string,
+      id: string,
+      patchID: string,
+      patchName: string,
+      updatedAt: string,
+      userEmail: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchProgressQueryVariables = {
+  patchIds: Array< string >,
+  userId: string,
+};
+
+export type ListPatchProgressQuery = {
+  listPatchProgress:  Array< {
+    __typename: "PatchProgress",
+    completed: number,
+    denom: number,
+    note?: string | null,
+    patchId: string,
+    percent: number,
+    userId: string,
+  } >,
+};
+
+export type ListPatchPurchasesQueryVariables = {
+  filter?: ModelPatchPurchaseFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchPurchasesQuery = {
+  listPatchPurchases?:  {
+    __typename: "ModelPatchPurchaseConnection",
+    items:  Array< {
+      __typename: "PatchPurchase",
+      amount?: number | null,
+      createdAt: string,
+      currency?: string | null,
+      id: string,
+      patchId: string,
+      stripeReceiptUrl?: string | null,
+      stripeSessionId: string,
+      updatedAt: string,
+      userId: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchRequestsQueryVariables = {
+  filter?: ModelPatchRequestFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchRequestsQuery = {
+  listPatchRequests?:  {
+    __typename: "ModelPatchRequestConnection",
+    items:  Array< {
+      __typename: "PatchRequest",
+      createdAt: string,
+      description: string,
+      email: string,
+      id: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchTrailsQueryVariables = {
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchTrailsQuery = {
+  listPatchTrails?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      createdAt: string,
+      id: string,
+      patchPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      trailPatchTrailsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListPatchesQueryVariables = {
+  filter?: ModelPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatchesQuery = {
+  listPatches?:  {
+    __typename: "ModelPatchConnection",
+    items:  Array< {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListTrailsQueryVariables = {
+  filter?: ModelTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListTrailsQuery = {
+  listTrails?:  {
+    __typename: "ModelTrailConnection",
+    items:  Array< {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListUserMountainsQueryVariables = {
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListUserMountainsQuery = {
+  listUserMountains?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      createdAt: string,
+      dateClimbed: string,
+      id: string,
+      mountainID: string,
+      notes?: string | null,
+      owner?: string | null,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListUserPatchesQueryVariables = {
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListUserPatchesQuery = {
+  listUserPatches?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      createdAt: string,
+      dateCompleted?: string | null,
+      difficulty?: number | null,
+      id: string,
+      imageUrl?: string | null,
+      inProgress?: boolean | null,
+      notes?: string | null,
+      patchID: string,
+      updatedAt: string,
+      userID: string,
+      wishlisted?: boolean | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type ListUserTrailsQueryVariables = {
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  trailID?: ModelIDKeyConditionInput | null,
+  userID?: string | null,
+};
+
+export type ListUserTrailsQuery = {
+  listUserTrails?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      createdAt: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      trailID: string,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchMountainsByMountainQueryVariables = {
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  mountainPatchMountainsId: string,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type PatchMountainsByMountainQuery = {
+  patchMountainsByMountain?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      createdAt: string,
+      delisted?: boolean | null,
+      id: string,
+      mountainPatchMountainsId?: string | null,
+      patchPatchMountainsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchMountainsByPatchQueryVariables = {
+  filter?: ModelPatchMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  patchPatchMountainsId: string,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type PatchMountainsByPatchQuery = {
+  patchMountainsByPatch?:  {
+    __typename: "ModelPatchMountainConnection",
+    items:  Array< {
+      __typename: "PatchMountain",
+      createdAt: string,
+      delisted?: boolean | null,
+      id: string,
+      mountainPatchMountainsId?: string | null,
+      patchPatchMountainsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchOwnersByPatchQueryVariables = {
+  filter?: ModelPatchOwnerFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  patchID: string,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type PatchOwnersByPatchQuery = {
+  patchOwnersByPatch?:  {
+    __typename: "ModelPatchOwnerConnection",
+    items:  Array< {
+      __typename: "PatchOwner",
+      createdAt: string,
+      id: string,
+      patchID: string,
+      patchName: string,
+      updatedAt: string,
+      userEmail: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchOwnersByUserQueryVariables = {
+  filter?: ModelPatchOwnerFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type PatchOwnersByUserQuery = {
+  patchOwnersByUser?:  {
+    __typename: "ModelPatchOwnerConnection",
+    items:  Array< {
+      __typename: "PatchOwner",
+      createdAt: string,
+      id: string,
+      patchID: string,
+      patchName: string,
+      updatedAt: string,
+      userEmail: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchTrailsByPatchQueryVariables = {
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  patchPatchTrailsId: string,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type PatchTrailsByPatchQuery = {
+  patchTrailsByPatch?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      createdAt: string,
+      id: string,
+      patchPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      trailPatchTrailsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type PatchTrailsByTrailQueryVariables = {
+  filter?: ModelPatchTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  trailPatchTrailsId: string,
+};
+
+export type PatchTrailsByTrailQuery = {
+  patchTrailsByTrail?:  {
+    __typename: "ModelPatchTrailConnection",
+    items:  Array< {
+      __typename: "PatchTrail",
+      createdAt: string,
+      id: string,
+      patchPatchTrailsId?: string | null,
+      requiredMiles?: number | null,
+      trailPatchTrailsId?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByMountainQueryVariables = {
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  mountainID: string,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type UserMountainsByMountainQuery = {
+  userMountainsByMountain?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      createdAt: string,
+      dateClimbed: string,
+      id: string,
+      mountainID: string,
+      notes?: string | null,
+      owner?: string | null,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByUserQueryVariables = {
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserMountainsByUserQuery = {
+  userMountainsByUser?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      createdAt: string,
+      dateClimbed: string,
+      id: string,
+      mountainID: string,
+      notes?: string | null,
+      owner?: string | null,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByUserByDateQueryVariables = {
+  dateClimbed?: ModelStringKeyConditionInput | null,
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserMountainsByUserByDateQuery = {
+  userMountainsByUserByDate?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      createdAt: string,
+      dateClimbed: string,
+      id: string,
+      mountainID: string,
+      notes?: string | null,
+      owner?: string | null,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserMountainsByUserByMountainQueryVariables = {
+  filter?: ModelUserMountainFilterInput | null,
+  limit?: number | null,
+  mountainID?: ModelIDKeyConditionInput | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserMountainsByUserByMountainQuery = {
+  userMountainsByUserByMountain?:  {
+    __typename: "ModelUserMountainConnection",
+    items:  Array< {
+      __typename: "UserMountain",
+      createdAt: string,
+      dateClimbed: string,
+      id: string,
+      mountainID: string,
+      notes?: string | null,
+      owner?: string | null,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserPatchesByPatchQueryVariables = {
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  patchID: string,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type UserPatchesByPatchQuery = {
+  userPatchesByPatch?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      createdAt: string,
+      dateCompleted?: string | null,
+      difficulty?: number | null,
+      id: string,
+      imageUrl?: string | null,
+      inProgress?: boolean | null,
+      notes?: string | null,
+      patchID: string,
+      updatedAt: string,
+      userID: string,
+      wishlisted?: boolean | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserPatchesByUserByPatchQueryVariables = {
+  filter?: ModelUserPatchFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  patchID?: ModelIDKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserPatchesByUserByPatchQuery = {
+  userPatchesByUserByPatch?:  {
+    __typename: "ModelUserPatchConnection",
+    items:  Array< {
+      __typename: "UserPatch",
+      createdAt: string,
+      dateCompleted?: string | null,
+      difficulty?: number | null,
+      id: string,
+      imageUrl?: string | null,
+      inProgress?: boolean | null,
+      notes?: string | null,
+      patchID: string,
+      updatedAt: string,
+      userID: string,
+      wishlisted?: boolean | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByTrailQueryVariables = {
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  trailID: string,
+};
+
+export type UserTrailsByTrailQuery = {
+  userTrailsByTrail?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      createdAt: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      trailID: string,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByUserQueryVariables = {
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserTrailsByUserQuery = {
+  userTrailsByUser?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      createdAt: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      trailID: string,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserTrailsByUserByDateCompletedQueryVariables = {
+  dateCompleted?: ModelStringKeyConditionInput | null,
+  filter?: ModelUserTrailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userID: string,
+};
+
+export type UserTrailsByUserByDateCompletedQuery = {
+  userTrailsByUserByDateCompleted?:  {
+    __typename: "ModelUserTrailConnection",
+    items:  Array< {
+      __typename: "UserTrail",
+      createdAt: string,
+      dateCompleted?: string | null,
+      milesRemaining?: number | null,
+      notes?: string | null,
+      trailID: string,
+      updatedAt: string,
+      userID: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type CreateAdminNotificationMutationVariables = {
+  condition?: ModelAdminNotificationConditionInput | null,
+  input: CreateAdminNotificationInput,
+};
+
+export type CreateAdminNotificationMutation = {
+  createAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateAppSettingMutationVariables = {
+  condition?: ModelAppSettingConditionInput | null,
+  input: CreateAppSettingInput,
+};
+
+export type CreateAppSettingMutation = {
+  createAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type CreateMountainMutationVariables = {
+  condition?: ModelMountainConditionInput | null,
+  input: CreateMountainInput,
+};
+
+export type CreateMountainMutation = {
+  createMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type CreatePatchMutationVariables = {
+  condition?: ModelPatchConditionInput | null,
+  input: CreatePatchInput,
+};
+
+export type CreatePatchMutation = {
+  createPatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type CreatePatchMountainMutationVariables = {
+  condition?: ModelPatchMountainConditionInput | null,
+  input: CreatePatchMountainInput,
+};
+
+export type CreatePatchMountainMutation = {
+  createPatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreatePatchOwnerMutationVariables = {
+  condition?: ModelPatchOwnerConditionInput | null,
+  input: CreatePatchOwnerInput,
+};
+
+export type CreatePatchOwnerMutation = {
+  createPatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type CreatePatchOwnerRequestMutationVariables = {
+  condition?: ModelPatchOwnerRequestConditionInput | null,
+  input: CreatePatchOwnerRequestInput,
+};
+
+export type CreatePatchOwnerRequestMutation = {
+  createPatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type CreatePatchPurchaseMutationVariables = {
+  condition?: ModelPatchPurchaseConditionInput | null,
+  input: CreatePatchPurchaseInput,
+};
+
+export type CreatePatchPurchaseMutation = {
+  createPatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type CreatePatchRequestMutationVariables = {
+  condition?: ModelPatchRequestConditionInput | null,
+  input: CreatePatchRequestInput,
+};
+
+export type CreatePatchRequestMutation = {
+  createPatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreatePatchTrailMutationVariables = {
+  condition?: ModelPatchTrailConditionInput | null,
+  input: CreatePatchTrailInput,
+};
+
+export type CreatePatchTrailMutation = {
+  createPatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateTrailMutationVariables = {
+  condition?: ModelTrailConditionInput | null,
+  input: CreateTrailInput,
+};
+
+export type CreateTrailMutation = {
+  createTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type CreateUserMountainMutationVariables = {
+  condition?: ModelUserMountainConditionInput | null,
+  input: CreateUserMountainInput,
+};
+
+export type CreateUserMountainMutation = {
+  createUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type CreateUserPatchMutationVariables = {
+  condition?: ModelUserPatchConditionInput | null,
+  input: CreateUserPatchInput,
+};
+
+export type CreateUserPatchMutation = {
+  createUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type CreateUserTrailMutationVariables = {
+  condition?: ModelUserTrailConditionInput | null,
+  input: CreateUserTrailInput,
+};
+
+export type CreateUserTrailMutation = {
+  createUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type DeleteAdminNotificationMutationVariables = {
+  condition?: ModelAdminNotificationConditionInput | null,
+  input: DeleteAdminNotificationInput,
+};
+
+export type DeleteAdminNotificationMutation = {
+  deleteAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteAppSettingMutationVariables = {
+  condition?: ModelAppSettingConditionInput | null,
+  input: DeleteAppSettingInput,
+};
+
+export type DeleteAppSettingMutation = {
+  deleteAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type DeleteMountainMutationVariables = {
+  condition?: ModelMountainConditionInput | null,
+  input: DeleteMountainInput,
+};
+
+export type DeleteMountainMutation = {
+  deleteMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type DeletePatchMutationVariables = {
+  condition?: ModelPatchConditionInput | null,
+  input: DeletePatchInput,
+};
+
+export type DeletePatchMutation = {
+  deletePatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type DeletePatchMountainMutationVariables = {
+  condition?: ModelPatchMountainConditionInput | null,
+  input: DeletePatchMountainInput,
+};
+
+export type DeletePatchMountainMutation = {
+  deletePatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchOwnerMutationVariables = {
+  condition?: ModelPatchOwnerConditionInput | null,
+  input: DeletePatchOwnerInput,
+};
+
+export type DeletePatchOwnerMutation = {
+  deletePatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type DeletePatchOwnerRequestMutationVariables = {
+  condition?: ModelPatchOwnerRequestConditionInput | null,
+  input: DeletePatchOwnerRequestInput,
+};
+
+export type DeletePatchOwnerRequestMutation = {
+  deletePatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type DeletePatchPurchaseMutationVariables = {
+  condition?: ModelPatchPurchaseConditionInput | null,
+  input: DeletePatchPurchaseInput,
+};
+
+export type DeletePatchPurchaseMutation = {
+  deletePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type DeletePatchRequestMutationVariables = {
+  condition?: ModelPatchRequestConditionInput | null,
+  input: DeletePatchRequestInput,
+};
+
+export type DeletePatchRequestMutation = {
+  deletePatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeletePatchTrailMutationVariables = {
+  condition?: ModelPatchTrailConditionInput | null,
+  input: DeletePatchTrailInput,
+};
+
+export type DeletePatchTrailMutation = {
+  deletePatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteTrailMutationVariables = {
+  condition?: ModelTrailConditionInput | null,
+  input: DeleteTrailInput,
+};
+
+export type DeleteTrailMutation = {
+  deleteTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type DeleteUserMountainMutationVariables = {
+  condition?: ModelUserMountainConditionInput | null,
+  input: DeleteUserMountainInput,
+};
+
+export type DeleteUserMountainMutation = {
+  deleteUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type DeleteUserPatchMutationVariables = {
+  condition?: ModelUserPatchConditionInput | null,
+  input: DeleteUserPatchInput,
+};
+
+export type DeleteUserPatchMutation = {
+  deleteUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type DeleteUserTrailMutationVariables = {
+  condition?: ModelUserTrailConditionInput | null,
+  input: DeleteUserTrailInput,
+};
+
+export type DeleteUserTrailMutation = {
+  deleteUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type UpdateAdminNotificationMutationVariables = {
+  condition?: ModelAdminNotificationConditionInput | null,
+  input: UpdateAdminNotificationInput,
+};
+
+export type UpdateAdminNotificationMutation = {
+  updateAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateAppSettingMutationVariables = {
+  condition?: ModelAppSettingConditionInput | null,
+  input: UpdateAppSettingInput,
+};
+
+export type UpdateAppSettingMutation = {
+  updateAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type UpdateMountainMutationVariables = {
+  condition?: ModelMountainConditionInput | null,
+  input: UpdateMountainInput,
+};
+
+export type UpdateMountainMutation = {
+  updateMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type UpdatePatchMutationVariables = {
+  condition?: ModelPatchConditionInput | null,
+  input: UpdatePatchInput,
+};
+
+export type UpdatePatchMutation = {
+  updatePatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type UpdatePatchMountainMutationVariables = {
+  condition?: ModelPatchMountainConditionInput | null,
+  input: UpdatePatchMountainInput,
+};
+
+export type UpdatePatchMountainMutation = {
+  updatePatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchOwnerMutationVariables = {
+  condition?: ModelPatchOwnerConditionInput | null,
+  input: UpdatePatchOwnerInput,
+};
+
+export type UpdatePatchOwnerMutation = {
+  updatePatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type UpdatePatchOwnerRequestMutationVariables = {
+  condition?: ModelPatchOwnerRequestConditionInput | null,
+  input: UpdatePatchOwnerRequestInput,
+};
+
+export type UpdatePatchOwnerRequestMutation = {
+  updatePatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type UpdatePatchPurchaseMutationVariables = {
+  condition?: ModelPatchPurchaseConditionInput | null,
+  input: UpdatePatchPurchaseInput,
+};
+
+export type UpdatePatchPurchaseMutation = {
+  updatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type UpdatePatchRequestMutationVariables = {
+  condition?: ModelPatchRequestConditionInput | null,
+  input: UpdatePatchRequestInput,
+};
+
+export type UpdatePatchRequestMutation = {
+  updatePatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdatePatchTrailMutationVariables = {
+  condition?: ModelPatchTrailConditionInput | null,
+  input: UpdatePatchTrailInput,
+};
+
+export type UpdatePatchTrailMutation = {
+  updatePatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateTrailMutationVariables = {
+  condition?: ModelTrailConditionInput | null,
+  input: UpdateTrailInput,
+};
+
+export type UpdateTrailMutation = {
+  updateTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type UpdateUserMountainMutationVariables = {
+  condition?: ModelUserMountainConditionInput | null,
+  input: UpdateUserMountainInput,
+};
+
+export type UpdateUserMountainMutation = {
+  updateUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type UpdateUserPatchMutationVariables = {
+  condition?: ModelUserPatchConditionInput | null,
+  input: UpdateUserPatchInput,
+};
+
+export type UpdateUserPatchMutation = {
+  updateUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type UpdateUserTrailMutationVariables = {
+  condition?: ModelUserTrailConditionInput | null,
+  input: UpdateUserTrailInput,
+};
+
+export type UpdateUserTrailMutation = {
+  updateUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnCreateAdminNotificationSubscriptionVariables = {
+  filter?: ModelSubscriptionAdminNotificationFilterInput | null,
+};
+
+export type OnCreateAdminNotificationSubscription = {
+  onCreateAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateAppSettingSubscriptionVariables = {
+  filter?: ModelSubscriptionAppSettingFilterInput | null,
+};
+
+export type OnCreateAppSettingSubscription = {
+  onCreateAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type OnCreateMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionMountainFilterInput | null,
+};
+
+export type OnCreateMountainSubscription = {
+  onCreateMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type OnCreatePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
+};
+
+export type OnCreatePatchSubscription = {
+  onCreatePatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type OnCreatePatchMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchMountainFilterInput | null,
+};
+
+export type OnCreatePatchMountainSubscription = {
+  onCreatePatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreatePatchOwnerSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerFilterInput | null,
+};
+
+export type OnCreatePatchOwnerSubscription = {
+  onCreatePatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnCreatePatchOwnerRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerRequestFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnCreatePatchOwnerRequestSubscription = {
+  onCreatePatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnCreatePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnCreatePatchPurchaseSubscription = {
+  onCreatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type OnCreatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnCreatePatchRequestSubscription = {
+  onCreatePatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreatePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnCreatePatchTrailSubscription = {
+  onCreatePatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnCreateTrailSubscription = {
+  onCreateTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnCreateUserMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionUserMountainFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnCreateUserMountainSubscription = {
+  onCreateUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnCreateUserPatchSubscriptionVariables = {
+  filter?: ModelSubscriptionUserPatchFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnCreateUserPatchSubscription = {
+  onCreateUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type OnCreateUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnCreateUserTrailSubscription = {
+  onCreateUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnDeleteAdminNotificationSubscriptionVariables = {
+  filter?: ModelSubscriptionAdminNotificationFilterInput | null,
+};
+
+export type OnDeleteAdminNotificationSubscription = {
+  onDeleteAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteAppSettingSubscriptionVariables = {
+  filter?: ModelSubscriptionAppSettingFilterInput | null,
+};
+
+export type OnDeleteAppSettingSubscription = {
+  onDeleteAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type OnDeleteMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionMountainFilterInput | null,
+};
+
+export type OnDeleteMountainSubscription = {
+  onDeleteMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type OnDeletePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
+};
+
+export type OnDeletePatchSubscription = {
+  onDeletePatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type OnDeletePatchMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchMountainFilterInput | null,
+};
+
+export type OnDeletePatchMountainSubscription = {
+  onDeletePatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchOwnerSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerFilterInput | null,
+};
+
+export type OnDeletePatchOwnerSubscription = {
+  onDeletePatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnDeletePatchOwnerRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerRequestFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnDeletePatchOwnerRequestSubscription = {
+  onDeletePatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnDeletePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnDeletePatchPurchaseSubscription = {
+  onDeletePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type OnDeletePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnDeletePatchRequestSubscription = {
+  onDeletePatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeletePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnDeletePatchTrailSubscription = {
+  onDeletePatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnDeleteTrailSubscription = {
+  onDeleteTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnDeleteUserMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionUserMountainFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnDeleteUserMountainSubscription = {
+  onDeleteUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnDeleteUserPatchSubscriptionVariables = {
+  filter?: ModelSubscriptionUserPatchFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnDeleteUserPatchSubscription = {
+  onDeleteUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type OnDeleteUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnDeleteUserTrailSubscription = {
+  onDeleteUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnUpdateAdminNotificationSubscriptionVariables = {
+  filter?: ModelSubscriptionAdminNotificationFilterInput | null,
+};
+
+export type OnUpdateAdminNotificationSubscription = {
+  onUpdateAdminNotification?:  {
+    __typename: "AdminNotification",
+    body?: string | null,
+    createdAt: string,
+    id: string,
+    link?: string | null,
+    read?: boolean | null,
+    title: string,
+    type: NotificationType,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateAppSettingSubscriptionVariables = {
+  filter?: ModelSubscriptionAppSettingFilterInput | null,
+};
+
+export type OnUpdateAppSettingSubscription = {
+  onUpdateAppSetting?:  {
+    __typename: "AppSetting",
+    createdAt: string,
+    key: string,
+    updatedAt: string,
+    value?: string | null,
+  } | null,
+};
+
+export type OnUpdateMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionMountainFilterInput | null,
+};
+
+export type OnUpdateMountainSubscription = {
+  onUpdateMountain?:  {
+    __typename: "Mountain",
+    alltrailsUrl?: string | null,
+    city?: string | null,
+    createdAt: string,
+    elevation?: number | null,
+    id: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    peakbaggerUrl?: string | null,
+    state?: string | null,
+    updatedAt: string,
+    userMountains?:  {
+      __typename: "ModelUserMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    weatherUrl?: string | null,
+  } | null,
+};
+
+export type OnUpdatePatchSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchFilterInput | null,
+};
+
+export type OnUpdatePatchSubscription = {
+  onUpdatePatch?:  {
+    __typename: "Patch",
+    alltrailsUrl?: string | null,
+    completionRule?: string | null,
+    createdAt: string,
+    description?: string | null,
+    difficulty?: Difficulty | null,
+    facebookUrl?: string | null,
+    formUrl?: string | null,
+    hasPeaks?: boolean | null,
+    hasTrails?: boolean | null,
+    howToGet?: string | null,
+    id: string,
+    imageUrl?: string | null,
+    isPurchasable?: boolean | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    name: string,
+    patchMountains?:  {
+      __typename: "ModelPatchMountainConnection",
+      nextToken?: string | null,
+    } | null,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    popularity?: number | null,
+    purchaseUrl?: string | null,
+    regions?: Array< string | null > | null,
+    seasons?: Array< Season | null > | null,
+    status?: string | null,
+    updatedAt: string,
+    userPatches?:  {
+      __typename: "ModelUserPatchConnection",
+      nextToken?: string | null,
+    } | null,
+    websiteUrl?: string | null,
+  } | null,
+};
+
+export type OnUpdatePatchMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchMountainFilterInput | null,
+};
+
+export type OnUpdatePatchMountainSubscription = {
+  onUpdatePatchMountain?:  {
+    __typename: "PatchMountain",
+    createdAt: string,
+    delisted?: boolean | null,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainPatchMountainsId?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchMountainsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchOwnerSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerFilterInput | null,
+};
+
+export type OnUpdatePatchOwnerSubscription = {
+  onUpdatePatchOwner?:  {
+    __typename: "PatchOwner",
+    createdAt: string,
+    id: string,
+    patchID: string,
+    patchName: string,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnUpdatePatchOwnerRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchOwnerRequestFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnUpdatePatchOwnerRequestSubscription = {
+  onUpdatePatchOwnerRequest?:  {
+    __typename: "PatchOwnerRequest",
+    createdAt: string,
+    id: string,
+    message?: string | null,
+    patchID: string,
+    patchName: string,
+    status: OwnershipRequestStatus,
+    updatedAt: string,
+    userEmail: string,
+    userID: string,
+  } | null,
+};
+
+export type OnUpdatePatchPurchaseSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
+  userId?: string | null,
+};
+
+export type OnUpdatePatchPurchaseSubscription = {
+  onUpdatePatchPurchase?:  {
+    __typename: "PatchPurchase",
+    amount?: number | null,
+    createdAt: string,
+    currency?: string | null,
+    id: string,
+    patchId: string,
+    stripeReceiptUrl?: string | null,
+    stripeSessionId: string,
+    updatedAt: string,
+    userId: string,
+  } | null,
+};
+
+export type OnUpdatePatchRequestSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchRequestFilterInput | null,
+};
+
+export type OnUpdatePatchRequestSubscription = {
+  onUpdatePatchRequest?:  {
+    __typename: "PatchRequest",
+    createdAt: string,
+    description: string,
+    email: string,
+    id: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdatePatchTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionPatchTrailFilterInput | null,
+};
+
+export type OnUpdatePatchTrailSubscription = {
+  onUpdatePatchTrail?:  {
+    __typename: "PatchTrail",
+    createdAt: string,
+    id: string,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchPatchTrailsId?: string | null,
+    requiredMiles?: number | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailPatchTrailsId?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionTrailFilterInput | null,
+};
+
+export type OnUpdateTrailSubscription = {
+  onUpdateTrail?:  {
+    __typename: "Trail",
+    alltrailsUrl?: string | null,
+    createdAt: string,
+    description?: string | null,
+    id: string,
+    lengthMiles: number,
+    name: string,
+    patchTrails?:  {
+      __typename: "ModelPatchTrailConnection",
+      nextToken?: string | null,
+    } | null,
+    trailLinkUrl?: string | null,
+    updatedAt: string,
+    userTrails?:  {
+      __typename: "ModelUserTrailConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnUpdateUserMountainSubscriptionVariables = {
+  filter?: ModelSubscriptionUserMountainFilterInput | null,
+  owner?: string | null,
+};
+
+export type OnUpdateUserMountainSubscription = {
+  onUpdateUserMountain?:  {
+    __typename: "UserMountain",
+    createdAt: string,
+    dateClimbed: string,
+    id: string,
+    mountain?:  {
+      __typename: "Mountain",
+      alltrailsUrl?: string | null,
+      city?: string | null,
+      createdAt: string,
+      elevation?: number | null,
+      id: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      peakbaggerUrl?: string | null,
+      state?: string | null,
+      updatedAt: string,
+      weatherUrl?: string | null,
+    } | null,
+    mountainID: string,
+    notes?: string | null,
+    owner?: string | null,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+export type OnUpdateUserPatchSubscriptionVariables = {
+  filter?: ModelSubscriptionUserPatchFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnUpdateUserPatchSubscription = {
+  onUpdateUserPatch?:  {
+    __typename: "UserPatch",
+    createdAt: string,
+    dateCompleted?: string | null,
+    difficulty?: number | null,
+    id: string,
+    imageUrl?: string | null,
+    inProgress?: boolean | null,
+    notes?: string | null,
+    patch?:  {
+      __typename: "Patch",
+      alltrailsUrl?: string | null,
+      completionRule?: string | null,
+      createdAt: string,
+      description?: string | null,
+      difficulty?: Difficulty | null,
+      facebookUrl?: string | null,
+      formUrl?: string | null,
+      hasPeaks?: boolean | null,
+      hasTrails?: boolean | null,
+      howToGet?: string | null,
+      id: string,
+      imageUrl?: string | null,
+      isPurchasable?: boolean | null,
+      latitude?: number | null,
+      longitude?: number | null,
+      name: string,
+      popularity?: number | null,
+      purchaseUrl?: string | null,
+      regions?: Array< string | null > | null,
+      seasons?: Array< Season | null > | null,
+      status?: string | null,
+      updatedAt: string,
+      websiteUrl?: string | null,
+    } | null,
+    patchID: string,
+    updatedAt: string,
+    userID: string,
+    wishlisted?: boolean | null,
+  } | null,
+};
+
+export type OnUpdateUserTrailSubscriptionVariables = {
+  filter?: ModelSubscriptionUserTrailFilterInput | null,
+  userID?: string | null,
+};
+
+export type OnUpdateUserTrailSubscription = {
+  onUpdateUserTrail?:  {
+    __typename: "UserTrail",
+    createdAt: string,
+    dateCompleted?: string | null,
+    milesRemaining?: number | null,
+    notes?: string | null,
+    trail?:  {
+      __typename: "Trail",
+      alltrailsUrl?: string | null,
+      createdAt: string,
+      description?: string | null,
+      id: string,
+      lengthMiles: number,
+      name: string,
+      trailLinkUrl?: string | null,
+      updatedAt: string,
+    } | null,
+    trailID: string,
+    updatedAt: string,
+    userID: string,
+  } | null,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HAND-MAINTAINED SECTION — everything above this line is emitted by
+// `ampx generate graphql-client-code` and will be overwritten by the next run.
+// The types below back the custom operations in src/graphql/custom-*.ts, which
+// codegen knows nothing about. RE-APPEND THIS SECTION after regenerating.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export enum PatchStatus {
+  DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
+  ARCHIVED = "ARCHIVED",
+}
+
+export type ModelPatchStatusInput = {
+  eq?: PatchStatus | null,
+  ne?: PatchStatus | null,
 };
 
 export type DeleteUserMountainMinimalMutationVariables = {
@@ -1514,2916 +5688,6 @@ export type GetTrailPublicQuery = {
     name: string,
     description?: string | null,
     lengthMiles: number,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreatePatchMutationVariables = {
-  input: CreatePatchInput,
-  condition?: ModelPatchConditionInput | null,
-};
-
-export type CreatePatchMutation = {
-  createPatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchMutationVariables = {
-  input: UpdatePatchInput,
-  condition?: ModelPatchConditionInput | null,
-};
-
-export type UpdatePatchMutation = {
-  updatePatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchMutationVariables = {
-  input: DeletePatchInput,
-  condition?: ModelPatchConditionInput | null,
-};
-
-export type DeletePatchMutation = {
-  deletePatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateUserPatchMutationVariables = {
-  input: CreateUserPatchInput,
-  condition?: ModelUserPatchConditionInput | null,
-};
-
-export type CreateUserPatchMutation = {
-  createUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateUserPatchMutationVariables = {
-  input: UpdateUserPatchInput,
-  condition?: ModelUserPatchConditionInput | null,
-};
-
-export type UpdateUserPatchMutation = {
-  updateUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteUserPatchMutationVariables = {
-  input: DeleteUserPatchInput,
-  condition?: ModelUserPatchConditionInput | null,
-};
-
-export type DeleteUserPatchMutation = {
-  deleteUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreatePatchRequestMutationVariables = {
-  input: CreatePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
-};
-
-export type CreatePatchRequestMutation = {
-  createPatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchRequestMutationVariables = {
-  input: UpdatePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
-};
-
-export type UpdatePatchRequestMutation = {
-  updatePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchRequestMutationVariables = {
-  input: DeletePatchRequestInput,
-  condition?: ModelPatchRequestConditionInput | null,
-};
-
-export type DeletePatchRequestMutation = {
-  deletePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateMountainMutationVariables = {
-  input: CreateMountainInput,
-  condition?: ModelMountainConditionInput | null,
-};
-
-export type CreateMountainMutation = {
-  createMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateMountainMutationVariables = {
-  input: UpdateMountainInput,
-  condition?: ModelMountainConditionInput | null,
-};
-
-export type UpdateMountainMutation = {
-  updateMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteMountainMutationVariables = {
-  input: DeleteMountainInput,
-  condition?: ModelMountainConditionInput | null,
-};
-
-export type DeleteMountainMutation = {
-  deleteMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreatePatchMountainMutationVariables = {
-  input: CreatePatchMountainInput,
-  condition?: ModelPatchMountainConditionInput | null,
-};
-
-export type CreatePatchMountainMutation = {
-  createPatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchMountainMutationVariables = {
-  input: UpdatePatchMountainInput,
-  condition?: ModelPatchMountainConditionInput | null,
-};
-
-export type UpdatePatchMountainMutation = {
-  updatePatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchMountainMutationVariables = {
-  input: DeletePatchMountainInput,
-  condition?: ModelPatchMountainConditionInput | null,
-};
-
-export type DeletePatchMountainMutation = {
-  deletePatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateUserMountainMutationVariables = {
-  input: CreateUserMountainInput,
-  condition?: ModelUserMountainConditionInput | null,
-};
-
-export type CreateUserMountainMutation = {
-  createUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type UpdateUserMountainMutationVariables = {
-  input: UpdateUserMountainInput,
-  condition?: ModelUserMountainConditionInput | null,
-};
-
-export type UpdateUserMountainMutation = {
-  updateUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type DeleteUserMountainMutationVariables = {
-  input: DeleteUserMountainInput,
-  condition?: ModelUserMountainConditionInput | null,
-};
-
-export type DeleteUserMountainMutation = {
-  deleteUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type CreateTrailMutationVariables = {
-  input: CreateTrailInput,
-  condition?: ModelTrailConditionInput | null,
-};
-
-export type CreateTrailMutation = {
-  createTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateTrailMutationVariables = {
-  input: UpdateTrailInput,
-  condition?: ModelTrailConditionInput | null,
-};
-
-export type UpdateTrailMutation = {
-  updateTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteTrailMutationVariables = {
-  input: DeleteTrailInput,
-  condition?: ModelTrailConditionInput | null,
-};
-
-export type DeleteTrailMutation = {
-  deleteTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreatePatchTrailMutationVariables = {
-  input: CreatePatchTrailInput,
-  condition?: ModelPatchTrailConditionInput | null,
-};
-
-export type CreatePatchTrailMutation = {
-  createPatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchTrailMutationVariables = {
-  input: UpdatePatchTrailInput,
-  condition?: ModelPatchTrailConditionInput | null,
-};
-
-export type UpdatePatchTrailMutation = {
-  updatePatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchTrailMutationVariables = {
-  input: DeletePatchTrailInput,
-  condition?: ModelPatchTrailConditionInput | null,
-};
-
-export type DeletePatchTrailMutation = {
-  deletePatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateUserTrailMutationVariables = {
-  input: CreateUserTrailInput,
-  condition?: ModelUserTrailConditionInput | null,
-};
-
-export type CreateUserTrailMutation = {
-  createUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateUserTrailMutationVariables = {
-  input: UpdateUserTrailInput,
-  condition?: ModelUserTrailConditionInput | null,
-};
-
-export type UpdateUserTrailMutation = {
-  updateUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteUserTrailMutationVariables = {
-  input: DeleteUserTrailInput,
-  condition?: ModelUserTrailConditionInput | null,
-};
-
-export type DeleteUserTrailMutation = {
-  deleteUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreatePatchPurchaseMutationVariables = {
-  input: CreatePatchPurchaseInput,
-  condition?: ModelPatchPurchaseConditionInput | null,
-};
-
-export type CreatePatchPurchaseMutation = {
-  createPatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdatePatchPurchaseMutationVariables = {
-  input: UpdatePatchPurchaseInput,
-  condition?: ModelPatchPurchaseConditionInput | null,
-};
-
-export type UpdatePatchPurchaseMutation = {
-  updatePatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeletePatchPurchaseMutationVariables = {
-  input: DeletePatchPurchaseInput,
-  condition?: ModelPatchPurchaseConditionInput | null,
-};
-
-export type DeletePatchPurchaseMutation = {
-  deletePatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type GetPatchProgressSummaryQueryVariables = {
-  patchId: string,
-  userId: string,
-};
-
-export type GetPatchProgressSummaryQuery = {
-  getPatchProgressSummary?:  {
-    __typename: "PatchProgress",
-    patchId: string,
-    userId: string,
-    completed: number,
-    denom: number,
-    percent: number,
-    note?: string | null,
-  } | null,
-};
-
-export type ListPatchProgressQueryVariables = {
-  patchIds: Array< string >,
-  userId: string,
-};
-
-export type ListPatchProgressQuery = {
-  listPatchProgress:  Array< {
-    __typename: "PatchProgress",
-    patchId: string,
-    userId: string,
-    completed: number,
-    denom: number,
-    percent: number,
-    note?: string | null,
-  } >,
-};
-
-export type GetRelatedPatchesQueryVariables = {
-  patchId: string,
-  limit?: number | null,
-};
-
-export type GetRelatedPatchesQuery = {
-  getRelatedPatches:  Array< {
-    __typename: "RelatedPatch",
-    id: string,
-    name: string,
-    description?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    popularity?: number | null,
-    isPurchasable?: boolean | null,
-    matchScore: number,
-  } >,
-};
-
-export type GetPatchQueryVariables = {
-  id: string,
-};
-
-export type GetPatchQuery = {
-  getPatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchesQueryVariables = {
-  filter?: ModelPatchFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchesQuery = {
-  listPatches?:  {
-    __typename: "ModelPatchConnection",
-    items:  Array< {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetUserPatchQueryVariables = {
-  id: string,
-};
-
-export type GetUserPatchQuery = {
-  getUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListUserPatchesQueryVariables = {
-  filter?: ModelUserPatchFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListUserPatchesQuery = {
-  listUserPatches?:  {
-    __typename: "ModelUserPatchConnection",
-    items:  Array< {
-      __typename: "UserPatch",
-      id: string,
-      patchID: string,
-      userID: string,
-      dateCompleted?: string | null,
-      notes?: string | null,
-      difficulty?: number | null,
-      imageUrl?: string | null,
-      inProgress?: boolean | null,
-      wishlisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserPatchesByPatchQueryVariables = {
-  patchID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserPatchFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserPatchesByPatchQuery = {
-  userPatchesByPatch?:  {
-    __typename: "ModelUserPatchConnection",
-    items:  Array< {
-      __typename: "UserPatch",
-      id: string,
-      patchID: string,
-      userID: string,
-      dateCompleted?: string | null,
-      notes?: string | null,
-      difficulty?: number | null,
-      imageUrl?: string | null,
-      inProgress?: boolean | null,
-      wishlisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserPatchesByUserByPatchQueryVariables = {
-  userID: string,
-  patchID?: ModelIDKeyConditionInput | null,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserPatchFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserPatchesByUserByPatchQuery = {
-  userPatchesByUserByPatch?:  {
-    __typename: "ModelUserPatchConnection",
-    items:  Array< {
-      __typename: "UserPatch",
-      id: string,
-      patchID: string,
-      userID: string,
-      dateCompleted?: string | null,
-      notes?: string | null,
-      difficulty?: number | null,
-      imageUrl?: string | null,
-      inProgress?: boolean | null,
-      wishlisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetPatchRequestQueryVariables = {
-  id: string,
-};
-
-export type GetPatchRequestQuery = {
-  getPatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchRequestsQueryVariables = {
-  filter?: ModelPatchRequestFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchRequestsQuery = {
-  listPatchRequests?:  {
-    __typename: "ModelPatchRequestConnection",
-    items:  Array< {
-      __typename: "PatchRequest",
-      id: string,
-      email: string,
-      description: string,
-      createdAt?: string | null,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetMountainQueryVariables = {
-  id: string,
-};
-
-export type GetMountainQuery = {
-  getMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListMountainsQueryVariables = {
-  filter?: ModelMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListMountainsQuery = {
-  listMountains?:  {
-    __typename: "ModelMountainConnection",
-    items:  Array< {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetPatchMountainQueryVariables = {
-  id: string,
-};
-
-export type GetPatchMountainQuery = {
-  getPatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchMountainsQueryVariables = {
-  filter?: ModelPatchMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchMountainsQuery = {
-  listPatchMountains?:  {
-    __typename: "ModelPatchMountainConnection",
-    items:  Array< {
-      __typename: "PatchMountain",
-      id: string,
-      patchPatchMountainsId?: string | null,
-      mountainPatchMountainsId?: string | null,
-      delisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type PatchMountainsByPatchQueryVariables = {
-  patchPatchMountainsId: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelPatchMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type PatchMountainsByPatchQuery = {
-  patchMountainsByPatch?:  {
-    __typename: "ModelPatchMountainConnection",
-    items:  Array< {
-      __typename: "PatchMountain",
-      id: string,
-      patchPatchMountainsId?: string | null,
-      mountainPatchMountainsId?: string | null,
-      delisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type PatchMountainsByMountainQueryVariables = {
-  mountainPatchMountainsId: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelPatchMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type PatchMountainsByMountainQuery = {
-  patchMountainsByMountain?:  {
-    __typename: "ModelPatchMountainConnection",
-    items:  Array< {
-      __typename: "PatchMountain",
-      id: string,
-      patchPatchMountainsId?: string | null,
-      mountainPatchMountainsId?: string | null,
-      delisted?: boolean | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetUserMountainQueryVariables = {
-  id: string,
-};
-
-export type GetUserMountainQuery = {
-  getUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type ListUserMountainsQueryVariables = {
-  filter?: ModelUserMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListUserMountainsQuery = {
-  listUserMountains?:  {
-    __typename: "ModelUserMountainConnection",
-    items:  Array< {
-      __typename: "UserMountain",
-      id: string,
-      userID: string,
-      mountainID: string,
-      dateClimbed: string,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-      owner?: string | null,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserMountainsByUserQueryVariables = {
-  userID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserMountainsByUserQuery = {
-  userMountainsByUser?:  {
-    __typename: "ModelUserMountainConnection",
-    items:  Array< {
-      __typename: "UserMountain",
-      id: string,
-      userID: string,
-      mountainID: string,
-      dateClimbed: string,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-      owner?: string | null,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserMountainsByUserByMountainQueryVariables = {
-  userID: string,
-  mountainID?: ModelIDKeyConditionInput | null,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserMountainsByUserByMountainQuery = {
-  userMountainsByUserByMountain?:  {
-    __typename: "ModelUserMountainConnection",
-    items:  Array< {
-      __typename: "UserMountain",
-      id: string,
-      userID: string,
-      mountainID: string,
-      dateClimbed: string,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-      owner?: string | null,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserMountainsByUserByDateQueryVariables = {
-  userID: string,
-  dateClimbed?: ModelStringKeyConditionInput | null,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserMountainsByUserByDateQuery = {
-  userMountainsByUserByDate?:  {
-    __typename: "ModelUserMountainConnection",
-    items:  Array< {
-      __typename: "UserMountain",
-      id: string,
-      userID: string,
-      mountainID: string,
-      dateClimbed: string,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-      owner?: string | null,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserMountainsByMountainQueryVariables = {
-  mountainID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserMountainFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserMountainsByMountainQuery = {
-  userMountainsByMountain?:  {
-    __typename: "ModelUserMountainConnection",
-    items:  Array< {
-      __typename: "UserMountain",
-      id: string,
-      userID: string,
-      mountainID: string,
-      dateClimbed: string,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-      owner?: string | null,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetTrailQueryVariables = {
-  id: string,
-};
-
-export type GetTrailQuery = {
-  getTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListTrailsQueryVariables = {
-  filter?: ModelTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListTrailsQuery = {
-  listTrails?:  {
-    __typename: "ModelTrailConnection",
-    items:  Array< {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetPatchTrailQueryVariables = {
-  id: string,
-};
-
-export type GetPatchTrailQuery = {
-  getPatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchTrailsQueryVariables = {
-  filter?: ModelPatchTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchTrailsQuery = {
-  listPatchTrails?:  {
-    __typename: "ModelPatchTrailConnection",
-    items:  Array< {
-      __typename: "PatchTrail",
-      id: string,
-      patchPatchTrailsId?: string | null,
-      trailPatchTrailsId?: string | null,
-      requiredMiles?: number | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type PatchTrailsByPatchQueryVariables = {
-  patchPatchTrailsId: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelPatchTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type PatchTrailsByPatchQuery = {
-  patchTrailsByPatch?:  {
-    __typename: "ModelPatchTrailConnection",
-    items:  Array< {
-      __typename: "PatchTrail",
-      id: string,
-      patchPatchTrailsId?: string | null,
-      trailPatchTrailsId?: string | null,
-      requiredMiles?: number | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type PatchTrailsByTrailQueryVariables = {
-  trailPatchTrailsId: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelPatchTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type PatchTrailsByTrailQuery = {
-  patchTrailsByTrail?:  {
-    __typename: "ModelPatchTrailConnection",
-    items:  Array< {
-      __typename: "PatchTrail",
-      id: string,
-      patchPatchTrailsId?: string | null,
-      trailPatchTrailsId?: string | null,
-      requiredMiles?: number | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetUserTrailQueryVariables = {
-  userID: string,
-  trailID: string,
-};
-
-export type GetUserTrailQuery = {
-  getUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListUserTrailsQueryVariables = {
-  userID?: string | null,
-  trailID?: ModelIDKeyConditionInput | null,
-  filter?: ModelUserTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-  sortDirection?: ModelSortDirection | null,
-};
-
-export type ListUserTrailsQuery = {
-  listUserTrails?:  {
-    __typename: "ModelUserTrailConnection",
-    items:  Array< {
-      __typename: "UserTrail",
-      userID: string,
-      trailID: string,
-      dateCompleted?: string | null,
-      milesRemaining?: number | null,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserTrailsByUserQueryVariables = {
-  userID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserTrailsByUserQuery = {
-  userTrailsByUser?:  {
-    __typename: "ModelUserTrailConnection",
-    items:  Array< {
-      __typename: "UserTrail",
-      userID: string,
-      trailID: string,
-      dateCompleted?: string | null,
-      milesRemaining?: number | null,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserTrailsByUserByDateCompletedQueryVariables = {
-  userID: string,
-  dateCompleted?: ModelStringKeyConditionInput | null,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserTrailsByUserByDateCompletedQuery = {
-  userTrailsByUserByDateCompleted?:  {
-    __typename: "ModelUserTrailConnection",
-    items:  Array< {
-      __typename: "UserTrail",
-      userID: string,
-      trailID: string,
-      dateCompleted?: string | null,
-      milesRemaining?: number | null,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type UserTrailsByTrailQueryVariables = {
-  trailID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelUserTrailFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type UserTrailsByTrailQuery = {
-  userTrailsByTrail?:  {
-    __typename: "ModelUserTrailConnection",
-    items:  Array< {
-      __typename: "UserTrail",
-      userID: string,
-      trailID: string,
-      dateCompleted?: string | null,
-      milesRemaining?: number | null,
-      notes?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetPatchPurchaseQueryVariables = {
-  id: string,
-};
-
-export type GetPatchPurchaseQuery = {
-  getPatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListPatchPurchasesQueryVariables = {
-  filter?: ModelPatchPurchaseFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListPatchPurchasesQuery = {
-  listPatchPurchases?:  {
-    __typename: "ModelPatchPurchaseConnection",
-    items:  Array< {
-      __typename: "PatchPurchase",
-      id: string,
-      userId: string,
-      patchId: string,
-      stripeSessionId: string,
-      amount?: number | null,
-      currency?: string | null,
-      stripeReceiptUrl?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type OnCreatePatchSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchFilterInput | null,
-};
-
-export type OnCreatePatchSubscription = {
-  onCreatePatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdatePatchSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchFilterInput | null,
-};
-
-export type OnUpdatePatchSubscription = {
-  onUpdatePatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchFilterInput | null,
-};
-
-export type OnDeletePatchSubscription = {
-  onDeletePatch?:  {
-    __typename: "Patch",
-    id: string,
-    name: string,
-    description?: string | null,
-    howToGet?: string | null,
-    imageUrl?: string | null,
-    regions?: Array< string | null > | null,
-    difficulty?: Difficulty | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    popularity?: number | null,
-    hasPeaks?: boolean | null,
-    hasTrails?: boolean | null,
-    completionRule?: string | null,
-    isPurchasable?: boolean | null,
-    status?: PatchStatus | null,
-    seasons?: Array< Season | null > | null,
-    userPatches?:  {
-      __typename: "ModelUserPatchConnection",
-      nextToken?: string | null,
-    } | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateUserPatchSubscriptionVariables = {
-  filter?: ModelSubscriptionUserPatchFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnCreateUserPatchSubscription = {
-  onCreateUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateUserPatchSubscriptionVariables = {
-  filter?: ModelSubscriptionUserPatchFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnUpdateUserPatchSubscription = {
-  onUpdateUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteUserPatchSubscriptionVariables = {
-  filter?: ModelSubscriptionUserPatchFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnDeleteUserPatchSubscription = {
-  onDeleteUserPatch?:  {
-    __typename: "UserPatch",
-    id: string,
-    patchID: string,
-    patch?:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    userID: string,
-    dateCompleted?: string | null,
-    notes?: string | null,
-    difficulty?: number | null,
-    imageUrl?: string | null,
-    inProgress?: boolean | null,
-    wishlisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreatePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
-};
-
-export type OnCreatePatchRequestSubscription = {
-  onCreatePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdatePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
-};
-
-export type OnUpdatePatchRequestSubscription = {
-  onUpdatePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchRequestSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchRequestFilterInput | null,
-};
-
-export type OnDeletePatchRequestSubscription = {
-  onDeletePatchRequest?:  {
-    __typename: "PatchRequest",
-    id: string,
-    email: string,
-    description: string,
-    createdAt?: string | null,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionMountainFilterInput | null,
-};
-
-export type OnCreateMountainSubscription = {
-  onCreateMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionMountainFilterInput | null,
-};
-
-export type OnUpdateMountainSubscription = {
-  onUpdateMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionMountainFilterInput | null,
-};
-
-export type OnDeleteMountainSubscription = {
-  onDeleteMountain?:  {
-    __typename: "Mountain",
-    id: string,
-    name: string,
-    elevation?: number | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    city?: string | null,
-    state?: string | null,
-    patchMountains?:  {
-      __typename: "ModelPatchMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    userMountains?:  {
-      __typename: "ModelUserMountainConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreatePatchMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchMountainFilterInput | null,
-};
-
-export type OnCreatePatchMountainSubscription = {
-  onCreatePatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdatePatchMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchMountainFilterInput | null,
-};
-
-export type OnUpdatePatchMountainSubscription = {
-  onUpdatePatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchMountainFilterInput | null,
-};
-
-export type OnDeletePatchMountainSubscription = {
-  onDeletePatchMountain?:  {
-    __typename: "PatchMountain",
-    id: string,
-    patchPatchMountainsId?: string | null,
-    mountainPatchMountainsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    mountain:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    delisted?: boolean | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateUserMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionUserMountainFilterInput | null,
-  owner?: string | null,
-};
-
-export type OnCreateUserMountainSubscription = {
-  onCreateUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type OnUpdateUserMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionUserMountainFilterInput | null,
-  owner?: string | null,
-};
-
-export type OnUpdateUserMountainSubscription = {
-  onUpdateUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type OnDeleteUserMountainSubscriptionVariables = {
-  filter?: ModelSubscriptionUserMountainFilterInput | null,
-  owner?: string | null,
-};
-
-export type OnDeleteUserMountainSubscription = {
-  onDeleteUserMountain?:  {
-    __typename: "UserMountain",
-    id: string,
-    userID: string,
-    mountainID: string,
-    dateClimbed: string,
-    notes?: string | null,
-    mountain?:  {
-      __typename: "Mountain",
-      id: string,
-      name: string,
-      elevation?: number | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      city?: string | null,
-      state?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-    owner?: string | null,
-  } | null,
-};
-
-export type OnCreateTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionTrailFilterInput | null,
-};
-
-export type OnCreateTrailSubscription = {
-  onCreateTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionTrailFilterInput | null,
-};
-
-export type OnUpdateTrailSubscription = {
-  onUpdateTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionTrailFilterInput | null,
-};
-
-export type OnDeleteTrailSubscription = {
-  onDeleteTrail?:  {
-    __typename: "Trail",
-    id: string,
-    name: string,
-    description?: string | null,
-    lengthMiles: number,
-    patchTrails?:  {
-      __typename: "ModelPatchTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    userTrails?:  {
-      __typename: "ModelUserTrailConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreatePatchTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchTrailFilterInput | null,
-};
-
-export type OnCreatePatchTrailSubscription = {
-  onCreatePatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdatePatchTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchTrailFilterInput | null,
-};
-
-export type OnUpdatePatchTrailSubscription = {
-  onUpdatePatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchTrailFilterInput | null,
-};
-
-export type OnDeletePatchTrailSubscription = {
-  onDeletePatchTrail?:  {
-    __typename: "PatchTrail",
-    id: string,
-    patchPatchTrailsId?: string | null,
-    trailPatchTrailsId?: string | null,
-    patch:  {
-      __typename: "Patch",
-      id: string,
-      name: string,
-      description?: string | null,
-      howToGet?: string | null,
-      imageUrl?: string | null,
-      regions?: Array< string | null > | null,
-      difficulty?: Difficulty | null,
-      latitude?: number | null,
-      longitude?: number | null,
-      popularity?: number | null,
-      hasPeaks?: boolean | null,
-      hasTrails?: boolean | null,
-      completionRule?: string | null,
-      isPurchasable?: boolean | null,
-      status?: PatchStatus | null,
-      seasons?: Array< Season | null > | null,
-      createdAt: string,
-      updatedAt: string,
-    },
-    trail:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    },
-    requiredMiles?: number | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateUserTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionUserTrailFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnCreateUserTrailSubscription = {
-  onCreateUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateUserTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionUserTrailFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnUpdateUserTrailSubscription = {
-  onUpdateUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteUserTrailSubscriptionVariables = {
-  filter?: ModelSubscriptionUserTrailFilterInput | null,
-  userID?: string | null,
-};
-
-export type OnDeleteUserTrailSubscription = {
-  onDeleteUserTrail?:  {
-    __typename: "UserTrail",
-    userID: string,
-    trailID: string,
-    dateCompleted?: string | null,
-    milesRemaining?: number | null,
-    notes?: string | null,
-    trail?:  {
-      __typename: "Trail",
-      id: string,
-      name: string,
-      description?: string | null,
-      lengthMiles: number,
-      createdAt: string,
-      updatedAt: string,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreatePatchPurchaseSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
-  userId?: string | null,
-};
-
-export type OnCreatePatchPurchaseSubscription = {
-  onCreatePatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdatePatchPurchaseSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
-  userId?: string | null,
-};
-
-export type OnUpdatePatchPurchaseSubscription = {
-  onUpdatePatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeletePatchPurchaseSubscriptionVariables = {
-  filter?: ModelSubscriptionPatchPurchaseFilterInput | null,
-  userId?: string | null,
-};
-
-export type OnDeletePatchPurchaseSubscription = {
-  onDeletePatchPurchase?:  {
-    __typename: "PatchPurchase",
-    id: string,
-    userId: string,
-    patchId: string,
-    stripeSessionId: string,
-    amount?: number | null,
-    currency?: string | null,
-    stripeReceiptUrl?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,

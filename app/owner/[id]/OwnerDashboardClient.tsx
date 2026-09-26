@@ -199,7 +199,7 @@ export default function OwnerDashboardClient({ id }: { id: string }) {
         <div>
           <label className="block text-sm font-medium mb-1">Patch Image</label>
           {imageUrl && (
-            <img src={imageUrl} alt={patchName} className="w-32 h-auto rounded shadow mb-2" />
+            <img src={imageUrl} alt={patchName} className="w-32 h-auto mb-2" />
           )}
           <input
             type="file"

@@ -8,323 +8,62 @@ type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionOutput: OutputType;
 };
 
-export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onCreatePatch(filter: $filter) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnCreatePatchSubscriptionVariables,
-  APITypes.OnCreatePatchSubscription
->;
-export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onUpdatePatch(filter: $filter) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnUpdatePatchSubscriptionVariables,
-  APITypes.OnUpdatePatchSubscription
->;
-export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: ModelSubscriptionPatchFilterInput) {
-  onDeletePatch(filter: $filter) {
-    id
-    name
-    description
-    howToGet
-    imageUrl
-    regions
-    difficulty
-    latitude
-    longitude
-    popularity
-    hasPeaks
-    hasTrails
-    completionRule
-    isPurchasable
-    status
-    seasons
-    userPatches {
-      nextToken
-      __typename
-    }
-    patchMountains {
-      nextToken
-      __typename
-    }
-    patchTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeletePatchSubscriptionVariables,
-  APITypes.OnDeletePatchSubscription
->;
-export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
-  $filter: ModelSubscriptionUserPatchFilterInput
-  $userID: String
+export const onCreateAdminNotification = /* GraphQL */ `subscription OnCreateAdminNotification(
+  $filter: ModelSubscriptionAdminNotificationFilterInput
 ) {
-  onCreateUserPatch(filter: $filter, userID: $userID) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
+  onCreateAdminNotification(filter: $filter) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreateUserPatchSubscriptionVariables,
-  APITypes.OnCreateUserPatchSubscription
+  APITypes.OnCreateAdminNotificationSubscriptionVariables,
+  APITypes.OnCreateAdminNotificationSubscription
 >;
-export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
-  $filter: ModelSubscriptionUserPatchFilterInput
-  $userID: String
+export const onCreateAppSetting = /* GraphQL */ `subscription OnCreateAppSetting(
+  $filter: ModelSubscriptionAppSettingFilterInput
 ) {
-  onUpdateUserPatch(filter: $filter, userID: $userID) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
+  onCreateAppSetting(filter: $filter) {
     createdAt
+    key
     updatedAt
+    value
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdateUserPatchSubscriptionVariables,
-  APITypes.OnUpdateUserPatchSubscription
->;
-export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
-  $filter: ModelSubscriptionUserPatchFilterInput
-  $userID: String
-) {
-  onDeleteUserPatch(filter: $filter, userID: $userID) {
-    id
-    patchID
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    userID
-    dateCompleted
-    notes
-    difficulty
-    imageUrl
-    inProgress
-    wishlisted
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeleteUserPatchSubscriptionVariables,
-  APITypes.OnDeleteUserPatchSubscription
->;
-export const onCreatePatchRequest = /* GraphQL */ `subscription OnCreatePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onCreatePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnCreatePatchRequestSubscriptionVariables,
-  APITypes.OnCreatePatchRequestSubscription
->;
-export const onUpdatePatchRequest = /* GraphQL */ `subscription OnUpdatePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onUpdatePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnUpdatePatchRequestSubscriptionVariables,
-  APITypes.OnUpdatePatchRequestSubscription
->;
-export const onDeletePatchRequest = /* GraphQL */ `subscription OnDeletePatchRequest(
-  $filter: ModelSubscriptionPatchRequestFilterInput
-) {
-  onDeletePatchRequest(filter: $filter) {
-    id
-    email
-    description
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeletePatchRequestSubscriptionVariables,
-  APITypes.OnDeletePatchRequestSubscription
+  APITypes.OnCreateAppSettingSubscriptionVariables,
+  APITypes.OnCreateAppSettingSubscription
 >;
 export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($filter: ModelSubscriptionMountainFilterInput) {
   onCreateMountain(filter: $filter) {
-    id
-    name
+    alltrailsUrl
+    city
+    createdAt
     elevation
+    id
     latitude
     longitude
-    city
-    state
-    alltrailsUrl
+    name
     patchMountains {
       nextToken
       __typename
     }
+    peakbaggerUrl
+    state
+    updatedAt
     userMountains {
       nextToken
       __typename
     }
-    createdAt
-    updatedAt
+    weatherUrl
     __typename
   }
 }
@@ -332,103 +71,100 @@ export const onCreateMountain = /* GraphQL */ `subscription OnCreateMountain($fi
   APITypes.OnCreateMountainSubscriptionVariables,
   APITypes.OnCreateMountainSubscription
 >;
-export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($filter: ModelSubscriptionMountainFilterInput) {
-  onUpdateMountain(filter: $filter) {
+export const onCreatePatch = /* GraphQL */ `subscription OnCreatePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onCreatePatch(filter: $filter) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
     id
-    name
-    elevation
+    imageUrl
+    isPurchasable
     latitude
     longitude
-    city
-    state
-    alltrailsUrl
+    name
     patchMountains {
       nextToken
       __typename
     }
-    userMountains {
+    patchTrails {
       nextToken
       __typename
     }
-    createdAt
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
     updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdateMountainSubscriptionVariables,
-  APITypes.OnUpdateMountainSubscription
->;
-export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($filter: ModelSubscriptionMountainFilterInput) {
-  onDeleteMountain(filter: $filter) {
-    id
-    name
-    elevation
-    latitude
-    longitude
-    city
-    state
-    alltrailsUrl
-    patchMountains {
-      nextToken
-      __typename
-    }
-    userMountains {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeleteMountainSubscriptionVariables,
-  APITypes.OnDeleteMountainSubscription
+  APITypes.OnCreatePatchSubscriptionVariables,
+  APITypes.OnCreatePatchSubscription
 >;
 export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMountain(
   $filter: ModelSubscriptionPatchMountainFilterInput
 ) {
   onCreatePatchMountain(filter: $filter) {
+    createdAt
+    delisted
     id
-    patchPatchMountainsId
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
     mountainPatchMountainsId
     patch {
-      id
-      name
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      howToGet
-      imageUrl
-      regions
       difficulty
-      latitude
-      longitude
-      popularity
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
+      howToGet
       id
-      name
-      elevation
+      imageUrl
+      isPurchasable
       latitude
       longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
       updatedAt
+      websiteUrl
       __typename
     }
-    delisted
-    createdAt
+    patchPatchMountainsId
     updatedAt
     __typename
   }
@@ -437,319 +173,128 @@ export const onCreatePatchMountain = /* GraphQL */ `subscription OnCreatePatchMo
   APITypes.OnCreatePatchMountainSubscriptionVariables,
   APITypes.OnCreatePatchMountainSubscription
 >;
-export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMountain(
-  $filter: ModelSubscriptionPatchMountainFilterInput
+export const onCreatePatchOwner = /* GraphQL */ `subscription OnCreatePatchOwner(
+  $filter: ModelSubscriptionPatchOwnerFilterInput
 ) {
-  onUpdatePatchMountain(filter: $filter) {
-    id
-    patchPatchMountainsId
-    mountainPatchMountainsId
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    delisted
+  onCreatePatchOwner(filter: $filter) {
     createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnUpdatePatchMountainSubscriptionVariables,
-  APITypes.OnUpdatePatchMountainSubscription
->;
-export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMountain(
-  $filter: ModelSubscriptionPatchMountainFilterInput
-) {
-  onDeletePatchMountain(filter: $filter) {
     id
-    patchPatchMountainsId
-    mountainPatchMountainsId
-    patch {
-      id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
-      latitude
-      longitude
-      popularity
-      hasPeaks
-      hasTrails
-      completionRule
-      isPurchasable
-      status
-      seasons
-      createdAt
-      updatedAt
-      __typename
-    }
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    delisted
-    createdAt
+    patchID
+    patchName
     updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeletePatchMountainSubscriptionVariables,
-  APITypes.OnDeletePatchMountainSubscription
->;
-export const onCreateUserMountain = /* GraphQL */ `subscription OnCreateUserMountain(
-  $filter: ModelSubscriptionUserMountainFilterInput
-  $owner: String
-) {
-  onCreateUserMountain(filter: $filter, owner: $owner) {
-    id
+    userEmail
     userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
-    createdAt
-    updatedAt
-    owner
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreateUserMountainSubscriptionVariables,
-  APITypes.OnCreateUserMountainSubscription
+  APITypes.OnCreatePatchOwnerSubscriptionVariables,
+  APITypes.OnCreatePatchOwnerSubscription
 >;
-export const onUpdateUserMountain = /* GraphQL */ `subscription OnUpdateUserMountain(
-  $filter: ModelSubscriptionUserMountainFilterInput
-  $owner: String
+export const onCreatePatchOwnerRequest = /* GraphQL */ `subscription OnCreatePatchOwnerRequest(
+  $filter: ModelSubscriptionPatchOwnerRequestFilterInput
+  $userID: String
 ) {
-  onUpdateUserMountain(filter: $filter, owner: $owner) {
-    id
-    userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
+  onCreatePatchOwnerRequest(filter: $filter, userID: $userID) {
     createdAt
+    id
+    message
+    patchID
+    patchName
+    status
     updatedAt
-    owner
+    userEmail
+    userID
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdateUserMountainSubscriptionVariables,
-  APITypes.OnUpdateUserMountainSubscription
+  APITypes.OnCreatePatchOwnerRequestSubscriptionVariables,
+  APITypes.OnCreatePatchOwnerRequestSubscription
 >;
-export const onDeleteUserMountain = /* GraphQL */ `subscription OnDeleteUserMountain(
-  $filter: ModelSubscriptionUserMountainFilterInput
-  $owner: String
+export const onCreatePatchPurchase = /* GraphQL */ `subscription OnCreatePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
 ) {
-  onDeleteUserMountain(filter: $filter, owner: $owner) {
-    id
-    userID
-    mountainID
-    dateClimbed
-    notes
-    mountain {
-      id
-      name
-      elevation
-      latitude
-      longitude
-      city
-      state
-      alltrailsUrl
-      createdAt
-      updatedAt
-      __typename
-    }
+  onCreatePatchPurchase(filter: $filter, userId: $userId) {
+    amount
     createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
     updatedAt
-    owner
+    userId
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnDeleteUserMountainSubscriptionVariables,
-  APITypes.OnDeleteUserMountainSubscription
+  APITypes.OnCreatePatchPurchaseSubscriptionVariables,
+  APITypes.OnCreatePatchPurchaseSubscription
 >;
-export const onCreateTrail = /* GraphQL */ `subscription OnCreateTrail($filter: ModelSubscriptionTrailFilterInput) {
-  onCreateTrail(filter: $filter) {
-    id
-    name
-    description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
+export const onCreatePatchRequest = /* GraphQL */ `subscription OnCreatePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
+) {
+  onCreatePatchRequest(filter: $filter) {
     createdAt
+    description
+    email
+    id
     updatedAt
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreateTrailSubscriptionVariables,
-  APITypes.OnCreateTrailSubscription
->;
-export const onUpdateTrail = /* GraphQL */ `subscription OnUpdateTrail($filter: ModelSubscriptionTrailFilterInput) {
-  onUpdateTrail(filter: $filter) {
-    id
-    name
-    description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnUpdateTrailSubscriptionVariables,
-  APITypes.OnUpdateTrailSubscription
->;
-export const onDeleteTrail = /* GraphQL */ `subscription OnDeleteTrail($filter: ModelSubscriptionTrailFilterInput) {
-  onDeleteTrail(filter: $filter) {
-    id
-    name
-    description
-    lengthMiles
-    alltrailsUrl
-    patchTrails {
-      nextToken
-      __typename
-    }
-    userTrails {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedSubscription<
-  APITypes.OnDeleteTrailSubscriptionVariables,
-  APITypes.OnDeleteTrailSubscription
+  APITypes.OnCreatePatchRequestSubscriptionVariables,
+  APITypes.OnCreatePatchRequestSubscription
 >;
 export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail(
   $filter: ModelSubscriptionPatchTrailFilterInput
 ) {
   onCreatePatchTrail(filter: $filter) {
+    createdAt
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
     patch {
-      id
-      name
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      howToGet
-      imageUrl
-      regions
       difficulty
-      latitude
-      longitude
-      popularity
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
+    patchPatchTrailsId
+    requiredMiles
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
-    createdAt
+    trailPatchTrailsId
     updatedAt
     __typename
   }
@@ -758,94 +303,432 @@ export const onCreatePatchTrail = /* GraphQL */ `subscription OnCreatePatchTrail
   APITypes.OnCreatePatchTrailSubscriptionVariables,
   APITypes.OnCreatePatchTrailSubscription
 >;
-export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail(
-  $filter: ModelSubscriptionPatchTrailFilterInput
-) {
-  onUpdatePatchTrail(filter: $filter) {
+export const onCreateTrail = /* GraphQL */ `subscription OnCreateTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onCreateTrail(filter: $filter) {
+    alltrailsUrl
+    createdAt
+    description
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
-    patch {
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
+      __typename
+    }
+    trailLinkUrl
+    updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateTrailSubscriptionVariables,
+  APITypes.OnCreateTrailSubscription
+>;
+export const onCreateUserMountain = /* GraphQL */ `subscription OnCreateUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
+) {
+  onCreateUserMountain(filter: $filter, owner: $owner) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
       id
-      name
-      description
-      howToGet
-      imageUrl
-      regions
-      difficulty
       latitude
       longitude
-      popularity
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainID
+    notes
+    owner
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserMountainSubscriptionVariables,
+  APITypes.OnCreateUserMountainSubscription
+>;
+export const onCreateUserPatch = /* GraphQL */ `subscription OnCreateUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $userID: String
+) {
+  onCreateUserPatch(filter: $filter, userID: $userID) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserPatchSubscriptionVariables,
+  APITypes.OnCreateUserPatchSubscription
+>;
+export const onCreateUserTrail = /* GraphQL */ `subscription OnCreateUserTrail(
+  $filter: ModelSubscriptionUserTrailFilterInput
+  $userID: String
+) {
+  onCreateUserTrail(filter: $filter, userID: $userID) {
+    createdAt
+    dateCompleted
+    milesRemaining
+    notes
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
+    trailID
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateUserTrailSubscriptionVariables,
+  APITypes.OnCreateUserTrailSubscription
+>;
+export const onDeleteAdminNotification = /* GraphQL */ `subscription OnDeleteAdminNotification(
+  $filter: ModelSubscriptionAdminNotificationFilterInput
+) {
+  onDeleteAdminNotification(filter: $filter) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdatePatchTrailSubscriptionVariables,
-  APITypes.OnUpdatePatchTrailSubscription
+  APITypes.OnDeleteAdminNotificationSubscriptionVariables,
+  APITypes.OnDeleteAdminNotificationSubscription
+>;
+export const onDeleteAppSetting = /* GraphQL */ `subscription OnDeleteAppSetting(
+  $filter: ModelSubscriptionAppSettingFilterInput
+) {
+  onDeleteAppSetting(filter: $filter) {
+    createdAt
+    key
+    updatedAt
+    value
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteAppSettingSubscriptionVariables,
+  APITypes.OnDeleteAppSettingSubscription
+>;
+export const onDeleteMountain = /* GraphQL */ `subscription OnDeleteMountain($filter: ModelSubscriptionMountainFilterInput) {
+  onDeleteMountain(filter: $filter) {
+    alltrailsUrl
+    city
+    createdAt
+    elevation
+    id
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    peakbaggerUrl
+    state
+    updatedAt
+    userMountains {
+      nextToken
+      __typename
+    }
+    weatherUrl
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteMountainSubscriptionVariables,
+  APITypes.OnDeleteMountainSubscription
+>;
+export const onDeletePatch = /* GraphQL */ `subscription OnDeletePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onDeletePatch(filter: $filter) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
+    id
+    imageUrl
+    isPurchasable
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
+      nextToken
+      __typename
+    }
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
+    updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchSubscriptionVariables,
+  APITypes.OnDeletePatchSubscription
+>;
+export const onDeletePatchMountain = /* GraphQL */ `subscription OnDeletePatchMountain(
+  $filter: ModelSubscriptionPatchMountainFilterInput
+) {
+  onDeletePatchMountain(filter: $filter) {
+    createdAt
+    delisted
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainPatchMountainsId
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchMountainsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchMountainSubscriptionVariables,
+  APITypes.OnDeletePatchMountainSubscription
+>;
+export const onDeletePatchOwner = /* GraphQL */ `subscription OnDeletePatchOwner(
+  $filter: ModelSubscriptionPatchOwnerFilterInput
+) {
+  onDeletePatchOwner(filter: $filter) {
+    createdAt
+    id
+    patchID
+    patchName
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchOwnerSubscriptionVariables,
+  APITypes.OnDeletePatchOwnerSubscription
+>;
+export const onDeletePatchOwnerRequest = /* GraphQL */ `subscription OnDeletePatchOwnerRequest(
+  $filter: ModelSubscriptionPatchOwnerRequestFilterInput
+  $userID: String
+) {
+  onDeletePatchOwnerRequest(filter: $filter, userID: $userID) {
+    createdAt
+    id
+    message
+    patchID
+    patchName
+    status
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchOwnerRequestSubscriptionVariables,
+  APITypes.OnDeletePatchOwnerRequestSubscription
+>;
+export const onDeletePatchPurchase = /* GraphQL */ `subscription OnDeletePatchPurchase(
+  $filter: ModelSubscriptionPatchPurchaseFilterInput
+  $userId: String
+) {
+  onDeletePatchPurchase(filter: $filter, userId: $userId) {
+    amount
+    createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
+    updatedAt
+    userId
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchPurchaseSubscriptionVariables,
+  APITypes.OnDeletePatchPurchaseSubscription
+>;
+export const onDeletePatchRequest = /* GraphQL */ `subscription OnDeletePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
+) {
+  onDeletePatchRequest(filter: $filter) {
+    createdAt
+    description
+    email
+    id
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeletePatchRequestSubscriptionVariables,
+  APITypes.OnDeletePatchRequestSubscription
 >;
 export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail(
   $filter: ModelSubscriptionPatchTrailFilterInput
 ) {
   onDeletePatchTrail(filter: $filter) {
+    createdAt
     id
-    patchPatchTrailsId
-    trailPatchTrailsId
     patch {
-      id
-      name
+      alltrailsUrl
+      completionRule
+      createdAt
       description
-      howToGet
-      imageUrl
-      regions
       difficulty
-      latitude
-      longitude
-      popularity
+      facebookUrl
+      formUrl
       hasPeaks
       hasTrails
-      completionRule
+      howToGet
+      id
+      imageUrl
       isPurchasable
-      status
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
       seasons
-      createdAt
+      status
       updatedAt
+      websiteUrl
       __typename
     }
+    patchPatchTrailsId
+    requiredMiles
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    requiredMiles
-    createdAt
+    trailPatchTrailsId
     updatedAt
     __typename
   }
@@ -854,86 +737,138 @@ export const onDeletePatchTrail = /* GraphQL */ `subscription OnDeletePatchTrail
   APITypes.OnDeletePatchTrailSubscriptionVariables,
   APITypes.OnDeletePatchTrailSubscription
 >;
-export const onCreateUserTrail = /* GraphQL */ `subscription OnCreateUserTrail(
-  $filter: ModelSubscriptionUserTrailFilterInput
-  $userID: String
-) {
-  onCreateUserTrail(filter: $filter, userID: $userID) {
-    userID
-    trailID
-    dateCompleted
-    milesRemaining
-    notes
-    trail {
-      id
-      name
-      description
-      lengthMiles
-      alltrailsUrl
-      createdAt
-      updatedAt
+export const onDeleteTrail = /* GraphQL */ `subscription OnDeleteTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onDeleteTrail(filter: $filter) {
+    alltrailsUrl
+    createdAt
+    description
+    id
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
       __typename
     }
-    createdAt
+    trailLinkUrl
     updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreateUserTrailSubscriptionVariables,
-  APITypes.OnCreateUserTrailSubscription
+  APITypes.OnDeleteTrailSubscriptionVariables,
+  APITypes.OnDeleteTrailSubscription
 >;
-export const onUpdateUserTrail = /* GraphQL */ `subscription OnUpdateUserTrail(
-  $filter: ModelSubscriptionUserTrailFilterInput
-  $userID: String
+export const onDeleteUserMountain = /* GraphQL */ `subscription OnDeleteUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
 ) {
-  onUpdateUserTrail(filter: $filter, userID: $userID) {
-    userID
-    trailID
-    dateCompleted
-    milesRemaining
-    notes
-    trail {
-      id
-      name
-      description
-      lengthMiles
+  onDeleteUserMountain(filter: $filter, owner: $owner) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
       alltrailsUrl
+      city
       createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
       updatedAt
+      weatherUrl
       __typename
     }
-    createdAt
+    mountainID
+    notes
+    owner
     updatedAt
+    userID
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdateUserTrailSubscriptionVariables,
-  APITypes.OnUpdateUserTrailSubscription
+  APITypes.OnDeleteUserMountainSubscriptionVariables,
+  APITypes.OnDeleteUserMountainSubscription
+>;
+export const onDeleteUserPatch = /* GraphQL */ `subscription OnDeleteUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $userID: String
+) {
+  onDeleteUserPatch(filter: $filter, userID: $userID) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteUserPatchSubscriptionVariables,
+  APITypes.OnDeleteUserPatchSubscription
 >;
 export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
   $filter: ModelSubscriptionUserTrailFilterInput
   $userID: String
 ) {
   onDeleteUserTrail(filter: $filter, userID: $userID) {
-    userID
-    trailID
+    createdAt
     dateCompleted
     milesRemaining
     notes
     trail {
-      id
-      name
-      description
-      lengthMiles
       alltrailsUrl
       createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
       updatedAt
       __typename
     }
-    createdAt
+    trailID
     updatedAt
+    userID
     __typename
   }
 }
@@ -941,41 +876,224 @@ export const onDeleteUserTrail = /* GraphQL */ `subscription OnDeleteUserTrail(
   APITypes.OnDeleteUserTrailSubscriptionVariables,
   APITypes.OnDeleteUserTrailSubscription
 >;
-export const onCreatePatchPurchase = /* GraphQL */ `subscription OnCreatePatchPurchase(
-  $filter: ModelSubscriptionPatchPurchaseFilterInput
-  $userId: String
+export const onUpdateAdminNotification = /* GraphQL */ `subscription OnUpdateAdminNotification(
+  $filter: ModelSubscriptionAdminNotificationFilterInput
 ) {
-  onCreatePatchPurchase(filter: $filter, userId: $userId) {
-    id
-    userId
-    patchId
-    stripeSessionId
-    amount
-    currency
-    stripeReceiptUrl
+  onUpdateAdminNotification(filter: $filter) {
+    body
     createdAt
+    id
+    link
+    read
+    title
+    type
     updatedAt
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreatePatchPurchaseSubscriptionVariables,
-  APITypes.OnCreatePatchPurchaseSubscription
+  APITypes.OnUpdateAdminNotificationSubscriptionVariables,
+  APITypes.OnUpdateAdminNotificationSubscription
+>;
+export const onUpdateAppSetting = /* GraphQL */ `subscription OnUpdateAppSetting(
+  $filter: ModelSubscriptionAppSettingFilterInput
+) {
+  onUpdateAppSetting(filter: $filter) {
+    createdAt
+    key
+    updatedAt
+    value
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateAppSettingSubscriptionVariables,
+  APITypes.OnUpdateAppSettingSubscription
+>;
+export const onUpdateMountain = /* GraphQL */ `subscription OnUpdateMountain($filter: ModelSubscriptionMountainFilterInput) {
+  onUpdateMountain(filter: $filter) {
+    alltrailsUrl
+    city
+    createdAt
+    elevation
+    id
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    peakbaggerUrl
+    state
+    updatedAt
+    userMountains {
+      nextToken
+      __typename
+    }
+    weatherUrl
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateMountainSubscriptionVariables,
+  APITypes.OnUpdateMountainSubscription
+>;
+export const onUpdatePatch = /* GraphQL */ `subscription OnUpdatePatch($filter: ModelSubscriptionPatchFilterInput) {
+  onUpdatePatch(filter: $filter) {
+    alltrailsUrl
+    completionRule
+    createdAt
+    description
+    difficulty
+    facebookUrl
+    formUrl
+    hasPeaks
+    hasTrails
+    howToGet
+    id
+    imageUrl
+    isPurchasable
+    latitude
+    longitude
+    name
+    patchMountains {
+      nextToken
+      __typename
+    }
+    patchTrails {
+      nextToken
+      __typename
+    }
+    popularity
+    purchaseUrl
+    regions
+    seasons
+    status
+    updatedAt
+    userPatches {
+      nextToken
+      __typename
+    }
+    websiteUrl
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchSubscriptionVariables,
+  APITypes.OnUpdatePatchSubscription
+>;
+export const onUpdatePatchMountain = /* GraphQL */ `subscription OnUpdatePatchMountain(
+  $filter: ModelSubscriptionPatchMountainFilterInput
+) {
+  onUpdatePatchMountain(filter: $filter) {
+    createdAt
+    delisted
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainPatchMountainsId
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchMountainsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchMountainSubscriptionVariables,
+  APITypes.OnUpdatePatchMountainSubscription
+>;
+export const onUpdatePatchOwner = /* GraphQL */ `subscription OnUpdatePatchOwner(
+  $filter: ModelSubscriptionPatchOwnerFilterInput
+) {
+  onUpdatePatchOwner(filter: $filter) {
+    createdAt
+    id
+    patchID
+    patchName
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchOwnerSubscriptionVariables,
+  APITypes.OnUpdatePatchOwnerSubscription
+>;
+export const onUpdatePatchOwnerRequest = /* GraphQL */ `subscription OnUpdatePatchOwnerRequest(
+  $filter: ModelSubscriptionPatchOwnerRequestFilterInput
+  $userID: String
+) {
+  onUpdatePatchOwnerRequest(filter: $filter, userID: $userID) {
+    createdAt
+    id
+    message
+    patchID
+    patchName
+    status
+    updatedAt
+    userEmail
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchOwnerRequestSubscriptionVariables,
+  APITypes.OnUpdatePatchOwnerRequestSubscription
 >;
 export const onUpdatePatchPurchase = /* GraphQL */ `subscription OnUpdatePatchPurchase(
   $filter: ModelSubscriptionPatchPurchaseFilterInput
   $userId: String
 ) {
   onUpdatePatchPurchase(filter: $filter, userId: $userId) {
-    id
-    userId
-    patchId
-    stripeSessionId
     amount
-    currency
-    stripeReceiptUrl
     createdAt
+    currency
+    id
+    patchId
+    stripeReceiptUrl
+    stripeSessionId
     updatedAt
+    userId
     __typename
   }
 }
@@ -983,24 +1101,212 @@ export const onUpdatePatchPurchase = /* GraphQL */ `subscription OnUpdatePatchPu
   APITypes.OnUpdatePatchPurchaseSubscriptionVariables,
   APITypes.OnUpdatePatchPurchaseSubscription
 >;
-export const onDeletePatchPurchase = /* GraphQL */ `subscription OnDeletePatchPurchase(
-  $filter: ModelSubscriptionPatchPurchaseFilterInput
-  $userId: String
+export const onUpdatePatchRequest = /* GraphQL */ `subscription OnUpdatePatchRequest(
+  $filter: ModelSubscriptionPatchRequestFilterInput
 ) {
-  onDeletePatchPurchase(filter: $filter, userId: $userId) {
-    id
-    userId
-    patchId
-    stripeSessionId
-    amount
-    currency
-    stripeReceiptUrl
+  onUpdatePatchRequest(filter: $filter) {
     createdAt
+    description
+    email
+    id
     updatedAt
     __typename
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnDeletePatchPurchaseSubscriptionVariables,
-  APITypes.OnDeletePatchPurchaseSubscription
+  APITypes.OnUpdatePatchRequestSubscriptionVariables,
+  APITypes.OnUpdatePatchRequestSubscription
+>;
+export const onUpdatePatchTrail = /* GraphQL */ `subscription OnUpdatePatchTrail(
+  $filter: ModelSubscriptionPatchTrailFilterInput
+) {
+  onUpdatePatchTrail(filter: $filter) {
+    createdAt
+    id
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchPatchTrailsId
+    requiredMiles
+    trail {
+      alltrailsUrl
+      createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
+      updatedAt
+      __typename
+    }
+    trailPatchTrailsId
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdatePatchTrailSubscriptionVariables,
+  APITypes.OnUpdatePatchTrailSubscription
+>;
+export const onUpdateTrail = /* GraphQL */ `subscription OnUpdateTrail($filter: ModelSubscriptionTrailFilterInput) {
+  onUpdateTrail(filter: $filter) {
+    alltrailsUrl
+    createdAt
+    description
+    id
+    lengthMiles
+    name
+    patchTrails {
+      nextToken
+      __typename
+    }
+    trailLinkUrl
+    updatedAt
+    userTrails {
+      nextToken
+      __typename
+    }
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateTrailSubscriptionVariables,
+  APITypes.OnUpdateTrailSubscription
+>;
+export const onUpdateUserMountain = /* GraphQL */ `subscription OnUpdateUserMountain(
+  $filter: ModelSubscriptionUserMountainFilterInput
+  $owner: String
+) {
+  onUpdateUserMountain(filter: $filter, owner: $owner) {
+    createdAt
+    dateClimbed
+    id
+    mountain {
+      alltrailsUrl
+      city
+      createdAt
+      elevation
+      id
+      latitude
+      longitude
+      name
+      peakbaggerUrl
+      state
+      updatedAt
+      weatherUrl
+      __typename
+    }
+    mountainID
+    notes
+    owner
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserMountainSubscriptionVariables,
+  APITypes.OnUpdateUserMountainSubscription
+>;
+export const onUpdateUserPatch = /* GraphQL */ `subscription OnUpdateUserPatch(
+  $filter: ModelSubscriptionUserPatchFilterInput
+  $userID: String
+) {
+  onUpdateUserPatch(filter: $filter, userID: $userID) {
+    createdAt
+    dateCompleted
+    difficulty
+    id
+    imageUrl
+    inProgress
+    notes
+    patch {
+      alltrailsUrl
+      completionRule
+      createdAt
+      description
+      difficulty
+      facebookUrl
+      formUrl
+      hasPeaks
+      hasTrails
+      howToGet
+      id
+      imageUrl
+      isPurchasable
+      latitude
+      longitude
+      name
+      popularity
+      purchaseUrl
+      regions
+      seasons
+      status
+      updatedAt
+      websiteUrl
+      __typename
+    }
+    patchID
+    updatedAt
+    userID
+    wishlisted
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserPatchSubscriptionVariables,
+  APITypes.OnUpdateUserPatchSubscription
+>;
+export const onUpdateUserTrail = /* GraphQL */ `subscription OnUpdateUserTrail(
+  $filter: ModelSubscriptionUserTrailFilterInput
+  $userID: String
+) {
+  onUpdateUserTrail(filter: $filter, userID: $userID) {
+    createdAt
+    dateCompleted
+    milesRemaining
+    notes
+    trail {
+      alltrailsUrl
+      createdAt
+      description
+      id
+      lengthMiles
+      name
+      trailLinkUrl
+      updatedAt
+      __typename
+    }
+    trailID
+    updatedAt
+    userID
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateUserTrailSubscriptionVariables,
+  APITypes.OnUpdateUserTrailSubscription
 >;

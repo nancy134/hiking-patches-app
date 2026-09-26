@@ -24,6 +24,7 @@ import { ModelSortDirection } from '@/API';
 import MountainAscentModal from '@/components/MountainAscentModal';
 import PatchMap from '@/components/PatchMap';
 import AllTrailsEmbed from '@/components/AllTrailsEmbed';
+import ReferenceLinks from '@/components/ReferenceLinks';
 
 const client = generateClient();
 
@@ -241,6 +242,14 @@ export default function MountainDetailPage() {
       ) : null}
 
       <AllTrailsEmbed url={mountain.alltrailsUrl} />
+
+      <ReferenceLinks
+        className="mb-6"
+        links={{
+          peakbagger: (mountain as any).peakbaggerUrl,
+          weather: (mountain as any).weatherUrl,
+        }}
+      />
 
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center justify-between gap-4">

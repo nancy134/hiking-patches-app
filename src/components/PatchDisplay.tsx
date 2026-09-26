@@ -10,7 +10,9 @@ type PatchDisplayProps = {
   status?: '' | 'In Progress' | 'Completed';
   progressPct?: number | null;
   extraFooter?: React.ReactNode;
-  topRight?: React.ReactNode; 
+  topRight?: React.ReactNode;
+  /** Compact cards show image + name only (used for Related Patches). */
+  compact?: boolean;
 };
 
 function StatusSkeleton() {
@@ -72,13 +74,14 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
   progressPct = null,
   extraFooter,
   topRight,
+  compact = false,
 }) => {
   let badgeColor = '';
   if (status === 'Completed') badgeColor = 'bg-green-600';
   else if (status === 'In Progress') badgeColor = 'bg-yellow-400 text-black';
 
   return (
-    <div className="relative border rounded shadow hover:shadow-lg transition p-4 cursor-pointer flex flex-col items-center bg-white">
+    <div className="relative h-full border rounded shadow hover:shadow-lg transition p-4 cursor-pointer flex flex-col items-center bg-white">
       {/* Difficulty icon – top left */}
       <div className="absolute top-2 left-2">
         {renderDifficultyIcon(difficulty)}
@@ -91,32 +94,32 @@ export const PatchDisplay: React.FC<PatchDisplayProps> = ({
           : (topRight ?? null)}
       </div>
 
-      {/* Image */}
-      {imageUrl && (
-        <div className="w-32 h-32 flex items-center justify-center mb-2">
+      {/* Image — fixed slot so every card lines up whether or not it has one */}
+      <div className="w-32 h-32 flex items-center justify-center mb-2 shrink-0">
+        {imageUrl && (
           <img
             src={imageUrl}
             alt={name}
             className="max-w-full max-h-full object-contain rounded"
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Name */}
-      <h2 className="text-xl font-semibold text-center">{name}</h2>
+      <h2 className={`${compact ? 'text-base' : 'text-xl'} font-semibold text-center line-clamp-2`}>{name}</h2>
 
-      {description && (
+      {!compact && description && (
         <p className="text-sm text-gray-600 line-clamp-2 text-center">{description}</p>
       )}
 
-      {regions && regions.length > 0 && (
+      {!compact && regions && regions.length > 0 && (
         <p className="text-sm text-gray-600 line-clamp-2 text-center">
           {regions.join(', ')}
         </p>
       )}
 
-      {/* NEW: reserved footer area for progress, sits below text */}
-      {extraFooter ? <div className="mt-3 w-full">{extraFooter}</div> : null}
+      {/* Reserved footer area for progress, sits below text (hidden when compact) */}
+      {!compact && extraFooter ? <div className="mt-3 w-full">{extraFooter}</div> : null}
     </div>
   );
 };
