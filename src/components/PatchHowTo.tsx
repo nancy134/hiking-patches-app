@@ -32,6 +32,11 @@ const PHRASES: Record<keyof HowToLinks, string> = {
 
 const ORDER: (keyof HowToLinks)[] = ['website', 'facebook', 'alltrails', 'form', 'purchase'];
 
+// Somewhere to read about the patch, versus something to go and do. They need
+// separate sentences: "Order the patch for more details" is nonsense, because
+// ordering is the action, not a source of information.
+const INFO: (keyof HowToLinks)[] = ['website', 'facebook', 'alltrails'];
+
 const norm = (u: string) => u.trim().replace(/\/+$/, '').toLowerCase();
 
 /**
@@ -111,26 +116,30 @@ export default function PatchHowTo({
 
   if (!prose && resolved.length === 0) return null;
 
-  // "visit the official website or join the Facebook page" / with commas for 3+.
-  const sentence = resolved.map(([kind, url], i) => {
-    const phrase = PHRASES[kind];
-    const text = i === 0 ? phrase.charAt(0).toUpperCase() + phrase.slice(1) : phrase;
-    const sep =
-      i === 0 ? null : i === resolved.length - 1 ? (resolved.length > 2 ? ', or ' : ' or ') : ', ';
-    return (
-      <span key={kind}>
-        {sep}
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline hover:text-blue-800"
-        >
-          {text}
-        </a>
-      </span>
-    );
-  });
+  // "visit the official website or join the Facebook page" / commas for 3+.
+  const series = (entries: readonly (readonly [keyof HowToLinks, string])[]) =>
+    entries.map(([kind, url], i) => {
+      const phrase = PHRASES[kind];
+      const text = i === 0 ? phrase.charAt(0).toUpperCase() + phrase.slice(1) : phrase;
+      const sep =
+        i === 0 ? null : i === entries.length - 1 ? (entries.length > 2 ? ', or ' : ' or ') : ', ';
+      return (
+        <span key={kind}>
+          {sep}
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            {text}
+          </a>
+        </span>
+      );
+    });
+
+  const info = resolved.filter(([k]) => INFO.includes(k));
+  const actions = resolved.filter(([k]) => !INFO.includes(k));
 
   return (
     <div className={`bg-white rounded shadow p-4 ${className}`}>
@@ -159,7 +168,9 @@ export default function PatchHowTo({
 
       {resolved.length > 0 && (
         <p className={`text-gray-800 ${prose ? 'mt-2' : ''}`}>
-          {sentence} for more details.
+          {info.length > 0 && <>{series(info)} for more details.</>}
+          {info.length > 0 && actions.length > 0 && ' '}
+          {actions.length > 0 && <>{series(actions)}.</>}
         </p>
       )}
     </div>
