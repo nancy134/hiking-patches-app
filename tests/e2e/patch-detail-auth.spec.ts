@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { login } from "./helpers/login";
 
-const PATCH_ID = "d2a1e7d3-b869-4b37-bd46-f77f04b905ee"; // Belknap Range
+const PATCH_ID = "9e42d722-e9dc-4b53-8af6-469ea93baf1c"; // Belknap Range — prod's id, valid in every env since the catalogue reseed
 
 test.describe("Patch detail page (authenticated)", () => {
   test.beforeEach(async ({ page }) => {
