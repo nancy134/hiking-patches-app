@@ -14,7 +14,10 @@ test.describe("Patch detail page", () => {
 
   test("shows sign-in prompt for unauthenticated users", async ({ page }) => {
     await expect(page.locator("h1")).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/sign in to mark your patch progress/i)).toBeVisible();
+    await expect(page.getByText(/track your progress on this patch/i)).toBeVisible();
+    // The prompt is a call to action now, so assert the link exists and carries
+    // the redirect back to this patch — the old static prompt had no link.
+    await expect(page.locator('a[href^="/auth?redirect="]')).toBeVisible();
   });
 
   test("does not redirect unauthenticated users", async ({ page }) => {
