@@ -526,6 +526,26 @@ export default function PatchFormModal({
               Patch can be purchased on our website
             </label>
 
+            {/* The checkout button lives in ProgressSummary, which the patch page
+                only renders when the patch has peaks or trails, and which keeps the
+                button disabled until progress reaches 100%. A purchasable patch with
+                nothing trackable therefore offers the buyer no way to pay — easy to
+                miss, since the admin form gives no hint. Warn here rather than
+                silently shipping an unbuyable patch. */}
+            {isPurchasable && !hasPeaks && !hasTrails && ruleType === 'default' && (
+              <div
+                role="alert"
+                className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+              >
+                <strong className="font-semibold">Heads up:</strong> this patch has no
+                peaks, no trails and no completion rule, so nothing tracks progress
+                towards it. The &ldquo;Get the Patch&rdquo; button only appears once a
+                patch is 100% complete, so buyers will have no way to purchase it. Add
+                peaks or trails, set a completion rule, or use a purchase URL under
+                Links instead.
+              </div>
+            )}
+
             {/* Completion Rule Editor */}
             <div className="border rounded p-3 space-y-3">
               <div className="font-semibold">Completion Rule</div>
