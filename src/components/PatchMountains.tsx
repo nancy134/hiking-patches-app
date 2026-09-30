@@ -19,6 +19,10 @@ import PatchMap from '@/components/PatchMap';
 
 const client = generateClient();
 
+// Stable identity for "this mountain has no ascents yet", so the ascent modal's
+// props don't change on every render of this component.
+const NO_ASCENTS: UserMountain[] = [];
+
 const VISIBLE_LIMIT = 5;
 
 type UserMountainMap = Record<string, UserMountain[] | undefined>;
@@ -578,7 +582,7 @@ export default function PatchMountains({
       {modalMountain && (
         <MountainAscentModal
           open={!!modalMountain}
-          userMountain={userMountainMap[modalMountain.mountain!.id] || []}
+          userMountain={userMountainMap[modalMountain.mountain!.id] ?? NO_ASCENTS}
           onClose={() => setModalMountain(null)}
           onSave={handleSave}
           mountainName={modalMountain.mountain?.name ?? ''}
