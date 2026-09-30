@@ -8,14 +8,8 @@ import { listTrails } from '@/graphql/queries';
 import { createPatchTrail, deletePatchTrail, updatePatchTrail } from '@/graphql/mutations';
 import { getPatchWithTrailsPaged } from '@/graphql/custom-queries';
 
-import type {
-  Trail,
-  Patch,
-  PatchTrail,
-  GetPatchWithTrailsQuery,
-  ListTrailsQuery,
-  UpdatePatchTrailInput,
-} from '@/API';
+import type { Trail, Patch, PatchTrail, ListTrailsQuery, UpdatePatchTrailInput } from '@/API';
+import type { GetPatchWithTrailsQuery } from '@/graphql/custom-types';
 
 const client = generateClient();
 
