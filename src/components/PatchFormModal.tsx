@@ -39,6 +39,9 @@ export default function PatchFormModal({
   // only a tooltip — so an admin editing the patch name could be stuck by a
   // pre-existing URL they never touched.
   const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
+  // A failed save used to leave the modal open with no indication of why, so an
+  // admin could retry indefinitely against an error only visible in the console.
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [regions, setRegions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty | ''>('');
@@ -200,6 +203,7 @@ export default function PatchFormModal({
     setUrlErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
+    setSaveError(null);
     setLoading(true);
     try {
       let imageUrl = patch?.imageUrl ?? '';
@@ -263,6 +267,14 @@ export default function PatchFormModal({
       onSaved();
     } catch (err) {
       console.error('Error saving patch:', err);
+      const detail =
+        (err as any)?.errors?.[0]?.message ??
+        (err instanceof Error ? err.message : null);
+      setSaveError(
+        detail
+          ? `Could not save this patch: ${detail}`
+          : 'Could not save this patch. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -588,6 +600,15 @@ export default function PatchFormModal({
             </div>
             {/* /Completion Rule Editor */}
           </div>
+
+          {saveError && (
+            <div
+              role="alert"
+              className="col-span-1 md:col-span-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            >
+              {saveError}
+            </div>
+          )}
 
           {/* Footer row spans both columns */}
           <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-2">

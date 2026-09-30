@@ -322,32 +322,43 @@ export default function PatchMountains({
     );
     const datesToAdd = newDates.filter((date) => !existingDates.has(date));
 
-    // Delete removed ascents
-    for (const um of datesToDelete) {
-      await client.graphql({
-        query: deleteUserMountainMinimal,
-        variables: { input: { id: um.id } },
-        authMode: 'userPool',
-      });
-    }
+    // The modal is already closed by this point, so a failure here is invisible
+    // unless we say so — the user would believe the ascent had been recorded.
+    try {
+      setError(null);
 
-    // Add new ascents
-    for (const date of datesToAdd) {
-      await client.graphql({
-        query: createUserMountainMinimal,
-        variables: {
-          input: {
-            userID: userId,
-            mountainID: mountainId,
-            dateClimbed: date,
+      // Delete removed ascents
+      for (const um of datesToDelete) {
+        await client.graphql({
+          query: deleteUserMountainMinimal,
+          variables: { input: { id: um.id } },
+          authMode: 'userPool',
+        });
+      }
+
+      // Add new ascents
+      for (const date of datesToAdd) {
+        await client.graphql({
+          query: createUserMountainMinimal,
+          variables: {
+            input: {
+              userID: userId,
+              mountainID: mountainId,
+              dateClimbed: date,
+            },
           },
-        },
-        authMode: 'userPool',
-      });
-    }
+          authMode: 'userPool',
+        });
+      }
 
-    if (datesToAdd.length > 0) {
-      await ensureUserPatchInProgress(userId, patchId).catch(console.error);
+      if (datesToAdd.length > 0) {
+        await ensureUserPatchInProgress(userId, patchId).catch(console.error);
+      }
+    } catch (e) {
+      console.error('Failed to save ascents:', e);
+      setError(
+        'Your ascents could not be saved. Please check your connection and try again.'
+      );
     }
 
     // Refresh local map
