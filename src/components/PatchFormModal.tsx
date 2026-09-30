@@ -5,6 +5,7 @@ import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
 import { Patch, Difficulty, PatchStatus, Season } from '@/API';
+import { absoluteUrl } from '@/lib/urls';
 import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import FileUploader from '@/components/FileUploader';
 
@@ -33,6 +34,11 @@ export default function PatchFormModal({
   const [alltrailsUrl, setAlltrailsUrl] = useState('');
   const [purchaseUrl, setPurchaseUrl] = useState('');
   const [formUrl, setFormUrl] = useState('');
+  // Per-field messages for the reference-link inputs. These used to be
+  // type="url", which let the browser block submission of the WHOLE form with
+  // only a tooltip — so an admin editing the patch name could be stuck by a
+  // pre-existing URL they never touched.
+  const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [regions, setRegions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty | ''>('');
@@ -166,8 +172,34 @@ export default function PatchFormModal({
     [completionRuleObject]
   );
 
+  const URL_LABELS: Record<string, string> = {
+    websiteUrl: 'Website URL',
+    facebookUrl: 'Facebook URL',
+    alltrailsUrl: 'AllTrails URL',
+    purchaseUrl: 'Purchase / order URL',
+    formUrl: 'Downloadable form URL',
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Normalise before saving: a stored "www.example.com" would otherwise be
+    // rendered as a relative href and navigate inside the app.
+    const rawUrls: Record<string, string> = {
+      websiteUrl, facebookUrl, alltrailsUrl, purchaseUrl, formUrl,
+    };
+    const urls: Record<string, string | null> = {};
+    const errs: Record<string, string> = {};
+    for (const [field, value] of Object.entries(rawUrls)) {
+      const raw = value.trim();
+      if (!raw) { urls[field] = null; continue; }
+      const abs = absoluteUrl(raw);
+      if (abs) urls[field] = abs;
+      else errs[field] = `${URL_LABELS[field]} doesn't look like a web address.`;
+    }
+    setUrlErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setLoading(true);
     try {
       let imageUrl = patch?.imageUrl ?? '';
@@ -187,11 +219,11 @@ export default function PatchFormModal({
         description,
         howToGet,
         imageUrl,
-        websiteUrl: websiteUrl.trim() || null,
-        facebookUrl: facebookUrl.trim() || null,
-        alltrailsUrl: alltrailsUrl.trim() || null,
-        purchaseUrl: purchaseUrl.trim() || null,
-        formUrl: formUrl.trim() || null,
+        websiteUrl: urls.websiteUrl,
+        facebookUrl: urls.facebookUrl,
+        alltrailsUrl: urls.alltrailsUrl,
+        purchaseUrl: urls.purchaseUrl,
+        formUrl: urls.formUrl,
         regions,
         difficulty: difficulty as Difficulty,
         latitude,
@@ -272,41 +304,76 @@ export default function PatchFormModal({
               rows={4}
             />
 
-            <input
-              type="url"
-              value={websiteUrl}
-              onChange={(e) => setWebsiteUrl(e.target.value)}
-              placeholder="Website URL"
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="url"
-              value={facebookUrl}
-              onChange={(e) => setFacebookUrl(e.target.value)}
-              placeholder="Facebook URL"
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="url"
-              value={alltrailsUrl}
-              onChange={(e) => setAlltrailsUrl(e.target.value)}
-              placeholder="AllTrails URL"
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="url"
-              value={purchaseUrl}
-              onChange={(e) => setPurchaseUrl(e.target.value)}
-              placeholder="Purchase / order URL"
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="url"
-              value={formUrl}
-              onChange={(e) => setFormUrl(e.target.value)}
-              placeholder="Downloadable form URL"
-              className="w-full p-2 border rounded"
-            />
+            <div>
+              <input
+                type="text"
+                inputMode="url"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+                placeholder="Website URL"
+                aria-invalid={!!urlErrors.websiteUrl}
+                className={`w-full p-2 border rounded ${urlErrors.websiteUrl ? 'border-red-500' : ''}`}
+              />
+              {urlErrors.websiteUrl && (
+                <p className="mt-1 text-sm text-red-600">{urlErrors.websiteUrl}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                inputMode="url"
+                value={facebookUrl}
+                onChange={(e) => setFacebookUrl(e.target.value)}
+                placeholder="Facebook URL"
+                aria-invalid={!!urlErrors.facebookUrl}
+                className={`w-full p-2 border rounded ${urlErrors.facebookUrl ? 'border-red-500' : ''}`}
+              />
+              {urlErrors.facebookUrl && (
+                <p className="mt-1 text-sm text-red-600">{urlErrors.facebookUrl}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                inputMode="url"
+                value={alltrailsUrl}
+                onChange={(e) => setAlltrailsUrl(e.target.value)}
+                placeholder="AllTrails URL"
+                aria-invalid={!!urlErrors.alltrailsUrl}
+                className={`w-full p-2 border rounded ${urlErrors.alltrailsUrl ? 'border-red-500' : ''}`}
+              />
+              {urlErrors.alltrailsUrl && (
+                <p className="mt-1 text-sm text-red-600">{urlErrors.alltrailsUrl}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                inputMode="url"
+                value={purchaseUrl}
+                onChange={(e) => setPurchaseUrl(e.target.value)}
+                placeholder="Purchase / order URL"
+                aria-invalid={!!urlErrors.purchaseUrl}
+                className={`w-full p-2 border rounded ${urlErrors.purchaseUrl ? 'border-red-500' : ''}`}
+              />
+              {urlErrors.purchaseUrl && (
+                <p className="mt-1 text-sm text-red-600">{urlErrors.purchaseUrl}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                inputMode="url"
+                value={formUrl}
+                onChange={(e) => setFormUrl(e.target.value)}
+                placeholder="Downloadable form URL"
+                aria-invalid={!!urlErrors.formUrl}
+                className={`w-full p-2 border rounded ${urlErrors.formUrl ? 'border-red-500' : ''}`}
+              />
+              {urlErrors.formUrl && (
+                <p className="mt-1 text-sm text-red-600">{urlErrors.formUrl}</p>
+              )}
+            </div>
 
             <FileUploader
               onFileSelected={(file) => setImageFile(file)}

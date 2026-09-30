@@ -81,6 +81,7 @@ mutation CreateUserMountain($input: CreateUserMountainInput!) {
 
 export default function PatchDetailClient({ id }: { id: string }) {
   const [patch, setPatch] = useState<Patch | null>(null);
+  const [loadingPatch, setLoadingPatch] = useState(true);
   const [dateCompleted, setDateCompleted] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState('');
   const [notes, setNotes] = useState('');
@@ -105,14 +106,17 @@ export default function PatchDetailClient({ id }: { id: string }) {
           variables: { id },
         });
         if ('data' in response) {
-          setPatch(response.data?.getPatch as Patch);
+          setPatch((response.data?.getPatch as Patch) ?? null);
         }
       } catch (error) {
         console.error('Error fetching patch:', error);
+      } finally {
+        setLoadingPatch(false);
       }
     };
 
     if (id) fetchPatch();
+    else setLoadingPatch(false);
   }, [id]);
 
   const fetchUserPatch = useCallback(async () => {
@@ -307,7 +311,9 @@ export default function PatchDetailClient({ id }: { id: string }) {
     }
   }, [patch]);
 
-  if (!patch) return <p className="p-4">Loading patch...</p>;
+  if (loadingPatch) return <div className="p-4">Loading patch…</div>;
+
+  if (!patch) return <div className="p-4">Patch not found.</div>;
 
   return (
     <>

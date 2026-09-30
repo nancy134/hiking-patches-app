@@ -11,12 +11,45 @@ npm run dev        # Start dev server with Turbopack at localhost:3000
 # Production
 npm run build      # Build for production
 npm run start      # Start production server
-
-# Code quality
-npm run lint       # Run ESLint
 ```
 
-No test suite is configured in this project.
+There is no lint step. `package.json` still defines `"lint": "next lint"`, but ESLint
+is not set up here — no config file and no `eslint` dependency — so running it drops
+into Next's interactive "How would you like to configure ESLint?" prompt and hangs
+rather than checking anything. Don't run it. (A stray `.eslintignore` remains from
+whenever it last worked.)
+
+## Tests
+
+There **is** a Playwright end-to-end suite — 25 tests across 8 specs in `tests/e2e/`
+(home, auth, sign-out, public pages, my-patches, patch detail signed-out and
+signed-in, add ascent). Run it:
+
+```bash
+npm run test:e2e                         # reporter is html — opens a report, no terminal output
+npx playwright test --reporter=line      # what you usually want locally
+npx playwright test tests/e2e/home.spec.ts   # one spec
+npm run test:e2e:report                  # reopen the last html report
+```
+
+Notes worth knowing before running it:
+
+- **Use `--workers=1` on the dev box.** 2 vCPU / 4 GiB does not comfortably run the
+  dev server plus parallel Chromium workers; the box has OOM-killed a dev server
+  during a concurrent build.
+- **Playwright starts its own dev server** (`webServer` in `playwright.config.ts`,
+  `reuseExistingServer` unless CI), so don't start `npm run dev` first — and don't run
+  `npm run build` at the same time, as they share `.next` and the build fails with a
+  confusing `Failed to collect page data for /favicon.ico`.
+- **The signed-in specs need `E2E_TEST_EMAIL` and `E2E_TEST_PASSWORD` in `.env.local`**
+  (see `tests/e2e/helpers/login.ts`, which throws without them).
+- **Tests run against whatever backend `amplify_outputs.json` points at** — normally
+  the personal sandbox — and against its real data, including hard-coded ids such as
+  the Belknap Range patch. They also write and clean up real records.
+- **`add-ascent.spec.ts` is intermittent.** It has failed twice and passed twice on
+  the same code; when it fails, the ascent never persists yet the modal still closes
+  as though it saved. Unresolved — treat a failure there as a known flake rather than
+  a regression until someone tracks down the race.
 
 ## Amplify backend deploys (IMPORTANT — Gen2)
 
