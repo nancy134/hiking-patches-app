@@ -62,9 +62,9 @@ if (!['id', 'name'].includes(MATCH_BY)) {
   process.exit(1);
 }
 
-const REPO_ROOT  = path.resolve(__dirname, '..', '..');
-const PATCH_CSV  = path.join(REPO_ROOT, 'patch-links-enriched.csv');
-const TRAIL_CSV  = path.join(REPO_ROOT, 'trail-links-enriched.csv');
+const DATA_DIR   = path.join(__dirname, 'data');
+const PATCH_CSV  = path.join(DATA_DIR, 'patch-links-enriched.csv');
+const TRAIL_CSV  = path.join(DATA_DIR, 'trail-links-enriched.csv');
 
 // CSV column → model field.
 const PATCH_FIELDS = {
