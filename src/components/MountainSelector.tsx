@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { listMountains } from '@/graphql/queries';
 import { createPatchMountain, deletePatchMountain, updatePatchMountain } from '@/graphql/mutations';
-import {
-  Mountain, Patch, PatchMountain,
-  UpdatePatchMountainInput, GetPatchWithMountainsQuery, ListMountainsQuery
-} from '@/API';
+import { Mountain, Patch, PatchMountain, UpdatePatchMountainInput, ListMountainsQuery } from '@/API';
+import { GetPatchWithMountainsQuery } from '@/graphql/custom-types';
 import { getPatchWithMountainsPaged } from '@/graphql/custom-queries';
 import { GraphQLResult } from '@aws-amplify/api';
 

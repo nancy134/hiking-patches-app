@@ -13,7 +13,7 @@ import {
 import { ensureUserPatchInProgress } from '@/lib/ensureUserPatchInProgress';
 import { GraphQLResult } from '@aws-amplify/api';
 import { ListPatchMountainsQueryVariables } from '@/API';
-import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/API';
+import { ListPatchMountainsWithMountainQuery as LPWQuery } from '@/graphql/custom-types';
 import Link from 'next/link';
 import PatchMap from '@/components/PatchMap';
 

@@ -9,7 +9,8 @@ import { generateClient } from 'aws-amplify/api';
 import { GraphQLResult } from '@aws-amplify/api';
 import { GraphQLQuery } from '@aws-amplify/api';
 import { getMountain } from '@/graphql/queries';
-import type { ListPatchMountainsWithPatchQuery, GetMountainQuery, Mountain, Patch, PatchMountain } from '@/API';
+import type { GetMountainQuery, Mountain, Patch, PatchMountain } from '@/API';
+import type { ListPatchMountainsWithPatchQuery } from '@/graphql/custom-types';
 import { listPatchMountains } from '@/graphql/queries';
 import { listPatchMountainsWithPatch } from '@/graphql/custom-queries';
 

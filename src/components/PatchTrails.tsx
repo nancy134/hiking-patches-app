@@ -9,13 +9,8 @@ import { createUserTrailMinimal, updateUserTrailMinimal, deleteUserTrailMinimal 
 import { ensureUserPatchInProgress } from '@/lib/ensureUserPatchInProgress';
 import { listUserTrails } from '@/graphql/queries';
 import Link from 'next/link';
-import type {
-  Trail,
-  PatchTrail,
-  ListPatchTrailsWithTrailQuery,
-  ListUserTrailsQuery,
-  UserTrail,
-} from '@/API';
+import type { Trail, PatchTrail, ListUserTrailsQuery, UserTrail } from '@/API';
+import type { ListPatchTrailsWithTrailQuery } from '@/graphql/custom-types';
 
 import TrailProgressModal from '@/components/TrailProgressModal';
 
