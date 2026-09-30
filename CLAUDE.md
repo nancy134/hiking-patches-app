@@ -46,10 +46,15 @@ Notes worth knowing before running it:
 - **Tests run against whatever backend `amplify_outputs.json` points at** — normally
   the personal sandbox — and against its real data, including hard-coded ids such as
   the Belknap Range patch. They also write and clean up real records.
-- **`add-ascent.spec.ts` is intermittent.** It has failed twice and passed twice on
-  the same code; when it fails, the ascent never persists yet the modal still closes
-  as though it saved. Unresolved — treat a failure there as a known flake rather than
-  a regression until someone tracks down the race.
+- **`add-ascent.spec.ts` used to be intermittent — it isn't any more, so treat a
+  failure there as a real regression.** It failed roughly two runs in three because
+  `PatchMountains` passed `userMountainMap[id] || []` to `MountainAscentModal`, a
+  fresh array identity on every parent render, and the modal re-seeded its draft
+  dates from that prop — wiping what the user had typed, so Save submitted an empty
+  list and the ascent was lost with no error shown. Fixed in `0acc08f`: the modal
+  seeds its draft only when the dialog opens, and the parent passes a stable
+  constant. If this spec starts failing again, look for something re-introducing
+  prop-identity churn or re-adding `userMountain` to that effect's dependencies.
 
 ## Amplify backend deploys (IMPORTANT — Gen2)
 
