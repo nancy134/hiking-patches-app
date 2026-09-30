@@ -11,10 +11,13 @@ npm run dev        # Start dev server with Turbopack at localhost:3000
 # Production
 npm run build      # Build for production
 npm run start      # Start production server
-
-# Code quality
-npm run lint       # Run ESLint
 ```
+
+There is no lint step. `package.json` still defines `"lint": "next lint"`, but ESLint
+is not set up here — no config file and no `eslint` dependency — so running it drops
+into Next's interactive "How would you like to configure ESLint?" prompt and hangs
+rather than checking anything. Don't run it. (A stray `.eslintignore` remains from
+whenever it last worked.)
 
 No test suite is configured in this project.
 
