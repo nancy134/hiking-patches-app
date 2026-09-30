@@ -21,16 +21,21 @@ export default function MountainAscentModal({
 }: MountainAscentModalProps) {
   const [ascentDates, setAscentDates] = useState<string[]>([]);
 
+  // Seed the draft when the dialog opens, and only then.
+  //
+  // `userMountain` is deliberately NOT a dependency. The parent passes
+  // `userMountainMap[id] ?? []`, and for a mountain with no ascents yet that
+  // used to be a fresh `[]` on every one of its renders — so this effect re-ran
+  // constantly and reset the dates while the user was typing. Save then
+  // submitted an empty list and the entry was lost with no error shown: an
+  // intermittent bug, since it only bit when a parent re-render landed between
+  // typing a date and clicking Save.
   useEffect(() => {
+    if (!open) return;
     const dates = userMountain.map((c) => c.dateClimbed).filter(Boolean);
-    setAscentDates(dates);
-  }, [userMountain]);
-
-  useEffect(() => {
-    if (open && userMountain.length === 0) {
-      setAscentDates(['']);
-    }
-  }, [open, userMountain]);
+    setAscentDates(dates.length > 0 ? dates : ['']);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleDateChange = (index: number, newDate: string) => {
     const newDates = [...ascentDates];
