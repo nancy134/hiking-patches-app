@@ -1,0 +1,14 @@
+{
+  "name": "reseed-catalogue",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Replace a non-prod environment's catalogue data with a copy of prod's",
+  "main": "index.js",
+  "scripts": {
+    "dry-run": "node index.js",
+    "execute": "node index.js --execute"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0"
+  }
+}
