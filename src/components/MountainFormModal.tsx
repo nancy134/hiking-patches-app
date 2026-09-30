@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { normaliseUrlFields } from '@/lib/urls';
 import { Mountain } from '@/API';
 import { createMountain, updateMountain } from '@/graphql/mutations';
 import { generateClient } from 'aws-amplify/api';
@@ -59,8 +60,30 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [errors, setErrors] = useState<
+    Partial<Record<'alltrailsUrl' | 'peakbaggerUrl' | 'weatherUrl', string>>
+  >({});
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Store absolute URLs so a bare "www.peakbagger.com/..." doesn't become a
+    // relative href that navigates inside the app.
+    const { values: urls, errors: urlErrs } = normaliseUrlFields(
+      {
+        alltrailsUrl: form.alltrailsUrl,
+        peakbaggerUrl: form.peakbaggerUrl,
+        weatherUrl: form.weatherUrl,
+      },
+      {
+        alltrailsUrl: 'AllTrails URL',
+        peakbaggerUrl: 'Peakbagger URL',
+        weatherUrl: 'Weather forecast URL',
+      }
+    );
+    setErrors(urlErrs);
+    if (Object.keys(urlErrs).length > 0) return;
 
     const input = {
       name: form.name.trim(),
@@ -69,28 +92,42 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
       longitude: parseFloat(form.longitude),
       city: form.city.trim(),
       state: form.state.trim(),
-      alltrailsUrl: form.alltrailsUrl.trim() || null,
-      peakbaggerUrl: form.peakbaggerUrl.trim() || null,
-      weatherUrl: form.weatherUrl.trim() || null
+      alltrailsUrl: urls.alltrailsUrl,
+      peakbaggerUrl: urls.peakbaggerUrl,
+      weatherUrl: urls.weatherUrl
     };
 
-    if (isEdit && mountain?.id) {
-      await client.graphql({
-        query: updateMountain,
-        variables: {
-          input: {
-            id: mountain.id,
-            ...input,
+    // Without this the save failed as an unhandled rejection: onSaved() never
+    // ran, so the modal simply sat there with no indication anything was wrong.
+    setSaveError(null);
+    try {
+      if (isEdit && mountain?.id) {
+        await client.graphql({
+          query: updateMountain,
+          variables: {
+            input: {
+              id: mountain.id,
+              ...input,
+            },
           },
-        },
-        authMode: 'userPool',
-      });
-    } else {
-      await client.graphql({
-        query: createMountain,
-        variables: { input },
-        authMode: 'userPool',
-      });
+          authMode: 'userPool',
+        });
+      } else {
+        await client.graphql({
+          query: createMountain,
+          variables: { input },
+          authMode: 'userPool',
+        });
+      }
+    } catch (err) {
+      console.error('Error saving mountain:', err);
+      const detail =
+        (err as any)?.errors?.[0]?.message ??
+        (err instanceof Error ? err.message : null);
+      setSaveError(
+        detail ? `Could not save this mountain: ${detail}` : 'Could not save this mountain. Please try again.'
+      );
+      return;
     }
 
     onSaved();
@@ -203,6 +240,7 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
               placeholder="https://www.peakbagger.com/peak.aspx?pid=..."
               className="w-full border px-3 py-2 rounded"
             />
+            {errors.peakbaggerUrl && <p className="mt-1 text-sm text-red-600">{errors.peakbaggerUrl}</p>}
           </div>
 
           <div>
@@ -214,7 +252,14 @@ export default function MountainFormModal({ mountain, onClose, onSaved }: Props)
               placeholder="https://forecast.weather.gov/..."
               className="w-full border px-3 py-2 rounded"
             />
+            {errors.weatherUrl && <p className="mt-1 text-sm text-red-600">{errors.weatherUrl}</p>}
           </div>
+
+          {saveError && (
+            <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {saveError}
+            </div>
+          )}
 
           <div className="flex justify-end gap-3 mt-6">
             <button

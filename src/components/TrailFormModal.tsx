@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { normaliseUrlFields } from '@/lib/urls';
 import type { Trail } from '@/API';
 import { createTrail, updateTrail } from '@/graphql/mutations';
 import { generateClient } from 'aws-amplify/api';
@@ -37,6 +38,9 @@ export default function TrailFormModal({
     }
   }, [trail]);
 
+  const [errors, setErrors] = useState<Partial<Record<'alltrailsUrl' | 'trailLinkUrl', string>>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -44,29 +48,52 @@ export default function TrailFormModal({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Store absolute URLs: a bare "www.traillink.com/..." would render as a
+    // relative href and navigate inside the app instead of out to the trail.
+    const { values: urls, errors: urlErrs } = normaliseUrlFields(
+      { alltrailsUrl: form.alltrailsUrl, trailLinkUrl: form.trailLinkUrl },
+      { alltrailsUrl: 'AllTrails widget URL', trailLinkUrl: 'TrailLink URL' }
+    );
+
     const input = {
       name: form.name.trim(),
       description: form.description.trim() || undefined,
       lengthMiles: Number(form.lengthMiles),
-      alltrailsUrl: form.alltrailsUrl.trim() || null,
-      trailLinkUrl: form.trailLinkUrl.trim() || null,
+      alltrailsUrl: urls.alltrailsUrl,
+      trailLinkUrl: urls.trailLinkUrl,
     };
     if (!Number.isFinite(input.lengthMiles) || input.lengthMiles <= 0) {
       alert('Length (miles) must be > 0'); return;
     }
 
-    if (isEdit && trail?.id) {
-      await client.graphql({
-        query: updateTrail,
-        variables: { input: { id: trail.id, ...input } },
-        authMode: 'userPool',
-      });
-    } else {
-      await client.graphql({
-        query: createTrail,
-        variables: { input },
-        authMode: 'userPool',
-      });
+    setErrors(urlErrs);
+    if (Object.keys(urlErrs).length > 0) return;
+
+    // Without this the save failed as an unhandled rejection: onSaved() never
+    // ran, so the modal simply sat there with no indication anything was wrong.
+    setSaveError(null);
+    try {
+      if (isEdit && trail?.id) {
+        await client.graphql({
+          query: updateTrail,
+          variables: { input: { id: trail.id, ...input } },
+          authMode: 'userPool',
+        });
+      } else {
+        await client.graphql({
+          query: createTrail,
+          variables: { input },
+          authMode: 'userPool',
+        });
+      }
+    } catch (err) {
+      console.error('Error saving trail:', err);
+      const detail =
+        (err as any)?.errors?.[0]?.message ??
+        (err instanceof Error ? err.message : null);
+      setSaveError(detail ? `Could not save this trail: ${detail}` : 'Could not save this trail. Please try again.');
+      return;
     }
     onSaved();
   }
@@ -92,11 +119,19 @@ export default function TrailFormModal({
             <label className="block font-medium">AllTrails widget URL</label>
             <input name="alltrailsUrl" value={form.alltrailsUrl} onChange={onChange} placeholder="https://www.alltrails.com/widget/..." className="w-full border px-3 py-2 rounded" />
             <p className="text-xs text-gray-500 mt-1">Paste the <code>src</code> URL from the AllTrails embed code (optional).</p>
+            {errors.alltrailsUrl && <p className="mt-1 text-sm text-red-600">{errors.alltrailsUrl}</p>}
           </div>
           <div>
             <label className="block font-medium">TrailLink URL</label>
             <input name="trailLinkUrl" value={form.trailLinkUrl} onChange={onChange} placeholder="https://www.traillink.com/trail/..." className="w-full border px-3 py-2 rounded" />
+            {errors.trailLinkUrl && <p className="mt-1 text-sm text-red-600">{errors.trailLinkUrl}</p>}
           </div>
+          {saveError && (
+            <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {saveError}
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 mt-6">
             <button type="button" onClick={onClose} className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Cancel</button>
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">

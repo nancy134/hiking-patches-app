@@ -5,7 +5,7 @@ import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/api';
 import { createPatch, updatePatch } from '@/graphql/mutations';
 import { Patch, Difficulty, PatchStatus, Season } from '@/API';
-import { absoluteUrl } from '@/lib/urls';
+import { normaliseUrlFields } from '@/lib/urls';
 import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import FileUploader from '@/components/FileUploader';
 
@@ -175,32 +175,24 @@ export default function PatchFormModal({
     [completionRuleObject]
   );
 
-  const URL_LABELS: Record<string, string> = {
+  const URL_LABELS = {
     websiteUrl: 'Website URL',
     facebookUrl: 'Facebook URL',
     alltrailsUrl: 'AllTrails URL',
     purchaseUrl: 'Purchase / order URL',
     formUrl: 'Downloadable form URL',
-  };
+  } as const;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Normalise before saving: a stored "www.example.com" would otherwise be
     // rendered as a relative href and navigate inside the app.
-    const rawUrls: Record<string, string> = {
-      websiteUrl, facebookUrl, alltrailsUrl, purchaseUrl, formUrl,
-    };
-    const urls: Record<string, string | null> = {};
-    const errs: Record<string, string> = {};
-    for (const [field, value] of Object.entries(rawUrls)) {
-      const raw = value.trim();
-      if (!raw) { urls[field] = null; continue; }
-      const abs = absoluteUrl(raw);
-      if (abs) urls[field] = abs;
-      else errs[field] = `${URL_LABELS[field]} doesn't look like a web address.`;
-    }
-    setUrlErrors(errs);
+    const { values: urls, errors: errs } = normaliseUrlFields(
+      { websiteUrl, facebookUrl, alltrailsUrl, purchaseUrl, formUrl },
+      URL_LABELS
+    );
+    setUrlErrors(errs as Record<string, string>);
     if (Object.keys(errs).length > 0) return;
 
     setSaveError(null);
