@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import Header from '@/components/Header';
@@ -25,6 +25,31 @@ export default function AdminUsersPage() {
   const [countsByUser, setCountsByUser] = useState<Record<string, UserCounts>>({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  // Newest first by default: the usual reason to open this page is to see who
+  // just signed up. Cognito's ListUsers returns no meaningful order of its own.
+  const [newestFirst, setNewestFirst] = useState(true);
+
+  const sortedUsers = useMemo(() => {
+    const stamp = (u: User) => {
+      const t = new Date(u.UserCreateDate).getTime();
+      return Number.isNaN(t) ? 0 : t;
+    };
+    return [...users].sort((a, b) => (newestFirst ? stamp(b) - stamp(a) : stamp(a) - stamp(b)));
+  }, [users, newestFirst]);
+
+  const toggleSort = () => {
+    setNewestFirst((v) => !v);
+    setPage(1);
+  };
+
+  const formatCreated = (value: string) => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return value;
+    return d.toLocaleString(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+  };
 
   useEffect(() => {
     const fetchUsersAndCounts = async () => {
@@ -93,14 +118,27 @@ export default function AdminUsersPage() {
         <p>Loading...</p>
       ) : (
         <>
-          <p className="text-sm text-gray-500 mb-2">{users.length} users total</p>
+          <p className="text-sm text-gray-500 mb-2">
+            {users.length} users total — {newestFirst ? 'newest first' : 'oldest first'}
+          </p>
           <div className="overflow-auto">
             <table className="min-w-full table-auto border border-gray-300 text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="border px-4 py-2 text-left">Email</th>
                   <th className="border px-4 py-2 text-left">Id</th>
-                  <th className="border px-4 py-2 text-left">Created</th>
+                  <th className="border px-4 py-2 text-left">
+                    <button
+                      type="button"
+                      onClick={toggleSort}
+                      className="inline-flex items-center gap-1 font-semibold hover:text-blue-700"
+                      title={newestFirst ? 'Showing newest first — click for oldest first' : 'Showing oldest first — click for newest first'}
+                      aria-label={`Sort by created date, currently ${newestFirst ? 'newest' : 'oldest'} first`}
+                    >
+                      Created
+                      <span aria-hidden="true">{newestFirst ? '▼' : '▲'}</span>
+                    </button>
+                  </th>
                   <th className="border px-4 py-2 text-left">Mountains</th>
                   <th className="border px-4 py-2 text-left">Patches</th>
                   <th className="border px-4 py-2 text-left">Trails</th>
@@ -108,7 +146,7 @@ export default function AdminUsersPage() {
               </thead>
 
               <tbody>
-                {users.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((user) => {
+                {sortedUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((user) => {
                   const email =
                     user.Attributes.find((attr) => attr.Name === 'email')?.Value;
 
@@ -122,7 +160,9 @@ export default function AdminUsersPage() {
                         )}
                       </td>
                       <td className="border px-4 py-2 font-medium">{user.Username}</td>
-                      <td className="border px-4 py-2">{user.UserCreateDate}</td>
+                      <td className="border px-4 py-2 whitespace-nowrap">
+                        {formatCreated(user.UserCreateDate)}
+                      </td>
 
                       <td className="border px-4 py-2">
                         {c ? renderLink(c.mountains, `/admin/users/${user.Username}/mountains`) : null}
