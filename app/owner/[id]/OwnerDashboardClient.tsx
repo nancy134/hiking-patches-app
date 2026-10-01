@@ -10,6 +10,7 @@ import Header from '@/components/Header';
 import { s3Bucket as bucket, s3Region as region } from '@/lib/config';
 import { patchOwnersByPatch as patchOwnersByPatchQuery } from '@/graphql/custom-queries';
 import { useOwnerEditingEnabled } from '@/lib/featureFlags';
+import { ID_TOKEN_HEADER } from '@/lib/apiToken';
 
 const client = generateClient();
 
@@ -88,7 +89,7 @@ export default function OwnerDashboardClient({ id }: { id: string }) {
         const token = session.tokens?.idToken?.toString();
         if (!token) return;
         const res = await fetch(`/api/patch-stats/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { [ID_TOKEN_HEADER]: token },
         });
         if (res.ok) setStats(await res.json());
       } catch (err) {
@@ -116,7 +117,7 @@ export default function OwnerDashboardClient({ id }: { id: string }) {
 
       const res = await fetch(`/api/owner-patch/${id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', [ID_TOKEN_HEADER]: token },
         body: JSON.stringify({ description, howToGet, imageUrl: newImageUrl }),
       });
 

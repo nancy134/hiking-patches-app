@@ -1,6 +1,7 @@
 // app/api/patch-stats/[id]/route.ts
 // Thin proxy to the list-users Lambda's /patch-stats route, which verifies
 // patch ownership server-side and returns aggregate progress counts only.
+import { idTokenFromRequest } from '@/lib/apiToken';
 const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function GET(
@@ -9,8 +10,7 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const authHeader = request.headers.get('authorization');
-  const token = authHeader?.split(' ')[1];
+  const token = idTokenFromRequest(request);
   if (!token) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }

@@ -1,6 +1,7 @@
 // app/api/owner-patch/[id]/route.ts
 // Thin proxy to the list-users Lambda's /owner-patch-update route, which
 // verifies patch ownership server-side before applying a scoped patch update.
+import { idTokenFromRequest } from '@/lib/apiToken';
 const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function POST(
@@ -9,8 +10,7 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  const authHeader = request.headers.get('authorization');
-  const token = authHeader?.split(' ')[1];
+  const token = idTokenFromRequest(request);
   if (!token) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }

@@ -8,6 +8,7 @@ import { generateClient } from 'aws-amplify/api';
 import { userPatchesByPatch, getPatchProgressSummary } from '@/graphql/queries';
 import Header from '@/components/Header';
 import { useAuth } from '@/context/auth-context';
+import { ID_TOKEN_HEADER } from '@/lib/apiToken';
 
 const getPatchName = /* GraphQL */ `
   query GetPatchName($id: ID!) {
@@ -53,12 +54,16 @@ export default function PatchProgressPage() {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
+      // Previously this was interpolated into `Bearer ${token}`, so a missing
+      // token was sent as the string "undefined" and failed server-side instead
+      // of being caught here.
+      if (!token) throw new Error('Not signed in');
 
       const patchRes = await client.graphql({ query: getPatchName, variables: { id: patchId }, authMode: 'userPool' });
       setPatchName((patchRes as any).data.getPatch?.name ?? '');
 
       const usersRes = await fetch('/api/list-users', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { [ID_TOKEN_HEADER]: token },
       });
       const users: CognitoUser[] = await usersRes.json();
       const emailMap: Record<string, string> = {};
