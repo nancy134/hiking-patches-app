@@ -46,8 +46,15 @@ Notes worth knowing before running it:
 - **Tests run against whatever backend `amplify_outputs.json` points at** — normally
   the personal sandbox — and against its real data, including hard-coded ids such as
   the Belknap Range patch. They also write and clean up real records.
-- **`add-ascent.spec.ts` used to be intermittent — it isn't any more, so treat a
-  failure there as a real regression.** It failed roughly two runs in three because
+- **Authenticated specs can fail on the login step.** `add-ascent`, `patch-detail-auth`,
+  `my-patches`, `auth` and `sign-out` all sign in through `helpers/login.ts`, and a run
+  occasionally lands on a signed-out page — the giveaway in the trace is a "Sign in"
+  button where the test expected authenticated controls. It passes on a re-run of that
+  spec alone; the likely cause is Cognito throttling the suite's repeated logins. Check
+  the trace for which state the page was in before treating a failure as a code bug.
+- **`add-ascent.spec.ts` had its own, separate bug, now fixed.** Distinguish the two by
+  the page state: the bug below always failed on a signed-IN page at the date
+  assertion. It failed roughly two runs in three because
   `PatchMountains` passed `userMountainMap[id] || []` to `MountainAscentModal`, a
   fresh array identity on every parent render, and the modal re-seeded its draft
   dates from that prop — wiping what the user had typed, so Save submitted an empty
