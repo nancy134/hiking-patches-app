@@ -1,13 +1,9 @@
 // app/api/user-entry-counts/route.ts
+import { idTokenFromRequest } from '@/lib/apiToken';
 const LIST_USERS_BASE = process.env.LIST_USERS_API_URL;
 
 export async function POST(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
-
-  const token = authHeader.split(' ')[1];
+  const token = idTokenFromRequest(request);
   if (!token) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }

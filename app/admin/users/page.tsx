@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import Header from '@/components/Header';
+import { ID_TOKEN_HEADER } from '@/lib/apiToken';
 
 type User = {
   Username: string;
@@ -55,21 +56,16 @@ export default function AdminUsersPage() {
     const fetchUsersAndCounts = async () => {
       try {
         const session = await fetchAuthSession();
-        console.log("session: ");
-        console.log(session);
-        
         const token = session.tokens?.idToken?.toString();
-        console.log("token: ");
-        console.log(token);
-        console.log("/api/list-users called");
+        // Previously interpolated into `Bearer ${token}`, so a missing token was
+        // sent as the string "undefined" and rejected server-side instead of here.
+        if (!token) throw new Error('Not signed in');
         // 1) get users
         const res = await fetch('/api/list-users', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            [ID_TOKEN_HEADER]: token,
           },
         });
-        console.log("res:");
-        console.log(res);
         const usersData: User[] = await res.json();
         setUsers(usersData);
 
@@ -79,7 +75,7 @@ export default function AdminUsersPage() {
         const countsRes = await fetch('/api/user-entry-counts', {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${token}`,
+            [ID_TOKEN_HEADER]: token,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ userIds: ids }),
