@@ -1,15 +1,35 @@
 'use client'; // if you're using Next.js app directory
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
 
+/**
+ * Rendered by <Authenticator> when it considers the visitor signed in.
+ *
+ * Without children, Authenticator renders nothing in that state — which is how
+ * an empty sign-in modal appeared: the Authenticator could see a valid session
+ * while AuthProvider had concluded the visitor was signed out. Asking the
+ * context to re-read puts the header right without a manual page refresh.
+ */
+function AlreadySignedIn({ onRecheck }: { onRecheck: () => void }) {
+  useEffect(() => {
+    onRecheck();
+  }, [onRecheck]);
+
+  return (
+    <p className="text-sm text-gray-700 py-4 text-center">
+      You&apos;re already signed in — updating the page&hellip;
+    </p>
+  );
+}
+
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
-  const { user, isAdmin, authReady } = useAuth();
+  const { user, isAdmin, authReady, refresh } = useAuth();
   const [authTab, setAuthTab] = useState<'signIn' | 'signUp'>('signIn');
 
   useEffect(() => {
@@ -17,6 +37,12 @@ export default function Header() {
       setShowLogin(false); // Auto-close modal on sign-in
     }
   }, [user]);
+
+  // Authenticator reports an authenticated visitor: sync the context and close.
+  const handleAuthenticated = useCallback(() => {
+    void refresh();
+    setShowLogin(false);
+  }, [refresh]);
 
   const openModal = (tab: 'signIn' | 'signUp') => {
     setAuthTab(tab);
@@ -104,7 +130,9 @@ export default function Header() {
                   >
                     &times;
                   </button>
-                  <Authenticator initialState={authTab} socialProviders={[]} />
+                  <Authenticator initialState={authTab} socialProviders={[]}>
+                    {() => <AlreadySignedIn onRecheck={handleAuthenticated} />}
+                  </Authenticator>
                 </Dialog.Panel>
               </div>
             </Dialog>

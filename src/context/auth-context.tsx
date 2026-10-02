@@ -1,7 +1,7 @@
 // context/auth-context.tsx
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Hub } from '@aws-amplify/core';
 import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth';
 
@@ -11,7 +11,10 @@ interface AuthContextValue {
   user: AuthUser | null;
   setUser: (user: AuthUser | null) => void;
   isAdmin: boolean;
-  authReady: boolean;            // ✅ NEW
+  authReady: boolean;
+  /** Re-read the session. Lets a component that knows better (e.g. the sign-in
+   *  modal, which has its own view of auth state) pull this context back in sync. */
+  refresh: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -22,42 +25,75 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [authReady, setAuthReady] = useState(false); // ✅ NEW
 
-  const updateUserAndRoles = async () => {
+  /**
+   * One attempt at reading auth state. Returns null when the browser genuinely
+   * holds no session, and throws when it could not be determined.
+   *
+   * The session is fetched BEFORE getCurrentUser(): on a cold load
+   * getCurrentUser() can reject while Amplify is still rehydrating tokens from
+   * storage, and the old code treated that rejection as "signed out".
+   */
+  const probeOnce = async (): Promise<{ user: AuthUser; isAdmin: boolean } | null> => {
+    const session = await fetchAuthSession();
+    const jwt = session.tokens?.idToken;
+    if (!jwt) return null;
+
+    const currentUser = await getCurrentUser();
+
+    const payload: any =
+      (jwt as any)?.payload ??
+      (() => {
+        const raw = jwt?.toString();
+        if (!raw) return {};
+        const [, body] = raw.split('.');
+        try { return JSON.parse(atob(body)); } catch { return {}; }
+      })();
+
+    const groups: string[] = payload?.['cognito:groups'] ?? [];
+    return { user: currentUser, isAdmin: groups.includes('Admin') };
+  };
+
+  /**
+   * True when this browser has a stored Cognito session. Used to decide whether
+   * an apparently-empty auth state is worth retrying: an anonymous visitor
+   * should not be made to wait, but someone who IS signed in should never be
+   * shown a signed-out header just because the first read lost a race.
+   */
+  const hasStoredSession = () => {
     try {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-
-      // Prefer using Amplify's decoded payload instead of manual atob, when available
-      const session = await fetchAuthSession();
-      // In Amplify Auth v6, tokens may expose `payload`; fall back to manual decode if needed
-      const jwt = session.tokens?.idToken;
-      // Try payload first
-      const payload: any =
-        (jwt as any)?.payload ??
-        (() => {
-          const raw = jwt?.toString();
-          if (!raw) return {};
-          const [, body] = raw.split('.');
-          try { return JSON.parse(atob(body)); } catch { return {}; }
-        })();
-
-      const groups: string[] = payload?.['cognito:groups'] ?? [];
-      setIsAdmin(groups.includes('Admin'));
+      return Object.keys(window.localStorage).some(
+        (k) => k.startsWith('CognitoIdentityServiceProvider.') && k.endsWith('.LastAuthUser')
+      );
     } catch {
-      // Not signed in
-      setUser(null);
-      setIsAdmin(false);
-    } finally {
-      setAuthReady(true); // ✅ Always mark as ready exactly once on first check
+      return false;
     }
   };
+
+  const refresh = useCallback(async () => {
+    let result: { user: AuthUser; isAdmin: boolean } | null = null;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        result = await probeOnce();
+        // An empty result is only trustworthy if nothing is stored locally.
+        if (result || !hasStoredSession()) break;
+      } catch {
+        // fall through to the retry
+      }
+      if (attempt === 0) await new Promise((r) => setTimeout(r, 400));
+    }
+
+    setUser(result?.user ?? null);
+    setIsAdmin(result?.isAdmin ?? false);
+    setAuthReady(true);
+  }, []);
 
   useEffect(() => {
     // Listen for auth events to keep context in sync
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
       const evt = payload?.event;
       if (evt === 'signedIn' || evt === 'tokenRefresh') {
-        updateUserAndRoles();
+        refresh();
       } else if (evt === 'signedOut') {
         setUser(null);
         setIsAdmin(false);
@@ -65,10 +101,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     // Initial check on mount
-    updateUserAndRoles();
+    refresh();
 
     return () => unsubscribe();
-  }, []);
+  }, [refresh]);
 
   const logout = async () => {
     await signOut();
@@ -77,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAdmin, authReady, logout }}>
+    <AuthContext.Provider value={{ user, setUser, isAdmin, authReady, refresh, logout }}>
       {children}
     </AuthContext.Provider>
   );
