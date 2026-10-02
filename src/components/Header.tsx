@@ -6,6 +6,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
+import { authServices } from '@/lib/authServices';
 
 /**
  * Rendered by <Authenticator> when it considers the visitor signed in.
@@ -130,7 +131,11 @@ export default function Header() {
                   >
                     &times;
                   </button>
-                  <Authenticator initialState={authTab} socialProviders={[]}>
+                  <Authenticator
+                    initialState={authTab}
+                    socialProviders={[]}
+                    services={authServices}
+                  >
                     {() => <AlreadySignedIn onRecheck={handleAuthenticated} />}
                   </Authenticator>
                 </Dialog.Panel>
